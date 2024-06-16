@@ -6,14 +6,9 @@ require "coruscate/version"
 Gem::Specification.new do |spec|
   spec.name          = "coruscate"
   spec.version       = Coruscate::VERSION
-  spec.authors       = ["TODO: Write your name"]
-  spec.email         = ["TODO: Write your email address"]
   spec.authors       = ["Jordan Hiltunen"]
   spec.email         = ["hello@jordanhiltunen.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because RubyGems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
   spec.summary       = %q{A recurring event generation gem, implemented in Rust with an emphasis on performance}
   spec.homepage      = "https://github.com/jordanhiltunen/coruscate"
   spec.license       = "MIT"
@@ -40,9 +35,11 @@ Gem::Specification.new do |spec|
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
+  spec.extensions = %w[ext/coruscate/extconf.rb]
 
   spec.add_development_dependency "bundler", "~> 2.5.9"
   spec.add_development_dependency "rake", "~> 10.0"
+  spec.add_development_dependency "rake-compiler", "~> 1.2.0"
   spec.add_development_dependency "rspec", "~> 3.0"
 
   spec.add_dependency "rb_sys", ">= 0.9.86"
