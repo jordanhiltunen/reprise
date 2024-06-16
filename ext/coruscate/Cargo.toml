@@ -1,0 +1,16 @@
+[package]
+name = "coruscate"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[build]
+rustflags = ["-C", "link-dead-code=on"]
+
+[dependencies]
+magnus = { git = "https://github.com/matsadler/magnus", features = ["rb-sys"] }
+rb-sys = { version = "0.9.56", default-features = false, features = ["ruby-static"] }
+
+# magnus = { version = "0.6.3", features = ["rb-sys", "ruby-static"] }
