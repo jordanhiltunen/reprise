@@ -10,6 +10,7 @@ crate-type = ["cdylib"]
 rustflags = ["-C", "link-dead-code=on"]
 
 [dependencies]
+chrono = "0.4.38"
 magnus = { git = "https://github.com/matsadler/magnus", features = ["rb-sys"] }
 memoize = "0.4.2"
 rb-sys = { version = "0.9.56", default-features = false, features = ["ruby-static"] }
