@@ -1,22 +1,22 @@
-use std::os::raw::c_int;
+use std::cell::RefCell;
 use magnus::prelude::*;
-use magnus::{Error, RArray, Ruby, Module, Value};
+use magnus::{Error, Ruby, Module};
 use magnus::class;
 use magnus::function;
 use magnus::method;
-use std::time::{Duration, SystemTime};
-use chrono::{DateTime, Utc, Months, Timelike, TimeZone, NaiveDateTime, NaiveDate, NaiveTime, MappedLocalTime};
+use chrono::{DateTime, Utc, Months, Timelike, TimeZone, NaiveDateTime, NaiveDate, NaiveTime, MappedLocalTime, Days};
 use chrono_tz::Tz;
-use magnus::rb_sys::protect;
+use crate::ruby_api::occurrence::Occurrence;
+use crate::ruby_api::exclusion::Exclusion;
+use crate::ruby_api::traits::HasOverlapAwareness;
 
-use rb_sys::{rb_time_timespec, rb_time_timespec_new, rb_time_timeval, rb_time_utc_offset, RTypedData, timespec, timeval};
-
-#[magnus::wrap(class = "Coruscate::Schedule")]
+// #[magnus::wrap(class = "Coruscate::Core::Schedule")]
 pub(crate) struct Schedule {
-    pub(crate) start_time: SystemTime,
-    pub(crate) end_time: SystemTime,
-    pub(crate) time_zone: chrono_tz::Tz,
-    pub(crate) occurrences: Option<Vec<SystemTime>>
+    pub(crate) start_time: i64,
+    pub(crate) end_time: i64,
+    pub(crate) time_zone: Tz,
+    pub(crate) occurrences: Vec<Occurrence>,
+    pub(crate) exclusions: Vec<Exclusion>
 }
 
 impl Schedule {
