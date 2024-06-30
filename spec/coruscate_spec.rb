@@ -1,4 +1,4 @@
-
+require "spec_helper"
 
 RSpec.describe Coruscate do
   it "has a version number" do

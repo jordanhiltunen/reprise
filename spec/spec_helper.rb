@@ -1,5 +1,9 @@
 require "bundler/setup"
 require "coruscate"
+require "active_support"
+require "active_support/core_ext/integer/time"
+require "active_support/core_ext/time"
+require "active_support/testing/time_helpers"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -7,6 +11,8 @@ RSpec.configure do |config|
 
   # Disable RSpec exposing methods globally on `Module` and `main`
   config.disable_monkey_patching!
+
+  config.include ActiveSupport::Testing::TimeHelpers
 
   config.expect_with :rspec do |c|
     c.syntax = :expect
