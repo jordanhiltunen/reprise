@@ -10,5 +10,6 @@ mod time_of_day;
 
 pub fn init(ruby: &Ruby) -> Result<(), Error> {
     schedule::init(ruby)?;
+    occurrence::init(ruby)?;
     Ok(())
 }

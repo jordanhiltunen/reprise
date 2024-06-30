@@ -28,7 +28,7 @@ RSpec.describe Coruscate do
     pp time[0].class
   end
 
-  fit "can do a thing with a class" do
+  it "can do a thing with a class" do
 
     my_schedule = Coruscate::Schedule.new(
       start_time: Time.current - 1.day,
@@ -51,6 +51,30 @@ RSpec.describe Coruscate do
       pp occurrence
       # t = Time.at(occurrence).in_time_zone("Europe/Paris")
       pp occurrence.strftime("%a %b %e %Y %I:%M%p %z")
+    end
+  end
+
+  describe "#repeats_weekly" do
+    fit "can repeat weekly" do
+
+      my_schedule = Coruscate::Schedule.new(
+        start_time: Time.current - 1.day,
+        end_time: Time.current + 1.year,
+        time_zone: "Hawaii"
+      )
+
+      my_schedule.add_exclusion((Time.current - 5.minutes).to_i, (Time.current + 5.minutes).to_i)
+
+      my_schedule.repeat_weekly("tuesday", { hour: 1, minute: 2, second: 3 }, 300)
+      pp my_schedule.inspect
+
+      occurrences = my_schedule.occurrences
+      pp occurrences.inspect
+      pp occurrences.size
+
+      occurrences.each do |occurrence|
+        pp occurrence.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z")
+      end
     end
   end
 end

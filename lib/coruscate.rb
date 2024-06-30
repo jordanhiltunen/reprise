@@ -21,12 +21,17 @@ module Coruscate
     def occurrences
       return @_occurrences if defined?(@_occurrences)
 
-      @_occurrences = internal_schedule.occurrences.map do |unix_timestamp|
-        Time.at(unix_timestamp).in_time_zone(time_zone)
-      end
+      # @_occurrences = internal_schedule.occurrences.map do |unix_timestamp|
+      #   Time.at(unix_timestamp).in_time_zone(time_zone)
+      # end
+
+      @_occurrences = internal_schedule.occurrences
     end
 
-    def_delegators :internal_schedule, :set_exclusions, :add_exclusion
+    def_delegators :internal_schedule,
+                   :set_exclusions,
+                   :add_exclusion,
+                   :repeat_weekly
 
     private
 
