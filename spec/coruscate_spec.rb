@@ -5,29 +5,6 @@ RSpec.describe Coruscate do
     expect(Coruscate::VERSION).not_to be nil
   end
 
-  xit "does something useful" do
-    expect(false).to eq(true)
-  end
-
-  xit "uses a custom rust blank method" do
-    expect("my string".rust_blank?).to eq(false)
-  end
-
-  it "does a thing" do
-    expect(Coruscate.return_hello).to eq("Hello!")
-  end
-
-  it "can do a thing with time" do
-    original_time = Time.now
-
-    pp original_time.inspect
-
-    time = Coruscate.return_modified_time(original_time)
-    pp time.inspect
-    pp time[0].inspect
-    pp time[0].class
-  end
-
   it "can do a thing with a class" do
 
     my_schedule = Coruscate::Schedule.new(
@@ -55,26 +32,33 @@ RSpec.describe Coruscate do
   end
 
   describe "#repeats_weekly" do
-    fit "can repeat weekly" do
-
-      my_schedule = Coruscate::Schedule.new(
+    let(:schedule) do
+      Coruscate::Schedule.new(
         start_time: Time.current - 1.day,
-        end_time: Time.current + 1.year,
+        end_time: Time.current + 2.months,
         time_zone: "Hawaii"
       )
+    end
 
-      my_schedule.add_exclusion((Time.current - 5.minutes).to_i, (Time.current + 5.minutes).to_i)
+    before { travel_to Time.new(2024, 6, 30, 0, 0, 0) }
 
-      my_schedule.repeat_weekly("tuesday", { hour: 1, minute: 2, second: 3 }, 300)
-      pp my_schedule.inspect
+    it "generates an array of weekly occurrences" do
+      schedule.repeat_weekly("tuesday", { hour: 1, minute: 2, second: 3 }, 300)
 
-      occurrences = my_schedule.occurrences
-      pp occurrences.inspect
-      pp occurrences.size
-
-      occurrences.each do |occurrence|
-        pp occurrence.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z")
-      end
+      expect(schedule.occurrences.size).to eq(9)
+      expect(
+        schedule.occurrences.map { |o| o.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z") }
+      ).to contain_exactly(
+         "Tue Jul  2 2024 01:02AM -1000",
+         "Tue Jul  9 2024 01:02AM -1000",
+         "Tue Jul 16 2024 01:02AM -1000",
+         "Tue Jul 23 2024 01:02AM -1000",
+         "Tue Jul 30 2024 01:02AM -1000",
+         "Tue Aug  6 2024 01:02AM -1000",
+         "Tue Aug 13 2024 01:02AM -1000",
+         "Tue Aug 20 2024 01:02AM -1000",
+         "Tue Aug 27 2024 01:02AM -1000"
+       )
     end
   end
 end
