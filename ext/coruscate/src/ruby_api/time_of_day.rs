@@ -1,7 +1,9 @@
 use chrono::{DateTime, Timelike};
 use chrono_tz::Tz;
 use magnus::RHash;
+use magnus::symbol::IntoSymbol;
 
+#[derive(Debug)]
 pub(crate) struct TimeOfDay {
     pub(crate) hour: u32,
     pub(crate) minute: u32,
@@ -11,11 +13,13 @@ pub(crate) struct TimeOfDay {
 
 impl TimeOfDay {
     pub(crate) fn new_from_ruby_hash(time_of_day: RHash) -> TimeOfDay {
+        let ruby = magnus::Ruby::get().unwrap();
+
         return TimeOfDay {
-            hour: time_of_day.fetch::<_, u32>("hour").unwrap_or(0),
-            minute: time_of_day.fetch::<_, u32>("minute").unwrap_or(0),
-            second: time_of_day.fetch::<_, u32>("second").unwrap_or(0),
-            millisecond: time_of_day.fetch::<_, i64>("millisecond").unwrap_or(0),
+            hour: time_of_day.fetch::<_, u32>("hour".into_symbol_with(&ruby)).unwrap_or(0),
+            minute: time_of_day.fetch::<_, u32>("minute".into_symbol_with(&ruby)).unwrap_or(0),
+            second: time_of_day.fetch::<_, u32>("second".into_symbol_with(&ruby)).unwrap_or(0),
+            millisecond: time_of_day.fetch::<_, i64>("millisecond".into_symbol_with(&ruby)).unwrap_or(0),
         }
     }
 
