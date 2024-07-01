@@ -1,6 +1,6 @@
 use std::cell::RefCell;
 use magnus::prelude::*;
-use magnus::{Error, Ruby, Module};
+use magnus::{Error, Ruby, Module, RHash};
 use magnus::class;
 use magnus::function;
 use magnus::method;
