@@ -1,4 +1,4 @@
-use magnus::{prelude::*, Error, Ruby};
+use magnus::{Error, prelude::*, Ruby};
 
 mod ruby_api;
 
