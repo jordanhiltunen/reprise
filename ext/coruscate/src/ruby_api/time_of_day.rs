@@ -7,8 +7,7 @@ use magnus::symbol::IntoSymbol;
 pub(crate) struct TimeOfDay {
     pub(crate) hour: u32,
     pub(crate) minute: u32,
-    pub(crate) second: u32,
-    pub(crate) millisecond: i64
+    pub(crate) second: u32
 }
 
 impl TimeOfDay {
@@ -18,8 +17,7 @@ impl TimeOfDay {
         return TimeOfDay {
             hour: time_of_day.fetch::<_, u32>("hour".into_symbol_with(&ruby)).unwrap_or(0),
             minute: time_of_day.fetch::<_, u32>("minute".into_symbol_with(&ruby)).unwrap_or(0),
-            second: time_of_day.fetch::<_, u32>("second".into_symbol_with(&ruby)).unwrap_or(0),
-            millisecond: time_of_day.fetch::<_, i64>("millisecond".into_symbol_with(&ruby)).unwrap_or(0),
+            second: time_of_day.fetch::<_, u32>("second".into_symbol_with(&ruby)).unwrap_or(0)
         }
     }
 
@@ -27,8 +25,7 @@ impl TimeOfDay {
         return TimeOfDay {
             hour: local_time.hour(),
             minute: local_time.minute(),
-            second: local_time.second(),
-            millisecond: local_time.timestamp_millis()
+            second: local_time.second()
         }
     }
 }
