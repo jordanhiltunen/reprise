@@ -23,8 +23,8 @@ module Coruscate
     end
 
     def_delegators :internal_schedule,
-                   :set_exclusions,
                    :add_exclusion,
+                   :add_exclusions,
                    :repeat_weekly
 
     private
