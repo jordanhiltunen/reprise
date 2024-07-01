@@ -75,7 +75,7 @@ impl Weekly<'_> {
             Some(first_occurrence_datetime) => {
                 let mut current_occurrence_datetime = first_occurrence_datetime;
 
-                while (current_occurrence_datetime < self.schedule.local_end_time) {
+                while current_occurrence_datetime < self.schedule.local_end_time {
                     occurrences.push(Occurrence {
                         start_time: current_occurrence_datetime.timestamp(),
                         end_time: (current_occurrence_datetime + Duration::seconds(self.duration_in_seconds)).timestamp()
