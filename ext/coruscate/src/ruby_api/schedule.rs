@@ -4,7 +4,7 @@ use magnus::{Error, Ruby, Module, RHash};
 use magnus::class;
 use magnus::function;
 use magnus::method;
-use chrono::{DateTime, Utc, Months, Timelike, TimeZone, NaiveDateTime, NaiveDate, NaiveTime, MappedLocalTime, Days};
+use chrono::{DateTime};
 use chrono_tz::Tz;
 use crate::ruby_api::occurrence::Occurrence;
 use crate::ruby_api::exclusion::Exclusion;
