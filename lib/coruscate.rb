@@ -14,6 +14,9 @@ module Coruscate
     def initialize(start_time:, end_time:, time_zone:)
       @start_time = start_time
       @end_time = end_time
+    def initialize(starts_at:, ends_at:, time_zone:)
+      @starts_at = starts_at
+      @ends_at = ends_at
       @time_zone = time_zone
       # TODO: validate the time zone, reject ambiguous zones.
     end
@@ -29,7 +32,7 @@ module Coruscate
 
     private
 
-    attr_reader :start_time, :end_time, :time_zone
+    attr_reader :starts_at, :ends_at, :time_zone
 
     def inferred_tzinfo_time_zone
       return @_inferred_tzinfo_time_zone if defined?(@_inferred_tzinfo_time_zone)
@@ -41,8 +44,8 @@ module Coruscate
       return @_internal_schedule if defined?(@_internal_schedule)
 
       @_internal_schedule = ::Coruscate::Core::Schedule.new(
-        start_time.to_i,
-        end_time.to_i,
+        starts_at.to_i,
+        ends_at.to_i,
         inferred_tzinfo_time_zone
       )
     end

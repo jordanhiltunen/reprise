@@ -9,8 +9,8 @@ require "benchmark/memory"
 RSpec.describe Coruscate::Schedule do
   subject(:schedule) do
     Coruscate::Schedule.new(
-      start_time: Time.current,
-      end_time: Time.current + 4.weeks,
+      starts_at: Time.current,
+      ends_at: Time.current + 4.weeks,
       time_zone: time_zone
     )
   end
@@ -115,8 +115,8 @@ RSpec.describe Coruscate::Schedule do
 
     def generate_coruscate_occurrences
       schedule = Coruscate::Schedule.new(
-        start_time: Time.current,
-        end_time: Time.current + 365.days,
+        starts_at: Time.current,
+        ends_at: Time.current + 365.days,
         time_zone: time_zone
       )
 

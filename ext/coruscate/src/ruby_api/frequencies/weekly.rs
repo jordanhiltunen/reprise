@@ -32,14 +32,14 @@ impl Weekly<'_> {
 
         if (
             occurrence_candidate.weekday() == self.weekday &&
-            occurrence_candidate > self.schedule.local_start_time &&
-            occurrence_candidate < self.schedule.local_end_time
+            occurrence_candidate > self.schedule.local_starts_at &&
+            occurrence_candidate < self.schedule.local_ends_at
         ) {
             return Some(occurrence_candidate);
         } else {
             let mut occurrence_found: bool = false;
 
-            while (occurrence_candidate < self.schedule.local_end_time) {
+            while (occurrence_candidate < self.schedule.local_ends_at) {
                 occurrence_candidate = occurrence_candidate.checked_add_days(Days::new(1)).unwrap();
 
                if (occurrence_candidate.weekday() == self.weekday) {
@@ -56,7 +56,7 @@ impl Weekly<'_> {
     }
 
     fn generate_first_occurrence_candidate(&self) -> DateTime<Tz> {
-        return self.schedule.local_start_time.with_time(self.naive_starts_at_time()).unwrap();
+        return self.schedule.local_starts_at.with_time(self.naive_starts_at_time()).unwrap();
     }
 
     fn naive_starts_at_time(&self) -> NaiveTime {
@@ -75,7 +75,7 @@ impl Weekly<'_> {
             Some(first_occurrence_datetime) => {
                 let mut current_occurrence_datetime = first_occurrence_datetime;
 
-                while current_occurrence_datetime < self.schedule.local_end_time {
+                while current_occurrence_datetime < self.schedule.local_ends_at {
                     occurrences.push(Occurrence {
                         start_time: current_occurrence_datetime.timestamp(),
                         end_time: (current_occurrence_datetime + Duration::seconds(self.duration_in_seconds)).timestamp()

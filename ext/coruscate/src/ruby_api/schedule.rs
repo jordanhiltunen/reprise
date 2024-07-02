@@ -17,10 +17,10 @@ type UnixTimestamp = i64;
 type Second = i64;
 
 pub(crate) struct Schedule {
-    pub(crate) start_time: UnixTimestamp,
-    pub(crate) local_start_time: DateTime<Tz>,
-    pub(crate) end_time: UnixTimestamp,
-    pub(crate) local_end_time: DateTime<Tz>,
+    pub(crate) starts_at: UnixTimestamp,
+    pub(crate) local_starts_at: DateTime<Tz>,
+    pub(crate) ends_at: UnixTimestamp,
+    pub(crate) local_ends_at: DateTime<Tz>,
     pub(crate) time_zone: Tz,
     pub(crate) occurrences: Vec<Occurrence>,
     pub(crate) sorted_exclusions: SortedExclusions
@@ -30,20 +30,19 @@ pub(crate) struct Schedule {
 struct MutSchedule(RefCell<Schedule>);
 
 impl MutSchedule {
-    pub(crate) fn new(start_time: UnixTimestamp, end_time: UnixTimestamp, time_zone: String) -> MutSchedule {
+    pub(crate) fn new(starts_at: UnixTimestamp, ends_at: UnixTimestamp, time_zone: String) -> MutSchedule {
         let parsed_time_zone: Tz = time_zone.parse().expect("Cannot parse time zone");
-
-        let start_time_utc = DateTime::from_timestamp(start_time, 0).unwrap();
-        let local_start_time = start_time_utc.with_timezone(&parsed_time_zone);
-        let end_time_utc = DateTime::from_timestamp(end_time, 0).unwrap();
-        let local_end_time = end_time_utc.with_timezone(&parsed_time_zone);
+        let starts_at_utc = DateTime::from_timestamp(starts_at, 0).unwrap();
+        let local_starts_at = starts_at_utc.with_timezone(&parsed_time_zone);
+        let ends_at_utc = DateTime::from_timestamp(ends_at, 0).unwrap();
+        let local_ends_at = ends_at_utc.with_timezone(&parsed_time_zone);
 
         Self(RefCell::new(
             Schedule {
-                start_time,
-                local_start_time,
-                end_time,
-                local_end_time,
+                starts_at,
+                local_starts_at,
+                ends_at,
+                local_ends_at,
                 time_zone: parsed_time_zone,
                 occurrences: Vec::new(),
                 sorted_exclusions: SortedExclusions::new()
