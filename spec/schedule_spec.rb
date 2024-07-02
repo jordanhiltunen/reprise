@@ -23,6 +23,25 @@ RSpec.describe Coruscate::Schedule do
     occurrence.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z")
   end
 
+  describe "#initialize" do
+    context "when the time zone is invalid" do
+      let(:time_zone) { "nonsense" }
+
+      it "raises a `TZInfo::InvalidTimezoneIdentifier` error" do
+        expect { schedule }.to raise_error(TZInfo::InvalidTimezoneIdentifier, "Invalid identifier: nonsense")
+      end
+    end
+
+    context "when the time zone is ambiguous" do
+      # https://github.com/tzinfo/tzinfo/issues/53#issuecomment-235852722
+      let(:time_zone) { "CEST" }
+
+      it "raises a `TZInfo::InvalidTimezoneIdentifier` error" do
+        expect { schedule }.to raise_error(TZInfo::InvalidTimezoneIdentifier, "Invalid identifier: CEST")
+      end
+    end
+  end
+
   describe "#add_exclusion" do
     it "allows users to specify exclusions that result in removed occurrences" do
       schedule.repeat_weekly("sunday", { hour: 0, minute: 1, second: 2 }, 300)
