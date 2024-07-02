@@ -3,7 +3,7 @@
 require "active_support"
 require "active_support/core_ext/integer/time"
 require "active_support/core_ext/time"
-require "coruscate/version"
+require_relative "coruscate/version"
 require_relative "coruscate/coruscate"
 require "forwardable"
 
