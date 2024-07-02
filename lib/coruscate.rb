@@ -27,6 +27,7 @@ module Coruscate
       @time_zone = ActiveSupport::TimeZone::find_tzinfo(time_zone).identifier
     end
 
+    # @return [Array<Coruscate::Core::Occurrence>]
     def occurrences
       internal_schedule.occurrences
     end
