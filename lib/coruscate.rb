@@ -13,14 +13,18 @@ module Coruscate
   class Schedule
     extend ::Forwardable
 
-    def initialize(start_time:, end_time:, time_zone:)
-      @start_time = start_time
-      @end_time = end_time
+    # @param starts_at [Time]
+    #   The beginning of the schedule; the earliest possible moment for a valid occurrence.
+    # @param ends_at [Time]
+    #   The end of the schedule; the latest possible moment for a valid occurrence.
+    # @param time_zone [String]
+    #   Must be an unambiguous, valid time-zone according to `ActiveSupport::TimeZone::find_tzinfo`.
+    #   See https://github.com/tzinfo/tzinfo/issues/53
+    # @raise [TZInfo::InvalidTimezoneIdentifier] if the time zone is ambiguous or invalid.
     def initialize(starts_at:, ends_at:, time_zone:)
       @starts_at = starts_at
       @ends_at = ends_at
-      @time_zone = time_zone
-      # TODO: validate the time zone, reject ambiguous zones.
+      @time_zone = ActiveSupport::TimeZone::find_tzinfo(time_zone).identifier
     end
 
     def occurrences
@@ -36,19 +40,13 @@ module Coruscate
 
     attr_reader :starts_at, :ends_at, :time_zone
 
-    def inferred_tzinfo_time_zone
-      return @_inferred_tzinfo_time_zone if defined?(@_inferred_tzinfo_time_zone)
-
-      @_inferred_tzinfo_time_zone = ActiveSupport::TimeZone::find_tzinfo(time_zone).identifier
-    end
-
     def internal_schedule
       return @_internal_schedule if defined?(@_internal_schedule)
 
       @_internal_schedule = ::Coruscate::Core::Schedule.new(
         starts_at.to_i,
         ends_at.to_i,
-        inferred_tzinfo_time_zone
+        time_zone
       )
     end
   end
