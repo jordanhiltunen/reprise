@@ -1,5 +1,6 @@
 use magnus::{class, Error, method, Module, Ruby, Time};
 use crate::ruby_api::traits::HasOverlapAwareness;
+use crate::ruby_api::ruby_modules;
 
 #[derive(Debug, Copy, Clone)]
 #[magnus::wrap(class = "Coruscate::Core::Occurrence")]
@@ -39,11 +40,8 @@ impl HasOverlapAwareness for Occurrence {
     }
 }
 
-pub fn init(ruby: &Ruby) -> Result<(), Error> {
-    let module = ruby.define_module("Coruscate")?;
-    let core_module = module.define_module("Core")?;
-
-    let occurrence_class = core_module.define_class("Occurrence", class::object())?;
+pub fn init() -> Result<(), Error> {
+    let occurrence_class = ruby_modules::coruscate_core().define_class("Occurrence", class::object())?;
     occurrence_class.define_method("start_time", method!(Occurrence::start_time, 0))?;
     occurrence_class.define_method("end_time", method!(Occurrence::end_time, 0))?;
 
