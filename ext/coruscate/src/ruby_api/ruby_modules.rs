@@ -1,4 +1,4 @@
-use magnus::{value::Lazy, Module, RClass, RModule, Ruby};
+use magnus::{value::Lazy, Module, RModule, Ruby};
 
 static CORUSCATE: Lazy<RModule> = Lazy::new(|ruby| ruby.define_module("Coruscate").unwrap());
 
