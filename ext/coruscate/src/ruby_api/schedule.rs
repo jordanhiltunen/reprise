@@ -12,6 +12,7 @@ use crate::ruby_api::traits::{HasOverlapAwareness, RecurringSeries};
 use crate::ruby_api::frequencies::weekly::Weekly;
 use crate::ruby_api::sorted_exclusions::SortedExclusions;
 use crate::ruby_api::time_of_day::TimeOfDay;
+use crate::ruby_api::ruby_modules;
 
 type UnixTimestamp = i64;
 type Second = i64;
@@ -89,10 +90,8 @@ impl MutSchedule {
     }
 }
 
-pub fn init(ruby: &Ruby) -> Result<(), Error> {
-    let module = ruby.define_module("Coruscate")?;
-    let core_module = module.define_module("Core")?;
-    let class = core_module.define_class("Schedule", class::object())?;
+pub fn init() -> Result<(), Error> {
+    let class = ruby_modules::coruscate_core().define_class("Schedule", class::object())?;
 
     class.define_singleton_method("new", function!(MutSchedule::new, 3))?;
     class.define_method("occurrences", method!(MutSchedule::get_occurrences, 0))?;
