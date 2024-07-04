@@ -103,6 +103,7 @@ impl MutSchedule {
             map(|series|
                 return match series {
                     Frequencies::Weekly(weekly) => { weekly.generate_occurrences(self_reference.local_starts_at, self_reference.local_ends_at) }
+                    Frequencies::MonthlyByDay(monthly_by_day) => { monthly_by_day.generate_occurrences(self_reference.local_starts_at, self_reference.local_ends_at) }
                 }
             ).flatten()
             .filter(|o| !self_reference.sorted_exclusions.is_occurrence_excluded(o))
