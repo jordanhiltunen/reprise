@@ -118,6 +118,25 @@ RSpec.describe Coruscate::Schedule do
            )
     end
 
+    it "supports the accumulation of occurrences from multiple recurring series" do
+      schedule.repeat_weekly("tuesday", { hour: 1, minute: 2, second: 3 }, 300)
+      schedule.repeat_weekly("wednesday", { hour: 2, minute: 3, second: 4 }, 300)
+
+      expect(schedule.occurrences.size).to eq(8)
+      expect(
+        schedule.occurrences.map { |o| o.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z") }
+      ).to contain_exactly(
+             "Tue Jul  2 2024 01:02AM -1000",
+             "Wed Jul  3 2024 02:03AM -1000",
+             "Tue Jul  9 2024 01:02AM -1000",
+             "Wed Jul 10 2024 02:03AM -1000",
+             "Tue Jul 16 2024 01:02AM -1000",
+             "Wed Jul 17 2024 02:03AM -1000",
+             "Tue Jul 23 2024 01:02AM -1000",
+             "Wed Jul 24 2024 02:03AM -1000"
+           )
+    end
+
     context "when the schedule crosses a daylight savings change" do
       let!(:starts_at) { Time.new(2024, 3, 2, 0, 0, 0) }
       let!(:ends_at) { starts_at + 4.weeks }
