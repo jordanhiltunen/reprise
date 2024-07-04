@@ -17,21 +17,30 @@ use crate::ruby_api::ruby_modules;
 type UnixTimestamp = i64;
 type Second = i64;
 
-pub(crate) struct Schedule {
+#[derive(Debug)]
+pub(crate) struct Schedule<'a> {
     pub(crate) starts_at: UnixTimestamp,
     pub(crate) local_starts_at: DateTime<Tz>,
     pub(crate) ends_at: UnixTimestamp,
     pub(crate) local_ends_at: DateTime<Tz>,
     pub(crate) time_zone: Tz,
     pub(crate) occurrences: Vec<Occurrence>,
-    pub(crate) sorted_exclusions: SortedExclusions
+    pub(crate) sorted_exclusions: SortedExclusions,
+    pub(crate) frequencies: Vec<Box<dyn RecurringSeries + 'a>>
 }
 
-#[magnus::wrap(class = "Coruscate::Core::Schedule")]
-struct MutSchedule(RefCell<Schedule>);
+// Necessary due to <Vec<Box<dyn RecurringSeries>>
+unsafe impl Send for Schedule<'_> {}
 
-impl MutSchedule {
-    pub(crate) fn new(starts_at: UnixTimestamp, ends_at: UnixTimestamp, time_zone: String) -> MutSchedule {
+#[magnus::wrap(class = "Coruscate::Core::Schedule")]
+// A note on using lifetimes for an object like this that we hope to return
+// to Ruby: the compiler complains with the following warnings:
+// > error: deriving TypedData is not guaranteed to be correct for types with lifetimes,
+// consider removing them, or use `#[magnus(unsafe_generics)]` to override this error.
+struct MutSchedule<'a>(RefCell<Schedule<'a>>);
+
+impl MutSchedule<'a> {
+    pub(crate) fn new<'a>(starts_at: UnixTimestamp, ends_at: UnixTimestamp, time_zone: String) -> MutSchedule<'a> {
         let parsed_time_zone: Tz = time_zone.parse().expect("Cannot parse time zone");
         let starts_at_utc = DateTime::from_timestamp(starts_at, 0).unwrap();
         let local_starts_at = starts_at_utc.with_timezone(&parsed_time_zone);
@@ -46,7 +55,8 @@ impl MutSchedule {
                 local_ends_at,
                 time_zone: parsed_time_zone,
                 occurrences: Vec::new(),
-                sorted_exclusions: SortedExclusions::new()
+                sorted_exclusions: SortedExclusions::new(),
+                frequencies: Vec::new()
             }))
     }
 
@@ -73,9 +83,11 @@ impl MutSchedule {
         let mut new_occurrences: Vec<Occurrence> = Vec::new();
 
         {
-            let schedule_reference = self.0.borrow();
-            let weekly_series = Weekly::new(&schedule_reference, weekday_string, starts_at_time_of_day, duration_in_seconds);
+            // let schedule_reference = self.0.borrow();
+            let weekly_series = Weekly::new(&self.0, weekday_string, starts_at_time_of_day, duration_in_seconds);
             new_occurrences = weekly_series.generate_occurrences();
+
+            self.0.borrow_mut().frequencies.push(Box::new(weekly_series));
         }
 
         self.0.borrow_mut().occurrences.extend(new_occurrences);
