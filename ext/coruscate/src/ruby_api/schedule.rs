@@ -79,24 +79,22 @@ impl MutSchedule {
 
     pub(crate) fn repeat_weekly(&self, weekday_string: String, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) -> bool {
         let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(starts_at_time_of_day_ruby_hash);
-        let mut mutable_self_borrow = self.0.borrow_mut();
-        let mut new_occurrences: Vec<Occurrence> = Vec::new();
-
-        {
-            let weekly_series = Weekly::new(weekday_string, starts_at_time_of_day, duration_in_seconds);
-            new_occurrences = weekly_series.generate_occurrences(mutable_self_borrow.local_starts_at, mutable_self_borrow.local_ends_at);
-
-            mutable_self_borrow.frequencies.push(Frequencies::Weekly(weekly_series));
-        }
-
-        mutable_self_borrow.occurrences.extend(new_occurrences);
+        let weekly_series = Weekly::new(weekday_string, starts_at_time_of_day, duration_in_seconds);
+        self.0.borrow_mut().frequencies.push(Frequencies::Weekly(weekly_series));
 
         return true;
     }
 
     pub(crate) fn get_occurrences(&self) -> Vec<Occurrence> {
-        return self.0.borrow().occurrences.clone().into_iter()
-            .filter(|o| !self.0.borrow().sorted_exclusions.is_occurrence_excluded(o))
+        let self_reference = self.0.borrow();
+
+        return self_reference.frequencies.iter().
+            map(|series|
+                return match series {
+                    Frequencies::Weekly(weekly) => { weekly.generate_occurrences(self_reference.local_starts_at, self_reference.local_ends_at) }
+                }
+            ).flatten()
+            .filter(|o| !self_reference.sorted_exclusions.is_occurrence_excluded(o))
             .collect();
     }
 }
