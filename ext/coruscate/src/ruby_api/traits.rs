@@ -10,6 +10,7 @@ pub(crate) trait HasOverlapAwareness {
     }
 }
 
-pub(crate) trait RecurrenceRule {
+// https://stackoverflow.com/a/64298897
+pub(crate) trait RecurringSeries: std::fmt::Debug {
     fn generate_occurrences(&self) -> Vec<Occurrence>;
 }

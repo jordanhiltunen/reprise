@@ -2,6 +2,7 @@ use crate::ruby_api::exclusion::Exclusion;
 use crate::ruby_api::occurrence::Occurrence;
 use crate::ruby_api::traits::HasOverlapAwareness;
 
+#[derive(Debug)]
 pub(crate) struct SortedExclusions {
     pub(crate) exclusions: Vec<Exclusion>
 }

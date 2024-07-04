@@ -8,6 +8,7 @@ use crate::ruby_api::schedule::Schedule;
 use crate::ruby_api::time_of_day::TimeOfDay;
 use crate::ruby_api::traits::RecurringSeries;
 
+#[derive(Debug)]
 pub(crate) struct Weekly<'a> {
     pub(crate) schedule: &'a Schedule,
     pub(crate) weekday: Weekday,
