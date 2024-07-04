@@ -35,7 +35,8 @@ module Coruscate
     def_delegators :internal_schedule,
                    :add_exclusion,
                    :add_exclusions,
-                   :repeat_weekly
+                   :repeat_weekly,
+                   :repeat_monthly_by_day
 
     private
 

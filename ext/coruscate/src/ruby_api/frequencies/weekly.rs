@@ -1,14 +1,8 @@
-// on day
-// interval (e.g. every other).
-
-use std::cell::RefCell;
-use std::cell::Ref;
 use chrono::{Datelike, DateTime, Days, Duration, NaiveTime, Weekday};
 use chrono_tz::Tz;
 use crate::ruby_api::occurrence::Occurrence;
-use crate::ruby_api::schedule::Schedule;
 use crate::ruby_api::time_of_day::TimeOfDay;
-use crate::ruby_api::traits::RecurringSeries;
+use crate::ruby_api::traits::{HasOverlapAwareness, RecurringSeries};
 
 #[derive(Debug)]
 pub(crate) struct Weekly {
@@ -57,14 +51,6 @@ impl Weekly {
     fn generate_first_occurrence_candidate(&self, starts_at: &DateTime<Tz>) -> DateTime<Tz> {
         return starts_at.with_time(self.naive_starts_at_time()).unwrap();
     }
-
-    fn naive_starts_at_time(&self) -> NaiveTime {
-        return NaiveTime::from_hms_opt(
-            self.starts_at_time_of_day.hour,
-            self.starts_at_time_of_day.minute,
-            self.starts_at_time_of_day.second,
-        ).unwrap();
-    }
 }
 
 impl RecurringSeries for Weekly {
@@ -89,5 +75,9 @@ impl RecurringSeries for Weekly {
                 occurrences
             }
         }
+    }
+
+    fn get_starts_at_time_of_day(&self) -> &TimeOfDay {
+        return &self.starts_at_time_of_day;
     }
 }

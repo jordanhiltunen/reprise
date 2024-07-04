@@ -145,6 +145,9 @@ RSpec.describe Coruscate::Schedule do
       it "holds the local occurrence time constant across the DST change" do
         schedule.repeat_weekly("sunday", { hour: 0, minute: 1, second: 2 }, 300)
 
+        pp "OCCURRENCES"
+        pp schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
+
         expect(
           schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
         ).to contain_exactly(
@@ -157,48 +160,22 @@ RSpec.describe Coruscate::Schedule do
     end
   end
 
-  xdescribe "Benchmarks" do
-    def generate_ice_cube_occurrences
-      schedule = IceCube::Schedule.new(now = Time.current) do |s|
-        s.add_recurrence_rule(IceCube::Rule.weekly(1, :tuesday).until(Date.today + 365))
-        s.add_recurrence_rule(IceCube::Rule.weekly(1, :wednesday).until(Date.today + 365))
-        s.add_exception_time(now + 1.day)
-      end
+  describe "#repeats_monthly_by_day" do
+    let(:ends_at) { Time.current + 5.months }
 
-      schedule.all_occurrences.size
-    end
+    it "generates an array of monthly occurrences" do
+      schedule.repeat_monthly_by_day(12, { hour: 1, minute: 2, second: 3 }, 300)
 
-    def generate_coruscate_occurrences
-      schedule = Coruscate::Schedule.new(
-        starts_at: Time.current,
-        ends_at: Time.current + 365.days,
-        time_zone: time_zone
-      )
-
-      schedule.repeat_weekly("tuesday", { hour: 1, minute: 2, second: 3 }, 300)
-      schedule.repeat_weekly("wednesday", { hour: 1, minute: 2, second: 3 }, 300)
-      schedule.add_exclusion(
-        (Time.current.in_time_zone(time_zone) - 30.minutes).to_i,
-        (Time.current.in_time_zone(time_zone) + 5.minutes).to_i
-      )
-
-      schedule.occurrences.size
-    end
-
-    it "is faster than ice cube" do
-      Benchmark.ips do |x|
-        x.report("IceCube:") { generate_ice_cube_occurrences }
-        x.report("Coruscate:") { generate_coruscate_occurrences }
-      end
-    end
-
-    it "is more memory-efficient than ice cube" do
-      Benchmark.memory do |x|
-        x.report("IceCube:") { generate_ice_cube_occurrences }
-        x.report("Coruscate:") { generate_coruscate_occurrences }
-
-        x.compare!
-      end
+      expect(schedule.occurrences.size).to eq(5)
+      expect(
+        schedule.occurrences.map { |o| o.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z") }
+      ).to contain_exactly(
+              "Fri Jul 12 2024 01:02AM -1000",
+              "Mon Aug 12 2024 01:02AM -1000",
+              "Sat Oct 12 2024 01:02AM -1000",
+              "Thu Sep 12 2024 01:02AM -1000",
+              "Tue Nov 12 2024 01:02AM -1000"
+           )
     end
   end
 end
