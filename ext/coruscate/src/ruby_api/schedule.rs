@@ -85,7 +85,7 @@ impl MutSchedule {
         return true;
     }
 
-    pub(crate) fn get_occurrences(&self) -> Vec<Occurrence> {
+    pub(crate) fn occurrences(&self) -> Vec<Occurrence> {
         let self_reference = self.0.borrow();
 
         return self_reference.frequencies.iter().
@@ -103,7 +103,7 @@ pub fn init() -> Result<(), Error> {
     let class = ruby_modules::coruscate_core().define_class("Schedule", class::object())?;
 
     class.define_singleton_method("new", function!(MutSchedule::new, 3))?;
-    class.define_method("occurrences", method!(MutSchedule::get_occurrences, 0))?;
+    class.define_method("occurrences", method!(MutSchedule::occurrences, 0))?;
     class.define_method("add_exclusion", method!(MutSchedule::add_exclusion, 2))?;
     class.define_method("add_exclusions", method!(MutSchedule::add_exclusions, 1))?;
     class.define_method("repeat_weekly", method!(MutSchedule::repeat_weekly, 3))?;
