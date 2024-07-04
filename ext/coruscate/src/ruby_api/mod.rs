@@ -10,7 +10,7 @@ mod time_of_day;
 mod ruby_modules;
 mod sorted_exclusions;
 
-pub fn init(ruby: &Ruby) -> Result<(), Error> {
+pub fn init() -> Result<(), Error> {
     schedule::init()?;
     occurrence::init()?;
     Ok(())
