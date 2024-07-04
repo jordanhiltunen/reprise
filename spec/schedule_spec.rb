@@ -103,7 +103,7 @@ RSpec.describe Coruscate::Schedule do
     end
   end
 
-  describe "#repeats_weekly" do
+  describe "#repeat_weekly" do
     it "generates an array of weekly occurrences" do
       schedule.repeat_weekly("tuesday", { hour: 1, minute: 2, second: 3 }, 300)
 
@@ -160,7 +160,7 @@ RSpec.describe Coruscate::Schedule do
     end
   end
 
-  describe "#repeats_monthly_by_day" do
+  describe "#repeat_monthly_by_day" do
     let(:ends_at) { Time.current + 5.months }
 
     it "generates an array of monthly occurrences" do
@@ -176,6 +176,28 @@ RSpec.describe Coruscate::Schedule do
               "Thu Sep 12 2024 01:02AM -1000",
               "Tue Nov 12 2024 01:02AM -1000"
            )
+    end
+  end
+
+  describe "#repeat_hourly" do
+    let(:ends_at) { Time.current + 6.hours }
+
+    it "generates an array of monthly occurrences" do
+      schedule.repeat_hourly({ hour: 1, minute: 2, second: 3 }, 300)
+
+      expect(schedule.occurrences.size).to eq(5)
+      expect(
+        schedule.occurrences.map { |o| o.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z") }
+      ).to contain_exactly(
+              "Sun Jun 30 2024 01:02AM -1000",
+              "Sun Jun 30 2024 02:02AM -1000",
+              "Sun Jun 30 2024 03:02AM -1000",
+              "Sun Jun 30 2024 04:02AM -1000",
+              "Sun Jun 30 2024 05:02AM -1000"
+           )
+    end
+
+    it "generates an array of hourly occurrences across a DST change" do
     end
   end
 end

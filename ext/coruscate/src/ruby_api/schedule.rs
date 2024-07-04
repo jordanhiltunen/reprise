@@ -9,6 +9,7 @@ use chrono_tz::Tz;
 use crate::ruby_api::occurrence::Occurrence;
 use crate::ruby_api::exclusion::Exclusion;
 use crate::ruby_api::traits::{HasOverlapAwareness, RecurringSeries};
+use crate::ruby_api::frequencies::hourly::Hourly;
 use crate::ruby_api::frequencies::weekly::Weekly;
 use crate::ruby_api::frequencies::monthly_by_day::MonthlyByDay;
 use crate::ruby_api::sorted_exclusions::SortedExclusions;
@@ -20,8 +21,9 @@ type Second = i64;
 
 #[derive(Debug)]
 enum Frequencies {
+    Hourly(Hourly),
     Weekly(Weekly),
-    MonthlyByDay(MonthlyByDay)
+    MonthlyByDay(MonthlyByDay),
 }
 
 #[derive(Debug)]
@@ -96,12 +98,21 @@ impl MutSchedule {
         return true;
     }
 
+    pub(crate) fn repeat_hourly(&self, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) -> bool {
+        let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(starts_at_time_of_day_ruby_hash);
+        let hourly_series = Hourly::new(starts_at_time_of_day, duration_in_seconds);
+        self.0.borrow_mut().frequencies.push(Frequencies::Hourly(hourly_series));
+
+        return true;
+    }
+
     pub(crate) fn occurrences(&self) -> Vec<Occurrence> {
         let self_reference = self.0.borrow();
 
         return self_reference.frequencies.iter().
             map(|series|
                 return match series {
+                    Frequencies::Hourly(hourly) => { hourly.generate_occurrences(self_reference.local_starts_at, self_reference.local_ends_at) }
                     Frequencies::Weekly(weekly) => { weekly.generate_occurrences(self_reference.local_starts_at, self_reference.local_ends_at) }
                     Frequencies::MonthlyByDay(monthly_by_day) => { monthly_by_day.generate_occurrences(self_reference.local_starts_at, self_reference.local_ends_at) }
                 }
@@ -118,6 +129,7 @@ pub fn init() -> Result<(), Error> {
     class.define_method("occurrences", method!(MutSchedule::occurrences, 0))?;
     class.define_method("add_exclusion", method!(MutSchedule::add_exclusion, 2))?;
     class.define_method("add_exclusions", method!(MutSchedule::add_exclusions, 1))?;
+    class.define_method("repeat_hourly", method!(MutSchedule::repeat_hourly, 2))?;
     class.define_method("repeat_weekly", method!(MutSchedule::repeat_weekly, 3))?;
     class.define_method("repeat_monthly_by_day", method!(MutSchedule::repeat_monthly_by_day, 3))?;
 
