@@ -1,9 +1,9 @@
-use magnus::{Error, prelude::*, Ruby};
+use magnus::{Error, prelude::*};
 
 mod ruby_api;
 
 #[magnus::init]
-fn init(ruby: &Ruby) -> Result<(), Error> {
-    ruby_api::init(ruby)?;
+fn init() -> Result<(), Error> {
+    ruby_api::init()?;
     Ok(())
 }
