@@ -10,6 +10,7 @@ use crate::ruby_api::occurrence::Occurrence;
 use crate::ruby_api::exclusion::Exclusion;
 use crate::ruby_api::traits::{HasOverlapAwareness, RecurringSeries};
 use crate::ruby_api::frequencies::weekly::Weekly;
+use crate::ruby_api::frequencies::monthly_by_day::MonthlyByDay;
 use crate::ruby_api::sorted_exclusions::SortedExclusions;
 use crate::ruby_api::time_of_day::TimeOfDay;
 use crate::ruby_api::ruby_modules;
@@ -20,6 +21,7 @@ type Second = i64;
 #[derive(Debug)]
 enum Frequencies {
     Weekly(Weekly),
+    MonthlyByDay(MonthlyByDay)
 }
 
 #[derive(Debug)]
@@ -82,6 +84,15 @@ impl MutSchedule {
         let weekly_series = Weekly::new(weekday_string, starts_at_time_of_day, duration_in_seconds);
         self.0.borrow_mut().frequencies.push(Frequencies::Weekly(weekly_series));
 
+        // TODO: get away from the meaningless bool return values passed back to Ruby.
+        return true;
+    }
+
+    pub(crate) fn repeat_monthly_by_day(&self, day_number: u32, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) -> bool {
+        let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(starts_at_time_of_day_ruby_hash);
+        let monthly_series = MonthlyByDay::new(day_number, starts_at_time_of_day, duration_in_seconds);
+        self.0.borrow_mut().frequencies.push(Frequencies::MonthlyByDay(monthly_series));
+
         return true;
     }
 
@@ -107,6 +118,7 @@ pub fn init() -> Result<(), Error> {
     class.define_method("add_exclusion", method!(MutSchedule::add_exclusion, 2))?;
     class.define_method("add_exclusions", method!(MutSchedule::add_exclusions, 1))?;
     class.define_method("repeat_weekly", method!(MutSchedule::repeat_weekly, 3))?;
+    class.define_method("repeat_monthly_by_day", method!(MutSchedule::repeat_monthly_by_day, 3))?;
 
     Ok(())
 }
