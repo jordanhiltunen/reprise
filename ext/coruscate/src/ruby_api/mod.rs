@@ -5,7 +5,6 @@ mod schedule;
 mod occurrence;
 mod exclusion;
 mod traits;
-mod recurrence_rules;
 mod frequencies;
 mod time_of_day;
 mod ruby_modules;
