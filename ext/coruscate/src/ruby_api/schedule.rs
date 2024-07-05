@@ -63,47 +63,35 @@ impl MutSchedule {
             }))
     }
 
-
-    pub(crate) fn add_exclusions(&self, exclusions: Vec<(i64, i64)>) -> bool {
+    pub(crate) fn add_exclusions(&self, exclusions: Vec<(i64, i64)>) {
         let mut converted_exclusions = exclusions.iter().map(|e| Exclusion::new(e.0, e.1))
             .collect::<Vec<Exclusion>>();
 
         self.0.borrow_mut().sorted_exclusions.add_exclusions(&mut converted_exclusions);
-
-        return true;
     }
 
-    pub(crate) fn add_exclusion(&self, start_time: i64, end_time: i64) -> bool {
+    pub(crate) fn add_exclusion(&self, start_time: i64, end_time: i64) {
         self.0.borrow_mut().sorted_exclusions.add_exclusion(Exclusion {
             start_time, end_time
         });
-
-        return true;
     }
 
-    pub(crate) fn repeat_weekly(&self, weekday_string: String, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) -> bool {
+    pub(crate) fn repeat_weekly(&self, weekday_string: String, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) {
         let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(starts_at_time_of_day_ruby_hash);
         let weekly_series = Weekly::new(weekday_string, starts_at_time_of_day, duration_in_seconds);
         self.0.borrow_mut().frequencies.push(Frequencies::Weekly(weekly_series));
-
-        // TODO: get away from the meaningless bool return values passed back to Ruby.
-        return true;
     }
 
-    pub(crate) fn repeat_monthly_by_day(&self, day_number: u32, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) -> bool {
+    pub(crate) fn repeat_monthly_by_day(&self, day_number: u32, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) {
         let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(starts_at_time_of_day_ruby_hash);
         let monthly_series = MonthlyByDay::new(day_number, starts_at_time_of_day, duration_in_seconds);
         self.0.borrow_mut().frequencies.push(Frequencies::MonthlyByDay(monthly_series));
-
-        return true;
     }
 
-    pub(crate) fn repeat_hourly(&self, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) -> bool {
+    pub(crate) fn repeat_hourly(&self, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) {
         let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(starts_at_time_of_day_ruby_hash);
         let hourly_series = Hourly::new(starts_at_time_of_day, duration_in_seconds);
         self.0.borrow_mut().frequencies.push(Frequencies::Hourly(hourly_series));
-
-        return true;
     }
 
     pub(crate) fn occurrences(&self) -> Vec<Occurrence> {
