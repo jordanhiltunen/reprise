@@ -76,6 +76,12 @@ impl MutSchedule {
         });
     }
 
+    pub(crate) fn repeat_hourly(&self, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) {
+        let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(starts_at_time_of_day_ruby_hash);
+        let hourly_series = Hourly::new(starts_at_time_of_day, duration_in_seconds);
+        self.0.borrow_mut().frequencies.push(Frequencies::Hourly(hourly_series));
+    }
+
     pub(crate) fn repeat_weekly(&self, weekday_string: String, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) {
         let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(starts_at_time_of_day_ruby_hash);
         let weekly_series = Weekly::new(weekday_string, starts_at_time_of_day, duration_in_seconds);
