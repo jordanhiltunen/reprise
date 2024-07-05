@@ -183,7 +183,10 @@ RSpec.describe Coruscate::Schedule do
     let(:ends_at) { Time.current + 6.hours }
 
     it "generates an array of monthly occurrences" do
-      schedule.repeat_hourly({ hour: 1, minute: 2, second: 3 }, 300)
+      schedule.repeat_hourly(
+        initial_time_of_day: { hour: 1, minute: 2, second: 3 },
+        duration_in_seconds: 300
+      )
 
       expect(schedule.occurrences.size).to eq(5)
       expect(

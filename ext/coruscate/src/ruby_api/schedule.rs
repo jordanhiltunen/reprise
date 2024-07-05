@@ -1,6 +1,6 @@
 use std::cell::RefCell;
 use magnus::prelude::*;
-use magnus::{Error, Ruby, Module, RHash};
+use magnus::{Error, Module, RHash, scan_args};
 use magnus::class;
 use magnus::function;
 use magnus::method;
@@ -78,6 +78,12 @@ impl MutSchedule {
 
     pub(crate) fn repeat_hourly(&self, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) {
         let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(starts_at_time_of_day_ruby_hash);
+    pub(crate) fn repeat_hourly(&self, kw: RHash) {
+        let args: scan_args::KwArgs<(RHash, i64), (), ()> = scan_args::get_kwargs(
+            kw, &["initial_time_of_day", "duration_in_seconds"], &[]
+        ).unwrap();
+        let (initial_time_of_day, duration_in_seconds): (RHash, i64) = args.required;
+        let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(initial_time_of_day);
         let hourly_series = Hourly::new(starts_at_time_of_day, duration_in_seconds);
         self.0.borrow_mut().frequencies.push(Frequencies::Hourly(hourly_series));
     }
@@ -123,7 +129,7 @@ pub fn init() -> Result<(), Error> {
     class.define_method("occurrences", method!(MutSchedule::occurrences, 0))?;
     class.define_method("add_exclusion", method!(MutSchedule::add_exclusion, 2))?;
     class.define_method("add_exclusions", method!(MutSchedule::add_exclusions, 1))?;
-    class.define_method("repeat_hourly", method!(MutSchedule::repeat_hourly, 2))?;
+    class.define_method("repeat_hourly", method!(MutSchedule::repeat_hourly, 1))?;
     class.define_method("repeat_weekly", method!(MutSchedule::repeat_weekly, 3))?;
     class.define_method("repeat_monthly_by_day", method!(MutSchedule::repeat_monthly_by_day, 3))?;
 
