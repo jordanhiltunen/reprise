@@ -104,7 +104,7 @@ impl MutSchedule {
     pub(crate) fn repeat_monthly_by_day(&self, day_number: u32, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) {
         let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(starts_at_time_of_day_ruby_hash);
         let monthly_series = MonthlyByDay::new(day_number, starts_at_time_of_day, duration_in_seconds);
-        self.0.lock().frequencies.push(Frequencies::MonthlyByDay(monthly_series));
+        self.0.write().frequencies.push(Frequencies::MonthlyByDay(monthly_series));
     }
 
     pub(crate) fn occurrences(&self) -> Vec<Occurrence> {
