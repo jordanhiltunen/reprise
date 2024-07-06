@@ -42,7 +42,7 @@ pub(crate) struct Schedule {
 
 #[derive(Debug)]
 #[magnus::wrap(class = "Coruscate::Core::Schedule")]
-struct MutSchedule(RefCell<Schedule>);
+struct MutSchedule(Arc<Mutex<Schedule>>);
 
 impl MutSchedule {
     pub(crate) fn new(starts_at: UnixTimestamp, ends_at: UnixTimestamp, time_zone: String) -> MutSchedule {
