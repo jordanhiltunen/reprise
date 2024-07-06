@@ -2,7 +2,7 @@ use chrono::{Datelike, DateTime, Days, Duration, Months, Weekday};
 use chrono_tz::Tz;
 use crate::ruby_api::occurrence::Occurrence;
 use crate::ruby_api::time_of_day::TimeOfDay;
-use crate::ruby_api::traits::RecurringSeries;
+use crate::ruby_api::traits::Recurrable;
 
 #[derive(Debug, Clone)]
 pub(crate) struct MonthlyByNthWeekday {
@@ -71,7 +71,7 @@ impl MonthlyByNthWeekday {
     }
 }
 
-impl RecurringSeries for MonthlyByNthWeekday {
+impl Recurrable for MonthlyByNthWeekday {
     // We override the trait definition because the logic required to expand this recurring series
     // differs substantially from the others.
     fn generate_occurrences(&self, starts_at: DateTime<Tz>, ends_at: DateTime<Tz>) -> Vec<Occurrence> {

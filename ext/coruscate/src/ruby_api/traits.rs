@@ -14,7 +14,7 @@ pub(crate) trait HasOverlapAwareness {
 }
 
 // https://stackoverflow.com/a/64298897
-pub(crate) trait RecurringSeries: std::fmt::Debug {
+pub(crate) trait Recurrable: std::fmt::Debug {
     fn generate_occurrences(&self, starts_at: DateTime<Tz>, ends_at: DateTime<Tz>) -> Vec<Occurrence> {
         let mut occurrences = Vec::new();
 

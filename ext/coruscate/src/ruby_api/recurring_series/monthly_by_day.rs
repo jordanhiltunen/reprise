@@ -1,7 +1,7 @@
 use chrono::{Datelike, DateTime, Days, Months};
 use chrono_tz::Tz;
 use crate::ruby_api::time_of_day::TimeOfDay;
-use crate::ruby_api::traits::RecurringSeries;
+use crate::ruby_api::traits::Recurrable;
 
 #[derive(Debug, Clone)]
 pub(crate) struct MonthlyByDay {
@@ -20,7 +20,7 @@ impl MonthlyByDay {
     }
 }
 
-impl RecurringSeries for MonthlyByDay {
+impl Recurrable for MonthlyByDay {
     fn get_starts_at_time_of_day(&self) -> &TimeOfDay {
         return &self.starts_at_time_of_day;
     }

@@ -9,11 +9,7 @@ use chrono::{DateTime};
 use chrono_tz::Tz;
 use crate::ruby_api::occurrence::Occurrence;
 use crate::ruby_api::exclusion::Exclusion;
-use crate::ruby_api::traits::{HasOverlapAwareness, RecurringSeries};
-use crate::ruby_api::frequencies::hourly::Hourly;
-use crate::ruby_api::frequencies::weekly::Weekly;
-use crate::ruby_api::frequencies::monthly_by_day::MonthlyByDay;
-use crate::ruby_api::frequencies::monthly_by_nth_weekday::MonthlyByNthWeekday;
+use crate::ruby_api::traits::{HasOverlapAwareness, Recurrable};
 use crate::ruby_api::recurring_series::hourly::Hourly;
 use crate::ruby_api::recurring_series::weekly::Weekly;
 use crate::ruby_api::recurring_series::monthly_by_day::MonthlyByDay;
@@ -27,7 +23,7 @@ type Second = i64;
 
 #[derive(Debug)]
 #[derive(Clone)]
-enum Frequencies {
+enum RecurringSeries {
     Hourly(Hourly),
     Weekly(Weekly),
     MonthlyByDay(MonthlyByDay),
@@ -67,7 +63,7 @@ impl MutSchedule {
                 time_zone: parsed_time_zone,
                 occurrences: Vec::new(),
                 sorted_exclusions: SortedExclusions::new(),
-                frequencies: Vec::new()
+                recurring_series: Vec::new()
             })))
     }
 
@@ -97,25 +93,25 @@ impl MutSchedule {
         let (initial_time_of_day, duration_in_seconds): (RHash, i64) = args.required;
         let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(initial_time_of_day);
         let hourly_series = Hourly::new(starts_at_time_of_day, duration_in_seconds);
-        self.0.write().frequencies.push(Frequencies::Hourly(hourly_series));
+        self.0.write().recurring_series.push(RecurringSeries::Hourly(hourly_series));
     }
 
     pub(crate) fn repeat_weekly(&self, weekday_string: String, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) {
         let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(starts_at_time_of_day_ruby_hash);
         let weekly_series = Weekly::new(weekday_string, starts_at_time_of_day, duration_in_seconds);
-        self.0.write().frequencies.push(Frequencies::Weekly(weekly_series));
+        self.0.write().recurring_series.push(RecurringSeries::Weekly(weekly_series));
     }
 
     pub(crate) fn repeat_monthly_by_day(&self, day_number: u32, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) {
         let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(starts_at_time_of_day_ruby_hash);
         let monthly_series = MonthlyByDay::new(day_number, starts_at_time_of_day, duration_in_seconds);
-        self.0.write().frequencies.push(Frequencies::MonthlyByDay(monthly_series));
+        self.0.write().recurring_series.push(RecurringSeries::MonthlyByDay(monthly_series));
     }
 
     pub(crate) fn repeat_monthly_by_nth_weekday(&self, weekday_string: String, nth_day: i32, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) {
         let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(starts_at_time_of_day_ruby_hash);
         let monthly_by_nth_weekday_series = MonthlyByNthWeekday::new(weekday_string, nth_day, starts_at_time_of_day, duration_in_seconds);
-        self.0.write().frequencies.push(Frequencies::MonthlyByNthWeekday(monthly_by_nth_weekday_series));
+        self.0.write().recurring_series.push(RecurringSeries::MonthlyByNthWeekday(monthly_by_nth_weekday_series));
     }
 
     pub(crate) fn occurrences(&self) -> Vec<Occurrence> {
@@ -125,13 +121,13 @@ impl MutSchedule {
         // and it is a simple substitution over iter(), schedule expansion is not computationally
         // demanding enough for it to really matter. Relative to IceCube, sequential processing is
         // ~500x faster, and parallel, only ~200x.
-        return self_reference.frequencies.iter().
+        return self_reference.recurring_series.iter().
             map(|series| {
                 return match series {
-                    Frequencies::Hourly(hourly) => { hourly.generate_occurrences(self_reference.local_starts_at_datetime, self_reference.local_ends_at_datetime) }
-                    Frequencies::Weekly(weekly) => { weekly.generate_occurrences(self_reference.local_starts_at_datetime, self_reference.local_ends_at_datetime) }
-                    Frequencies::MonthlyByDay(monthly_by_day) => { monthly_by_day.generate_occurrences(self_reference.local_starts_at_datetime, self_reference.local_ends_at_datetime) }
-                    Frequencies::MonthlyByNthWeekday(monthly_by_nth_weekday) => { monthly_by_nth_weekday.generate_occurrences(self_reference.local_starts_at_datetime, self_reference.local_ends_at_datetime) }
+                    RecurringSeries::Hourly(hourly) => { hourly.generate_occurrences(self_reference.local_starts_at_datetime, self_reference.local_ends_at_datetime) }
+                    RecurringSeries::Weekly(weekly) => { weekly.generate_occurrences(self_reference.local_starts_at_datetime, self_reference.local_ends_at_datetime) }
+                    RecurringSeries::MonthlyByDay(monthly_by_day) => { monthly_by_day.generate_occurrences(self_reference.local_starts_at_datetime, self_reference.local_ends_at_datetime) }
+                    RecurringSeries::MonthlyByNthWeekday(monthly_by_nth_weekday) => { monthly_by_nth_weekday.generate_occurrences(self_reference.local_starts_at_datetime, self_reference.local_ends_at_datetime) }
                 };
             }
             ).flatten()

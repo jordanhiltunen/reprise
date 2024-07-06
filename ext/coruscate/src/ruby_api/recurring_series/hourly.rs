@@ -1,7 +1,7 @@
 use chrono::{DateTime, Timelike};
 use chrono_tz::Tz;
 use crate::ruby_api::time_of_day::TimeOfDay;
-use crate::ruby_api::traits::{RecurringSeries};
+use crate::ruby_api::traits::{Recurrable};
 
 #[derive(Debug, Clone)]
 pub(crate) struct Hourly {
@@ -18,7 +18,7 @@ impl Hourly {
     }
 }
 
-impl RecurringSeries for Hourly {
+impl Recurrable for Hourly {
     fn get_starts_at_time_of_day(&self) -> &TimeOfDay {
         return &self.starts_at_time_of_day;
     }
