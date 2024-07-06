@@ -13,8 +13,8 @@ pub(crate) struct Occurrence {
 unsafe impl magnus::IntoValueFromNative for Occurrence {}
 
 impl Occurrence {
-    pub(crate) fn new(start_time: i64, end_time: i64) -> Occurrence {
-        return Occurrence { start_time, end_time }
+    pub(crate) fn new(starts_at_unix_timestamp: i64, ends_at_unix_timestamp: i64) -> Occurrence {
+        return Occurrence { starts_at_unix_timestamp, ends_at_unix_timestamp }
     }
 
     pub fn start_time(&self) -> Time {
@@ -31,11 +31,11 @@ impl Occurrence {
 }
 
 impl HasOverlapAwareness for Occurrence {
-    fn get_start_time(&self) -> i64 {
+    fn get_starts_at_unix_timestamp(&self) -> i64 {
         return self.starts_at_unix_timestamp;
     }
 
-    fn get_end_time(&self) -> i64 {
+    fn get_ends_at_unix_timestamp(&self) -> i64 {
         return self.ends_at_unix_timestamp;
     }
 }

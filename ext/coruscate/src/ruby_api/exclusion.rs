@@ -14,11 +14,11 @@ impl Exclusion {
 }
 
 impl HasOverlapAwareness for Exclusion {
-    fn get_start_time(&self) -> i64 {
+    fn get_starts_at_unix_timestamp(&self) -> i64 {
         return self.starts_at_unix_timestamp;
     }
 
-    fn get_end_time(&self) -> i64 {
+    fn get_ends_at_unix_timestamp(&self) -> i64 {
         return self.ends_at_unix_timestamp;
     }
 }

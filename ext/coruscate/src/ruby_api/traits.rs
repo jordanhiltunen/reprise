@@ -4,12 +4,12 @@ use crate::ruby_api::occurrence::Occurrence;
 use crate::ruby_api::time_of_day::TimeOfDay;
 
 pub(crate) trait HasOverlapAwareness {
-    fn get_start_time(&self) -> i64;
-    fn get_end_time(&self) -> i64;
+    fn get_starts_at_unix_timestamp(&self) -> i64;
+    fn get_ends_at_unix_timestamp(&self) -> i64;
 
     fn overlaps_with<T: HasOverlapAwareness>(&self, other: &T) -> bool {
-        return (self.get_start_time() <= other.get_end_time())
-            && (other.get_start_time() < self.get_end_time());
+        return (self.get_starts_at_unix_timestamp() <= other.get_ends_at_unix_timestamp())
+            && (other.get_starts_at_unix_timestamp() < self.get_ends_at_unix_timestamp());
     }
 }
 
