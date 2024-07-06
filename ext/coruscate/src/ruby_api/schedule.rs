@@ -8,6 +8,7 @@ use magnus::method;
 use chrono::{DateTime};
 use chrono_tz::Tz;
 use rayon::iter::ParallelIterator;
+use rayon::iter::IntoParallelRefIterator;
 use crate::ruby_api::occurrence::Occurrence;
 use crate::ruby_api::exclusion::Exclusion;
 use crate::ruby_api::traits::{HasOverlapAwareness, RecurringSeries};
@@ -114,7 +115,7 @@ impl MutSchedule {
         // and it is a simple substitution over iter(), schedule expansion is not computationally
         // demanding enough for it to really matter. Relative to IceCube, sequential processing is
         // ~500x faster, and parallel, only ~200x.
-        return self_reference.frequencies.iter().
+        return self_reference.frequencies.par_iter().
             map(|series| {
                 return match series {
                     Frequencies::Hourly(hourly) => { hourly.generate_occurrences(self_reference.local_starts_at_datetime, self_reference.local_ends_at_datetime) }
