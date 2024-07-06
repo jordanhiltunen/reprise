@@ -112,7 +112,7 @@ impl MutSchedule {
 
         // Even though we are structurally equipped to use par_iter() here to parallelize,
         // and it is a simple substitution over iter(), schedule expansion is not computationally
-        // demanding enough for it to really matter. Relative to IceCube, parallel processing is
+        // demanding enough for it to really matter. Relative to IceCube, sequential processing is
         // ~500x faster, and parallel, only ~200x.
         return self_reference.frequencies.iter().
             map(|series| {
