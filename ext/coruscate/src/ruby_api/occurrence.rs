@@ -5,8 +5,8 @@ use crate::ruby_api::ruby_modules;
 #[derive(Debug, Copy, Clone)]
 #[magnus::wrap(class = "Coruscate::Core::Occurrence")]
 pub(crate) struct Occurrence {
-    pub(crate) start_time: i64,
-    pub(crate) end_time: i64
+    pub(crate) starts_at_unix_timestamp: i64,
+    pub(crate) ends_at_unix_timestamp: i64
 }
 
 // this is safe as Occurrence does not contain any Ruby types
@@ -18,11 +18,11 @@ impl Occurrence {
     }
 
     pub fn start_time(&self) -> Time {
-        return Occurrence::ruby_handle().time_new(self.start_time, 0).unwrap();
+        return Occurrence::ruby_handle().time_new(self.starts_at_unix_timestamp, 0).unwrap();
     }
 
     pub fn end_time(&self) -> Time {
-        return Occurrence::ruby_handle().time_new(self.end_time, 0).unwrap();
+        return Occurrence::ruby_handle().time_new(self.ends_at_unix_timestamp, 0).unwrap();
     }
 
     fn ruby_handle() -> Ruby {
@@ -32,11 +32,11 @@ impl Occurrence {
 
 impl HasOverlapAwareness for Occurrence {
     fn get_start_time(&self) -> i64 {
-        return self.start_time;
+        return self.starts_at_unix_timestamp;
     }
 
     fn get_end_time(&self) -> i64 {
-        return self.end_time;
+        return self.ends_at_unix_timestamp;
     }
 }
 

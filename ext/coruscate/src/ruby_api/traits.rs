@@ -25,8 +25,8 @@ pub(crate) trait RecurringSeries: std::fmt::Debug {
 
                 while current_occurrence_datetime < ends_at {
                     occurrences.push(Occurrence {
-                        start_time: current_occurrence_datetime.timestamp(),
-                        end_time: (current_occurrence_datetime + Duration::seconds(self.get_occurrence_duration_in_seconds())).timestamp()
+                        starts_at_unix_timestamp: current_occurrence_datetime.timestamp(),
+                        ends_at_unix_timestamp: (current_occurrence_datetime + Duration::seconds(self.get_occurrence_duration_in_seconds())).timestamp()
                     });
 
                     current_occurrence_datetime = self.next_occurrence_candidate(&current_occurrence_datetime);

@@ -80,8 +80,8 @@ impl MutSchedule {
         let (starts_at_unix_timestamp, ends_at_unix_timestamp): (i64, i64) = args.required;
 
         self.0.write().sorted_exclusions.add_exclusion(Exclusion {
-            start_time: starts_at_unix_timestamp,
-            end_time: ends_at_unix_timestamp,
+            starts_at_unix_timestamp,
+            ends_at_unix_timestamp,
         });
     }
 

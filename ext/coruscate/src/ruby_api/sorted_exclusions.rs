@@ -29,6 +29,6 @@ impl SortedExclusions {
     fn reorder_exclusions(&mut self) {
         // Maintain an ascending end time sort order to simplify comparisons
         // against occurrences.
-        self.exclusions.sort_by_key(|e| e.end_time)
+        self.exclusions.sort_by_key(|e| e.ends_at_unix_timestamp)
     }
 }
