@@ -1,8 +1,42 @@
 # Coruscate
 
+> /ˈkɒɹəskeɪt/
+> (intransitive) To give off light; to reflect in flashes; to sparkle.
+
+Coruscate is a shiny schedule expansion library that pursues style over substance.
+While battle-tested gems like IceCube and Montrose provide incredibly flexible APIs
+to allow client applications to idiomatically construct recurring schedules with ease,
+Coruscate offers a very sparse API, opting instead to pursue blazingly-fast schedule
+expansion at the expense of ergonomics.
+
+Coruscate provides schedule expansion using a Rust extension built with magnus.
+Your use case probably will not benefit from the emphasis it places on raw performance,
+you would probably benefit more from the mature and very comprehensive APIs offered
+by IceCube and Montrose... but if you only need to support very rudimentary schedule
+expansion logic and you need speed, this might be worthwhile
+
 Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/coruscate`. To experiment with that code, run `bin/console` for an interactive prompt.
 
 TODO: Delete this and the text above, and describe your gem
+
+## Design Goals
+
+- Raw performance & memory efficiency.
+
+## Design Non-Goals
+
+- Offering multiple methods / calling conventions for each feature.
+  We are calling into Rust functions, relying on a very strict
+  typed language to do the heavy lifting for us. Libraries like 
+  ice_cube and montrose offer remarkable flexibility in a Ruby idiom; 
+  if those libraries make sense for your use case, you should probably
+  use them.
+- Supporting serialization to and from iCal. We are straying from that
+  standard in meaningful ways. For example, we do not define exclusions by
+  date, but by specific time ranges. This allows the library to handle 
+  exclusion collision detection without client applications having to 
+  implement that core scheduling concern on their own, outside of schedule
+  expansion.
 
 ## Installation
 
@@ -34,6 +68,49 @@ After checking out the res
 po, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+
+## Generating Documentation
+
+Generate documentation within the `./docs` directory so that it can be
+easily imported into GitHub pages. 
+See: https://medium.com/make-school/a-cheatsheet-to-generate-documentation-for-your-rails-project-on-gh-pages-e28f6acfb9b9
+
+```
+bundle exec yard doc -o ./docs
+```
+
+- [ ] TODO: When we have a decent 0.0.1, publish the yarddocs
+- on GitHub.
+
+## Benchmarks
+
+```
+rake benchmark
+```
+
+```
+"Benchmarking Iterations Per Second (IPS)"
+ruby 3.3.2 (2024-05-30 revision e5a195edf6) [x86_64-darwin23]
+Warming up --------------------------------------
+            IceCube:     5.000 i/100ms
+          Coruscate:     1.829k i/100ms
+Calculating -------------------------------------
+            IceCube:     49.747 (± 6.0%) i/s -    250.000 in   5.046194s
+          Coruscate:     16.962k (± 9.1%) i/s -     84.134k in   5.008231s
+"Benchmarking Memory Use"
+Calculating -------------------------------------
+            IceCube:     2.126M memsize (     4.752k retained)
+                        36.324k objects (    47.000  retained)
+                        10.000  strings (     1.000  retained)
+          Coruscate:     9.296k memsize (   320.000  retained)
+                       165.000  objects (     7.000  retained)
+                         4.000  strings (     1.000  retained)
+
+Comparison:
+          Coruscate::       9296 allocated
+            IceCube::    2126296 allocated - 228.73x more
+
+```
 
 ## Contributing
 

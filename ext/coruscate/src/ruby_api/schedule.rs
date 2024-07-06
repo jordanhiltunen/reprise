@@ -1,4 +1,5 @@
-use std::cell::RefCell;
+use std::sync::{Arc};
+use parking_lot::{Mutex};
 use magnus::prelude::*;
 use magnus::{Error, Module, RHash, scan_args};
 use magnus::class;
@@ -20,6 +21,7 @@ type UnixTimestamp = i64;
 type Second = i64;
 
 #[derive(Debug)]
+#[derive(Clone)]
 enum Frequencies {
     Hourly(Hourly),
     Weekly(Weekly),
@@ -50,7 +52,7 @@ impl MutSchedule {
         let ends_at_utc = DateTime::from_timestamp(ends_at, 0).unwrap();
         let local_ends_at = ends_at_utc.with_timezone(&parsed_time_zone);
 
-        Self(RefCell::new(
+        Self(Arc::new(Mutex::new(
             Schedule {
                 starts_at,
                 local_starts_at,
@@ -60,19 +62,22 @@ impl MutSchedule {
                 occurrences: Vec::new(),
                 sorted_exclusions: SortedExclusions::new(),
                 frequencies: Vec::new()
-            }))
+            })))
     }
 
     pub(crate) fn add_exclusions(&self, exclusions: Vec<(i64, i64)>) {
         let mut converted_exclusions = exclusions.iter().map(|e| Exclusion::new(e.0, e.1))
             .collect::<Vec<Exclusion>>();
 
-        self.0.borrow_mut().sorted_exclusions.add_exclusions(&mut converted_exclusions);
+        self.0.lock().sorted_exclusions.add_exclusions(&mut converted_exclusions);
     }
 
     pub(crate) fn add_exclusion(&self, start_time: i64, end_time: i64) {
         self.0.borrow_mut().sorted_exclusions.add_exclusion(Exclusion {
             start_time, end_time
+        self.0.lock().sorted_exclusions.add_exclusion(Exclusion {
+            start_time: start_at_unix_timestamp,
+            end_time: end_at_unix_timestamp,
         });
     }
 
@@ -85,37 +90,32 @@ impl MutSchedule {
         let (initial_time_of_day, duration_in_seconds): (RHash, i64) = args.required;
         let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(initial_time_of_day);
         let hourly_series = Hourly::new(starts_at_time_of_day, duration_in_seconds);
-        self.0.borrow_mut().frequencies.push(Frequencies::Hourly(hourly_series));
+        self.0.lock().frequencies.push(Frequencies::Hourly(hourly_series));
     }
 
     pub(crate) fn repeat_weekly(&self, weekday_string: String, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) {
         let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(starts_at_time_of_day_ruby_hash);
         let weekly_series = Weekly::new(weekday_string, starts_at_time_of_day, duration_in_seconds);
-        self.0.borrow_mut().frequencies.push(Frequencies::Weekly(weekly_series));
+        self.0.lock().frequencies.push(Frequencies::Weekly(weekly_series));
     }
 
     pub(crate) fn repeat_monthly_by_day(&self, day_number: u32, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) {
         let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(starts_at_time_of_day_ruby_hash);
         let monthly_series = MonthlyByDay::new(day_number, starts_at_time_of_day, duration_in_seconds);
-        self.0.borrow_mut().frequencies.push(Frequencies::MonthlyByDay(monthly_series));
-    }
-
-    pub(crate) fn repeat_hourly(&self, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) {
-        let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(starts_at_time_of_day_ruby_hash);
-        let hourly_series = Hourly::new(starts_at_time_of_day, duration_in_seconds);
-        self.0.borrow_mut().frequencies.push(Frequencies::Hourly(hourly_series));
+        self.0.lock().frequencies.push(Frequencies::MonthlyByDay(monthly_series));
     }
 
     pub(crate) fn occurrences(&self) -> Vec<Occurrence> {
-        let self_reference = self.0.borrow();
+        let self_reference = self.0.lock();
 
         return self_reference.frequencies.iter().
-            map(|series|
+            map(|series| {
                 return match series {
                     Frequencies::Hourly(hourly) => { hourly.generate_occurrences(self_reference.local_starts_at, self_reference.local_ends_at) }
                     Frequencies::Weekly(weekly) => { weekly.generate_occurrences(self_reference.local_starts_at, self_reference.local_ends_at) }
                     Frequencies::MonthlyByDay(monthly_by_day) => { monthly_by_day.generate_occurrences(self_reference.local_starts_at, self_reference.local_ends_at) }
-                }
+                };
+            }
             ).flatten()
             .filter(|o| !self_reference.sorted_exclusions.is_occurrence_excluded(o))
             .collect();

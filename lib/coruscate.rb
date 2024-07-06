@@ -13,6 +13,10 @@ module Coruscate
   class Schedule
     extend ::Forwardable
 
+    # All schedules must be constructed with a valid starts_at and ends_at time.
+    # Coruscate does not support infinitely-recurring schedules, or the bounding
+    # of schedules on the basis of an occurence count.
+    #
     # @param starts_at [Time]
     #   The beginning of the schedule; the earliest possible moment for a valid occurrence.
     # @param ends_at [Time]
