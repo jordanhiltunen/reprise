@@ -31,9 +31,9 @@ enum Frequencies {
 
 #[derive(Debug)]
 pub(crate) struct Schedule {
-    pub(crate) starts_at: UnixTimestamp,
+    pub(crate) starts_at_unix_timestamp: UnixTimestamp,
     pub(crate) local_starts_at: DateTime<Tz>,
-    pub(crate) ends_at: UnixTimestamp,
+    pub(crate) ends_at_unix_timestamp: UnixTimestamp,
     pub(crate) local_ends_at: DateTime<Tz>,
     pub(crate) time_zone: Tz,
     pub(crate) occurrences: Vec<Occurrence>,
@@ -46,11 +46,11 @@ pub(crate) struct Schedule {
 struct MutSchedule(Arc<RwLock<Schedule>>);
 
 impl MutSchedule {
-    pub(crate) fn new(starts_at: UnixTimestamp, ends_at: UnixTimestamp, time_zone: String) -> MutSchedule {
+    pub(crate) fn new(starts_at_unix_timestamp: UnixTimestamp, ends_at_unix_timestamp: UnixTimestamp, time_zone: String) -> MutSchedule {
         let parsed_time_zone: Tz = time_zone.parse().expect("Cannot parse time zone");
-        let starts_at_utc = DateTime::from_timestamp(starts_at, 0).unwrap();
+        let starts_at_utc = DateTime::from_timestamp(starts_at_unix_timestamp, 0).unwrap();
         let local_starts_at = starts_at_utc.with_timezone(&parsed_time_zone);
-        let ends_at_utc = DateTime::from_timestamp(ends_at, 0).unwrap();
+        let ends_at_utc = DateTime::from_timestamp(ends_at_unix_timestamp, 0).unwrap();
         let local_ends_at = ends_at_utc.with_timezone(&parsed_time_zone);
 
         Self(Arc::new(RwLock::new(
