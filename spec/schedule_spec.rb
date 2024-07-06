@@ -107,7 +107,7 @@ RSpec.describe Coruscate::Schedule do
     let(:ends_at) { Time.current + 11.months }
 
     it "generates an array of monthly occurrences with a fixed weekday" do
-      schedule.repeat_monthly_by_nth_weekday("tuesday", 2, { hour: 1, minute: 2, second: 3 }, 300)
+      schedule.repeat_monthly_by_nth_weekday(:tuesday, 2, { hour: 1, minute: 2, second: 3 }, 300)
 
       expect(schedule.occurrences.size).to eq(11)
       expect(
@@ -128,7 +128,7 @@ RSpec.describe Coruscate::Schedule do
     end
 
     it "allows negative indexing into the monthly occurrences" do
-      schedule.repeat_monthly_by_nth_weekday("friday", -1, { hour: 1, minute: 2, second: 3 }, 300)
+      schedule.repeat_monthly_by_nth_weekday(:friday, -1, { hour: 1, minute: 2, second: 3 }, 300)
 
       expect(schedule.occurrences.size).to eq(10)
       expect(
@@ -149,7 +149,7 @@ RSpec.describe Coruscate::Schedule do
 
     it "can handle nth weekday edge cases that do not occur every month" do
       # The fifth (NB: 4; zeroth indexing) wednesday of a month is relatively rare.
-      schedule.repeat_monthly_by_nth_weekday("wednesday", 4, { hour: 1, minute: 2, second: 3 }, 300)
+      schedule.repeat_monthly_by_nth_weekday(:wednesday, 4, { hour: 1, minute: 2, second: 3 }, 300)
 
       expect(schedule.occurrences.size).to eq(4)
       expect(
@@ -237,9 +237,6 @@ RSpec.describe Coruscate::Schedule do
 
       it "holds the local occurrence time constant across the DST change" do
         schedule.repeat_weekly(:sunday, { hour: 0, minute: 1, second: 2 }, 300)
-
-        pp "OCCURRENCES"
-        pp schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
 
         expect(
           schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
