@@ -37,14 +37,14 @@ pub(crate) trait Recurrable: std::fmt::Debug {
         }
     }
 
-    fn get_starts_at_time_of_day(&self) -> &TimeOfDay;
+    fn get_time_of_day(&self) -> &TimeOfDay;
     fn get_occurrence_duration_in_seconds(&self) -> i64;
 
     fn naive_starts_at_time(&self) -> NaiveTime {
         return NaiveTime::from_hms_opt(
-            self.get_starts_at_time_of_day().hour,
-            self.get_starts_at_time_of_day().minute,
-            self.get_starts_at_time_of_day().second,
+            self.get_time_of_day().hour,
+            self.get_time_of_day().minute,
+            self.get_time_of_day().second,
         ).unwrap();
     }
 

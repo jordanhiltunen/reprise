@@ -7,25 +7,25 @@ use crate::ruby_api::traits::{Recurrable};
 #[derive(Debug, Clone)]
 pub(crate) struct Weekly {
     pub(crate) weekday: Weekday,
-    pub(crate) starts_at_time_of_day: TimeOfDay,
+    pub(crate) time_of_day: TimeOfDay,
     pub(crate) duration_in_seconds: i64
 }
 
 impl Weekly {
-    pub(crate) fn new(weekday_symbol: Symbol, starts_at_time_of_day: TimeOfDay, duration_in_seconds: i64) -> Weekly {
+    pub(crate) fn new(weekday_symbol: Symbol, time_of_day: TimeOfDay, duration_in_seconds: i64) -> Weekly {
         let weekday = weekday_symbol.to_string().parse::<Weekday>().unwrap();
 
         return Weekly {
             weekday,
-            starts_at_time_of_day,
+            time_of_day,
             duration_in_seconds,
         }
     }
 }
 
 impl Recurrable for Weekly {
-    fn get_starts_at_time_of_day(&self) -> &TimeOfDay {
-        return &self.starts_at_time_of_day;
+    fn get_time_of_day(&self) -> &TimeOfDay {
+        return &self.time_of_day;
     }
 
     fn get_occurrence_duration_in_seconds(&self) -> i64 {

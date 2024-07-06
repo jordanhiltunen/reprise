@@ -6,23 +6,23 @@ use crate::ruby_api::traits::Recurrable;
 #[derive(Debug, Clone)]
 pub(crate) struct MonthlyByDay {
     pub(crate) day_number: u32,
-    pub(crate) starts_at_time_of_day: TimeOfDay,
+    pub(crate) time_of_day: TimeOfDay,
     pub(crate) duration_in_seconds: i64,
 }
 
 impl MonthlyByDay {
-    pub(crate) fn new(day_number: u32, starts_at_time_of_day: TimeOfDay, duration_in_seconds: i64) -> MonthlyByDay {
+    pub(crate) fn new(day_number: u32, time_of_day: TimeOfDay, duration_in_seconds: i64) -> MonthlyByDay {
         return MonthlyByDay {
             day_number,
-            starts_at_time_of_day,
+            time_of_day,
             duration_in_seconds,
         };
     }
 }
 
 impl Recurrable for MonthlyByDay {
-    fn get_starts_at_time_of_day(&self) -> &TimeOfDay {
-        return &self.starts_at_time_of_day;
+    fn get_time_of_day(&self) -> &TimeOfDay {
+        return &self.time_of_day;
     }
 
     fn get_occurrence_duration_in_seconds(&self) -> i64 {

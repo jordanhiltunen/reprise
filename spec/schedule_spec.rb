@@ -42,7 +42,7 @@ RSpec.describe Coruscate::Schedule do
 
   describe "#add_exclusion" do
     it "allows users to specify exclusions that result in removed occurrences" do
-      schedule.repeat_weekly(:sunday, { hour: 0, minute: 1, second: 2 }, 300)
+      schedule.repeat_weekly(:sunday, time_of_day: { hour: 0, minute: 1, second: 2 }, duration_in_seconds: 300)
 
       expect(schedule.occurrences.size).to eq(4)
       expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) }).
@@ -70,7 +70,7 @@ RSpec.describe Coruscate::Schedule do
 
   describe "#add_exclusions" do
     it "allows users to specify multiple exclusions" do
-      schedule.repeat_weekly(:sunday, { hour: 0, minute: 1, second: 2 }, 300)
+      schedule.repeat_weekly(:sunday, time_of_day: { hour: 0, minute: 1, second: 2 }, duration_in_seconds: 300)
 
       expect(schedule.occurrences.size).to eq(4)
       expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) }).
@@ -198,7 +198,7 @@ RSpec.describe Coruscate::Schedule do
 
   describe "#repeat_weekly" do
     it "generates an array of weekly occurrences" do
-      schedule.repeat_weekly(:tuesday, { hour: 1, minute: 2, second: 3 }, 300)
+      schedule.repeat_weekly(:tuesday, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
 
       expect(schedule.occurrences.size).to eq(4)
       expect(
@@ -212,8 +212,8 @@ RSpec.describe Coruscate::Schedule do
     end
 
     it "supports the accumulation of occurrences from multiple recurring series" do
-      schedule.repeat_weekly(:tuesday, { hour: 1, minute: 2, second: 3 }, 300)
-      schedule.repeat_weekly(:wednesday, { hour: 2, minute: 3, second: 4 }, 300)
+      schedule.repeat_weekly(:tuesday, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
+      schedule.repeat_weekly(:wednesday, time_of_day: { hour: 2, minute: 3, second: 4 }, duration_in_seconds: 300)
 
       expect(schedule.occurrences.size).to eq(8)
       expect(
@@ -236,7 +236,7 @@ RSpec.describe Coruscate::Schedule do
       let!(:time_zone) { "America/Los_Angeles" }
 
       it "holds the local occurrence time constant across the DST change" do
-        schedule.repeat_weekly(:sunday, { hour: 0, minute: 1, second: 2 }, 300)
+        schedule.repeat_weekly(:sunday, time_of_day: { hour: 0, minute: 1, second: 2 }, duration_in_seconds: 300)
 
         expect(
           schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
