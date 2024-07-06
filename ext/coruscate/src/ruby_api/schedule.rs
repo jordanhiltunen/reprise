@@ -72,20 +72,21 @@ impl MutSchedule {
         self.0.lock().sorted_exclusions.add_exclusions(&mut converted_exclusions);
     }
 
-    pub(crate) fn add_exclusion(&self, start_time: i64, end_time: i64) {
-        self.0.borrow_mut().sorted_exclusions.add_exclusion(Exclusion {
-            start_time, end_time
+    pub(crate) fn add_exclusion(&self, kw: RHash) {
+        let args: scan_args::KwArgs<(i64, i64), (), ()> = scan_args::get_kwargs(
+            kw, &["start_at_unix_timestamp", "end_at_unix_timestamp"], &[],
+        ).unwrap();
+        let (start_at_unix_timestamp, end_at_unix_timestamp): (i64, i64) = args.required;
+
         self.0.lock().sorted_exclusions.add_exclusion(Exclusion {
             start_time: start_at_unix_timestamp,
             end_time: end_at_unix_timestamp,
         });
     }
 
-    pub(crate) fn repeat_hourly(&self, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) {
-        let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(starts_at_time_of_day_ruby_hash);
     pub(crate) fn repeat_hourly(&self, kw: RHash) {
         let args: scan_args::KwArgs<(RHash, i64), (), ()> = scan_args::get_kwargs(
-            kw, &["initial_time_of_day", "duration_in_seconds"], &[]
+            kw, &["initial_time_of_day", "duration_in_seconds"], &[],
         ).unwrap();
         let (initial_time_of_day, duration_in_seconds): (RHash, i64) = args.required;
         let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(initial_time_of_day);
@@ -127,7 +128,7 @@ pub fn init() -> Result<(), Error> {
 
     class.define_singleton_method("new", function!(MutSchedule::new, 3))?;
     class.define_method("occurrences", method!(MutSchedule::occurrences, 0))?;
-    class.define_method("add_exclusion", method!(MutSchedule::add_exclusion, 2))?;
+    class.define_method("add_exclusion", method!(MutSchedule::add_exclusion, 1))?;
     class.define_method("add_exclusions", method!(MutSchedule::add_exclusions, 1))?;
     class.define_method("repeat_hourly", method!(MutSchedule::repeat_hourly, 1))?;
     class.define_method("repeat_weekly", method!(MutSchedule::repeat_weekly, 3))?;
