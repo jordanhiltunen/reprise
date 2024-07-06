@@ -32,9 +32,9 @@ enum Frequencies {
 #[derive(Debug)]
 pub(crate) struct Schedule {
     pub(crate) starts_at_unix_timestamp: UnixTimestamp,
-    pub(crate) local_starts_at: DateTime<Tz>,
+    pub(crate) local_starts_at_datetime: DateTime<Tz>,
     pub(crate) ends_at_unix_timestamp: UnixTimestamp,
-    pub(crate) local_ends_at: DateTime<Tz>,
+    pub(crate) local_ends_at_datetime: DateTime<Tz>,
     pub(crate) time_zone: Tz,
     pub(crate) occurrences: Vec<Occurrence>,
     pub(crate) sorted_exclusions: SortedExclusions,
@@ -49,16 +49,16 @@ impl MutSchedule {
     pub(crate) fn new(starts_at_unix_timestamp: UnixTimestamp, ends_at_unix_timestamp: UnixTimestamp, time_zone: String) -> MutSchedule {
         let parsed_time_zone: Tz = time_zone.parse().expect("Cannot parse time zone");
         let starts_at_utc = DateTime::from_timestamp(starts_at_unix_timestamp, 0).unwrap();
-        let local_starts_at = starts_at_utc.with_timezone(&parsed_time_zone);
+        let local_starts_at_datetime = starts_at_utc.with_timezone(&parsed_time_zone);
         let ends_at_utc = DateTime::from_timestamp(ends_at_unix_timestamp, 0).unwrap();
-        let local_ends_at = ends_at_utc.with_timezone(&parsed_time_zone);
+        let local_ends_at_datetime = ends_at_utc.with_timezone(&parsed_time_zone);
 
         Self(Arc::new(RwLock::new(
             Schedule {
-                starts_at,
-                local_starts_at,
-                ends_at,
-                local_ends_at,
+                starts_at_unix_timestamp,
+                local_starts_at_datetime,
+                ends_at_unix_timestamp,
+                local_ends_at_datetime,
                 time_zone: parsed_time_zone,
                 occurrences: Vec::new(),
                 sorted_exclusions: SortedExclusions::new(),
@@ -117,9 +117,9 @@ impl MutSchedule {
         return self_reference.frequencies.iter().
             map(|series| {
                 return match series {
-                    Frequencies::Hourly(hourly) => { hourly.generate_occurrences(self_reference.local_starts_at, self_reference.local_ends_at) }
-                    Frequencies::Weekly(weekly) => { weekly.generate_occurrences(self_reference.local_starts_at, self_reference.local_ends_at) }
-                    Frequencies::MonthlyByDay(monthly_by_day) => { monthly_by_day.generate_occurrences(self_reference.local_starts_at, self_reference.local_ends_at) }
+                    Frequencies::Hourly(hourly) => { hourly.generate_occurrences(self_reference.local_starts_at_datetime, self_reference.local_ends_at_datetime) }
+                    Frequencies::Weekly(weekly) => { weekly.generate_occurrences(self_reference.local_starts_at_datetime, self_reference.local_ends_at_datetime) }
+                    Frequencies::MonthlyByDay(monthly_by_day) => { monthly_by_day.generate_occurrences(self_reference.local_starts_at_datetime, self_reference.local_ends_at_datetime) }
                 };
             }
             ).flatten()
