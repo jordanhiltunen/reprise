@@ -103,6 +103,86 @@ RSpec.describe Coruscate::Schedule do
     end
   end
 
+  describe "#repeat_monthly_by_nth_weekday" do
+    let(:ends_at) { Time.current + 11.months }
+
+    it "generates an array of monthly occurrences with a fixed weekday" do
+      schedule.repeat_monthly_by_nth_weekday("tuesday", 2, { hour: 1, minute: 2, second: 3 }, 300)
+
+      expect(schedule.occurrences.size).to eq(12)
+      expect(
+        schedule.occurrences.map { |o| o.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z") }
+      ).to contain_exactly(
+             "Tue Jun 18 2024 01:02AM -1000",
+             "Tue Jul 16 2024 01:02AM -1000",
+             "Tue Aug 20 2024 01:02AM -1000",
+             "Tue Sep 17 2024 01:02AM -1000",
+             "Tue Oct 15 2024 01:02AM -1000",
+             "Tue Nov 19 2024 01:02AM -1000",
+             "Tue Dec 17 2024 01:02AM -1000",
+             "Tue Jan 21 2025 01:02AM -1000",
+             "Tue Feb 18 2025 01:02AM -1000",
+             "Tue Mar 18 2025 01:02AM -1000",
+             "Tue Apr 15 2025 01:02AM -1000",
+             "Tue May 20 2025 01:02AM -1000"
+           )
+    end
+
+    it "allows negative indexing into the monthly occurrences" do
+      schedule.repeat_monthly_by_nth_weekday("friday", -1, { hour: 1, minute: 2, second: 3 }, 300)
+
+      expect(schedule.occurrences.size).to eq(11)
+      expect(
+        schedule.occurrences.map { |o| o.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z") }
+      ).to contain_exactly(
+             "Fri Jun 28 2024 01:02AM -1000",
+             "Fri Jul 26 2024 01:02AM -1000",
+             "Fri Aug 30 2024 01:02AM -1000",
+             "Fri Sep 27 2024 01:02AM -1000",
+             "Fri Oct 25 2024 01:02AM -1000",
+             "Fri Nov 29 2024 01:02AM -1000",
+             "Fri Dec 27 2024 01:02AM -1000",
+             "Fri Jan 31 2025 01:02AM -1000",
+             "Fri Feb 28 2025 01:02AM -1000",
+             "Fri Mar 28 2025 01:02AM -1000",
+             "Fri Apr 25 2025 01:02AM -1000",
+           )
+    end
+  end
+
+  describe "#repeat_monthly_by_day" do
+    let(:ends_at) { Time.current + 5.months }
+
+    it "generates an array of monthly occurrences" do
+      schedule.repeat_monthly_by_day(12, { hour: 1, minute: 2, second: 3 }, 300)
+
+      expect(schedule.occurrences.size).to eq(5)
+      expect(
+        schedule.occurrences.map { |o| o.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z") }
+      ).to contain_exactly(
+             "Fri Jul 12 2024 01:02AM -1000",
+             "Mon Aug 12 2024 01:02AM -1000",
+             "Sat Oct 12 2024 01:02AM -1000",
+             "Thu Sep 12 2024 01:02AM -1000",
+             "Tue Nov 12 2024 01:02AM -1000"
+           )
+    end
+
+    it "handles indexing into non-universal day numbers" do
+      schedule.repeat_monthly_by_day(31, { hour: 1, minute: 2, second: 3 }, 300)
+
+      expect(schedule.occurrences.size).to eq(4)
+      expect(
+        schedule.occurrences.map { |o| o.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z") }
+      ).to contain_exactly(
+             "Wed Jul 31 2024 01:02AM -1000",
+             "Sat Aug 31 2024 01:02AM -1000",
+             "Mon Sep 30 2024 01:02AM -1000", # UGH
+             "Wed Oct 30 2024 01:02AM -1000"
+      )
+    end
+  end
+
   describe "#repeat_weekly" do
     it "generates an array of weekly occurrences" do
       schedule.repeat_weekly("tuesday", { hour: 1, minute: 2, second: 3 }, 300)
@@ -157,25 +237,6 @@ RSpec.describe Coruscate::Schedule do
                "Sun Mar 24 2024 12:01AM -0700"
              )
       end
-    end
-  end
-
-  describe "#repeat_monthly_by_day" do
-    let(:ends_at) { Time.current + 5.months }
-
-    it "generates an array of monthly occurrences" do
-      schedule.repeat_monthly_by_day(12, { hour: 1, minute: 2, second: 3 }, 300)
-
-      expect(schedule.occurrences.size).to eq(5)
-      expect(
-        schedule.occurrences.map { |o| o.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z") }
-      ).to contain_exactly(
-              "Fri Jul 12 2024 01:02AM -1000",
-              "Mon Aug 12 2024 01:02AM -1000",
-              "Sat Oct 12 2024 01:02AM -1000",
-              "Thu Sep 12 2024 01:02AM -1000",
-              "Tue Nov 12 2024 01:02AM -1000"
-           )
     end
   end
 

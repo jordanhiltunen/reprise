@@ -13,6 +13,7 @@ use crate::ruby_api::traits::{HasOverlapAwareness, RecurringSeries};
 use crate::ruby_api::frequencies::hourly::Hourly;
 use crate::ruby_api::frequencies::weekly::Weekly;
 use crate::ruby_api::frequencies::monthly_by_day::MonthlyByDay;
+use crate::ruby_api::frequencies::monthly_by_nth_weekday::MonthlyByNthWeekday;
 use crate::ruby_api::sorted_exclusions::SortedExclusions;
 use crate::ruby_api::time_of_day::TimeOfDay;
 use crate::ruby_api::ruby_modules;
@@ -26,6 +27,7 @@ enum Frequencies {
     Hourly(Hourly),
     Weekly(Weekly),
     MonthlyByDay(MonthlyByDay),
+    MonthlyByNthWeekday(MonthlyByNthWeekday),
 }
 
 #[derive(Debug)]
@@ -106,6 +108,12 @@ impl MutSchedule {
         self.0.write().frequencies.push(Frequencies::MonthlyByDay(monthly_series));
     }
 
+    pub(crate) fn repeat_monthly_by_nth_weekday(&self, weekday_string: String, nth_day: i32, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) {
+        let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(starts_at_time_of_day_ruby_hash);
+        let monthly_by_nth_weekday_series = MonthlyByNthWeekday::new(weekday_string, nth_day, starts_at_time_of_day, duration_in_seconds);
+        self.0.write().frequencies.push(Frequencies::MonthlyByNthWeekday(monthly_by_nth_weekday_series));
+    }
+
     pub(crate) fn occurrences(&self) -> Vec<Occurrence> {
         let self_reference = self.0.read();
 
@@ -119,6 +127,7 @@ impl MutSchedule {
                     Frequencies::Hourly(hourly) => { hourly.generate_occurrences(self_reference.local_starts_at_datetime, self_reference.local_ends_at_datetime) }
                     Frequencies::Weekly(weekly) => { weekly.generate_occurrences(self_reference.local_starts_at_datetime, self_reference.local_ends_at_datetime) }
                     Frequencies::MonthlyByDay(monthly_by_day) => { monthly_by_day.generate_occurrences(self_reference.local_starts_at_datetime, self_reference.local_ends_at_datetime) }
+                    Frequencies::MonthlyByNthWeekday(monthly_by_nth_weekday) => { monthly_by_nth_weekday.generate_occurrences(self_reference.local_starts_at_datetime, self_reference.local_ends_at_datetime) }
                 };
             }
             ).flatten()
@@ -137,6 +146,7 @@ pub fn init() -> Result<(), Error> {
     class.define_method("repeat_hourly", method!(MutSchedule::repeat_hourly, 1))?;
     class.define_method("repeat_weekly", method!(MutSchedule::repeat_weekly, 3))?;
     class.define_method("repeat_monthly_by_day", method!(MutSchedule::repeat_monthly_by_day, 3))?;
+    class.define_method("repeat_monthly_by_nth_weekday", method!(MutSchedule::repeat_monthly_by_nth_weekday, 4))?;
 
     Ok(())
 }

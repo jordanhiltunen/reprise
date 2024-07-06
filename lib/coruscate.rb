@@ -41,7 +41,8 @@ module Coruscate
                    :add_exclusions,
                    :repeat_hourly,
                    :repeat_weekly,
-                   :repeat_monthly_by_day
+                   :repeat_monthly_by_day,
+                   :repeat_monthly_by_nth_weekday
 
     private
 
