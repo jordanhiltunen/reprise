@@ -3,7 +3,7 @@ use chrono_tz::Tz;
 use magnus::RHash;
 use magnus::symbol::IntoSymbol;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct TimeOfDay {
     pub(crate) hour: u32,
     pub(crate) minute: u32,

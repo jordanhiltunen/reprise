@@ -3,7 +3,7 @@ use chrono_tz::Tz;
 use crate::ruby_api::time_of_day::TimeOfDay;
 use crate::ruby_api::traits::{RecurringSeries};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct Hourly {
     pub(crate) starts_at_time_of_day: TimeOfDay,
     pub(crate) duration_in_seconds: i64
