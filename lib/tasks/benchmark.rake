@@ -32,11 +32,11 @@ task :benchmark do
       time_zone: "Hawaii"
     )
 
-    schedule.repeat_weekly("monday", { hour: 1, minute: 2, second: 3 }, 300)
-    schedule.repeat_weekly("tuesday", { hour: 1, minute: 2, second: 3 }, 300)
-    schedule.repeat_weekly("wednesday", { hour: 1, minute: 2, second: 3 }, 300)
-    schedule.repeat_weekly("thursday", { hour: 1, minute: 2, second: 3 }, 300)
-    schedule.repeat_weekly("friday", { hour: 1, minute: 2, second: 3 }, 300)
+    schedule.repeat_weekly(:monday, { hour: 1, minute: 2, second: 3 }, 300)
+    schedule.repeat_weekly(:tuesday, { hour: 1, minute: 2, second: 3 }, 300)
+    schedule.repeat_weekly(:wednesday, { hour: 1, minute: 2, second: 3 }, 300)
+    schedule.repeat_weekly(:thursday, { hour: 1, minute: 2, second: 3 }, 300)
+    schedule.repeat_weekly(:friday, { hour: 1, minute: 2, second: 3 }, 300)
     schedule.add_exclusion(
       starts_at_unix_timestamp: (Time.current.in_time_zone("Hawaii") - 30.minutes).to_i,
       ends_at_unix_timestamp: (Time.current.in_time_zone("Hawaii") + 5.minutes).to_i

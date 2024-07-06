@@ -1,5 +1,6 @@
 use chrono::{Datelike, DateTime, Days, Weekday};
 use chrono_tz::Tz;
+use magnus::Symbol;
 use crate::ruby_api::time_of_day::TimeOfDay;
 use crate::ruby_api::traits::{Recurrable};
 
@@ -11,8 +12,8 @@ pub(crate) struct Weekly {
 }
 
 impl Weekly {
-    pub(crate) fn new(weekday_string: String, starts_at_time_of_day: TimeOfDay, duration_in_seconds: i64) -> Weekly {
-        let weekday = weekday_string.parse::<Weekday>().unwrap();
+    pub(crate) fn new(weekday_symbol: Symbol, starts_at_time_of_day: TimeOfDay, duration_in_seconds: i64) -> Weekly {
+        let weekday = weekday_symbol.to_string().parse::<Weekday>().unwrap();
 
         return Weekly {
             weekday,

@@ -1,5 +1,6 @@
 use chrono::{Datelike, DateTime, Days, Duration, Months, Weekday};
 use chrono_tz::Tz;
+use magnus::Symbol;
 use crate::ruby_api::occurrence::Occurrence;
 use crate::ruby_api::time_of_day::TimeOfDay;
 use crate::ruby_api::traits::Recurrable;
@@ -13,8 +14,8 @@ pub(crate) struct MonthlyByNthWeekday {
 }
 
 impl MonthlyByNthWeekday {
-    pub(crate) fn new(weekday_string: String, nth_weekday: i32, starts_at_time_of_day: TimeOfDay, duration_in_seconds: i64) -> MonthlyByNthWeekday {
-        let weekday = weekday_string.parse::<Weekday>().unwrap();
+    pub(crate) fn new(weekday_symbol: Symbol, nth_weekday: i32, starts_at_time_of_day: TimeOfDay, duration_in_seconds: i64) -> MonthlyByNthWeekday {
+        let weekday = weekday_symbol.to_string().parse::<Weekday>().unwrap();
 
         return MonthlyByNthWeekday {
             weekday,

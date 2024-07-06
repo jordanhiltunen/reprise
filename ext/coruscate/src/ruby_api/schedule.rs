@@ -1,7 +1,7 @@
 use std::sync::{Arc};
 use parking_lot::{RwLock};
 use magnus::prelude::*;
-use magnus::{Error, Module, RHash, scan_args};
+use magnus::{Error, Module, RHash, scan_args, Symbol};
 use magnus::class;
 use magnus::function;
 use magnus::method;
@@ -39,7 +39,7 @@ pub(crate) struct Schedule {
     pub(crate) time_zone: Tz,
     pub(crate) occurrences: Vec<Occurrence>,
     pub(crate) sorted_exclusions: SortedExclusions,
-    pub(crate) frequencies: Vec<Frequencies>
+    pub(crate) recurring_series: Vec<RecurringSeries>
 }
 
 #[derive(Debug)]
@@ -96,9 +96,9 @@ impl MutSchedule {
         self.0.write().recurring_series.push(RecurringSeries::Hourly(hourly_series));
     }
 
-    pub(crate) fn repeat_weekly(&self, weekday_string: String, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) {
+    pub(crate) fn repeat_weekly(&self, weekday_symbol: Symbol, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) {
         let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(starts_at_time_of_day_ruby_hash);
-        let weekly_series = Weekly::new(weekday_string, starts_at_time_of_day, duration_in_seconds);
+        let weekly_series = Weekly::new(weekday_symbol, starts_at_time_of_day, duration_in_seconds);
         self.0.write().recurring_series.push(RecurringSeries::Weekly(weekly_series));
     }
 
@@ -108,9 +108,9 @@ impl MutSchedule {
         self.0.write().recurring_series.push(RecurringSeries::MonthlyByDay(monthly_series));
     }
 
-    pub(crate) fn repeat_monthly_by_nth_weekday(&self, weekday_string: String, nth_day: i32, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) {
+    pub(crate) fn repeat_monthly_by_nth_weekday(&self, weekday_symbol: Symbol, nth_day: i32, starts_at_time_of_day_ruby_hash: RHash, duration_in_seconds: i64) {
         let starts_at_time_of_day = TimeOfDay::new_from_ruby_hash(starts_at_time_of_day_ruby_hash);
-        let monthly_by_nth_weekday_series = MonthlyByNthWeekday::new(weekday_string, nth_day, starts_at_time_of_day, duration_in_seconds);
+        let monthly_by_nth_weekday_series = MonthlyByNthWeekday::new(weekday_symbol, nth_day, starts_at_time_of_day, duration_in_seconds);
         self.0.write().recurring_series.push(RecurringSeries::MonthlyByNthWeekday(monthly_by_nth_weekday_series));
     }
 
