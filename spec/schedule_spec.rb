@@ -109,11 +109,10 @@ RSpec.describe Coruscate::Schedule do
     it "generates an array of monthly occurrences with a fixed weekday" do
       schedule.repeat_monthly_by_nth_weekday("tuesday", 2, { hour: 1, minute: 2, second: 3 }, 300)
 
-      expect(schedule.occurrences.size).to eq(12)
+      expect(schedule.occurrences.size).to eq(11)
       expect(
         schedule.occurrences.map { |o| o.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
-             "Tue Jun 18 2024 01:02AM -1000",
              "Tue Jul 16 2024 01:02AM -1000",
              "Tue Aug 20 2024 01:02AM -1000",
              "Tue Sep 17 2024 01:02AM -1000",
@@ -131,11 +130,10 @@ RSpec.describe Coruscate::Schedule do
     it "allows negative indexing into the monthly occurrences" do
       schedule.repeat_monthly_by_nth_weekday("friday", -1, { hour: 1, minute: 2, second: 3 }, 300)
 
-      expect(schedule.occurrences.size).to eq(11)
+      expect(schedule.occurrences.size).to eq(10)
       expect(
         schedule.occurrences.map { |o| o.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
-             "Fri Jun 28 2024 01:02AM -1000",
              "Fri Jul 26 2024 01:02AM -1000",
              "Fri Aug 30 2024 01:02AM -1000",
              "Fri Sep 27 2024 01:02AM -1000",
@@ -146,6 +144,21 @@ RSpec.describe Coruscate::Schedule do
              "Fri Feb 28 2025 01:02AM -1000",
              "Fri Mar 28 2025 01:02AM -1000",
              "Fri Apr 25 2025 01:02AM -1000",
+           )
+    end
+
+    it "can handle nth weekday edge cases that do not occur every month" do
+      # The fifth (NB: 4; zeroth indexing) wednesday of a month is relatively rare.
+      schedule.repeat_monthly_by_nth_weekday("wednesday", 4, { hour: 1, minute: 2, second: 3 }, 300)
+
+      expect(schedule.occurrences.size).to eq(4)
+      expect(
+        schedule.occurrences.map { |o| o.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z") }
+      ).to contain_exactly(
+             "Wed Apr 30 2025 01:02AM -1000",
+             "Wed Jan 29 2025 01:02AM -1000",
+             "Wed Jul 31 2024 01:02AM -1000",
+             "Wed Oct 30 2024 01:02AM -1000"
            )
     end
   end

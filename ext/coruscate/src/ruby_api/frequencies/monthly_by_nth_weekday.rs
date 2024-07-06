@@ -1,5 +1,6 @@
-use chrono::{Datelike, DateTime, Days, Months, Weekday};
+use chrono::{Datelike, DateTime, Days, Duration, Months, Weekday};
 use chrono_tz::Tz;
+use crate::ruby_api::occurrence::Occurrence;
 use crate::ruby_api::time_of_day::TimeOfDay;
 use crate::ruby_api::traits::RecurringSeries;
 
@@ -19,11 +20,11 @@ impl MonthlyByNthWeekday {
             weekday,
             nth_weekday,
             starts_at_time_of_day,
-            duration_in_seconds
+            duration_in_seconds,
         }
     }
 
-    fn get_all_weekdays_in_month_of(&self, &datetime: &DateTime<Tz>) -> Vec<DateTime<Tz>> {
+    fn identify_all_weekdays_in_month_of(&self, &datetime: &DateTime<Tz>) -> Vec<DateTime<Tz>> {
         let mut weekdays_in_month: Vec<DateTime<Tz>> = Vec::new();
         let start_of_month = datetime.with_day(1).unwrap().with_time(self.naive_starts_at_time()).unwrap();
 
@@ -65,13 +66,42 @@ impl MonthlyByNthWeekday {
             // TODO: if the index is STILL negative (imagine indexing -7 into a collection of four
             // elements) then we should panic. A slice access of -4, for example, makes very little
             // sense relative to something like 1, or 2.
-
             (collection_size - self.nth_weekday.abs()) as usize
         }
     }
 }
 
 impl RecurringSeries for MonthlyByNthWeekday {
+    // We override the trait definition because the logic required to expand this recurring series
+    // differs substantially from the others.
+    fn generate_occurrences(&self, starts_at: DateTime<Tz>, ends_at: DateTime<Tz>) -> Vec<Occurrence> {
+        let mut occurrences = Vec::new();
+        let mut current_weekdays_in_examined_month : Vec<DateTime<Tz>> = Vec::new();
+
+        return match self.first_occurrence_datetime(&starts_at, &ends_at) {
+            None => { occurrences }
+            Some(first_occurrence_datetime) => {
+                let mut current_occurrence_datetime = first_occurrence_datetime;
+
+                while current_occurrence_datetime < ends_at {
+                    current_weekdays_in_examined_month = self.identify_all_weekdays_in_month_of(&current_occurrence_datetime);
+                    let potential_match = current_weekdays_in_examined_month.get(self.get_unsigned_nth_weekday_index_from_signed(current_weekdays_in_examined_month.len() as i32));
+
+                    if potential_match.is_some() {
+                        occurrences.push(Occurrence {
+                            starts_at_unix_timestamp: current_occurrence_datetime.timestamp(),
+                            ends_at_unix_timestamp: (current_occurrence_datetime + Duration::seconds(self.get_occurrence_duration_in_seconds())).timestamp()
+                        });
+                    }
+
+                    current_occurrence_datetime = self.next_occurrence_candidate(&current_occurrence_datetime);
+                }
+
+                occurrences
+            }
+        }
+    }
+
     fn get_starts_at_time_of_day(&self) -> &TimeOfDay {
         return &self.starts_at_time_of_day;
     }
@@ -81,48 +111,35 @@ impl RecurringSeries for MonthlyByNthWeekday {
     }
 
     fn generate_first_occurrence_candidate(&self, starts_at: &DateTime<Tz>) -> DateTime<Tz> {
-        let weekdays_in_month = self.get_all_weekdays_in_month_of(starts_at);
+        let weekdays_in_month = self.identify_all_weekdays_in_month_of(starts_at);
 
-        let first_occurrence_candidate = weekdays_in_month.get(
+        return weekdays_in_month.get(
             self.get_unsigned_nth_weekday_index_from_signed(weekdays_in_month.len() as i32)
-        );
-
-        return first_occurrence_candidate.unwrap().clone()
+        ).cloned().unwrap_or(*starts_at);
     }
 
-    // fn generate_first_occurrence_candidate(&self, starts_at: &DateTime<Tz>) -> Option<DateTime<Tz>> {
-    //     let weekdays_in_month = self.get_all_weekdays_in_month_of(starts_at);
-    //
-    //     let first_occurrence_candidate = weekdays_in_month.get(
-    //         self.get_unsigned_nth_weekday_index_from_signed(weekdays_in_month.len() as i32)
-    //     );
-    //
-    //     return if first_occurrence_candidate.is_some() {
-    //         Some(first_occurrence_candidate.unwrap().clone())
-    //     } else {
-    //         None
-    //     }
-    // }
-    
-    fn occurrence_candidate_matches_criteria(&self, _occurrence_candidate: &DateTime<Tz>) -> bool {
-        // no-op; we are handling more of the criteria in earlier steps.
-        true
+    fn occurrence_candidate_matches_criteria(&self, occurrence_candidate: &DateTime<Tz>) -> bool {
+        let weekdays_in_month = self.identify_all_weekdays_in_month_of(occurrence_candidate);
+
+        let match_for_current_month = weekdays_in_month.get(
+            self.get_unsigned_nth_weekday_index_from_signed(weekdays_in_month.len() as i32)
+        ).cloned();
+
+        return match_for_current_month.is_some() && &match_for_current_month.unwrap() == occurrence_candidate;
     }
 
     fn advance_to_find_first_occurrence_candidate(&self, occurrence_candidate: &DateTime<Tz>) -> DateTime<Tz> {
-        // no-op.
-        self.generate_first_occurrence_candidate(occurrence_candidate)
+        self.generate_first_occurrence_candidate(
+            &occurrence_candidate.checked_add_months(Months::new(1)).unwrap()
+        )
     }
-
-    // fn advance_to_find_first_occurrence_candidate(&self, occurrence_candidate: &DateTime<Tz>) -> Option<DateTime<Tz>> {
-    //     // no-op.
-    //     self.generate_first_occurrence_candidate(occurrence_candidate)
-    // }
 
     fn next_occurrence_candidate(&self, occurrence_candidate: &DateTime<Tz>) -> DateTime<Tz> {
         let occurrence_candidate = occurrence_candidate.checked_add_months(Months::new(1)).unwrap();
-        let weekdays_in_month = self.get_all_weekdays_in_month_of(&occurrence_candidate);
+        let weekdays_in_month = self.identify_all_weekdays_in_month_of(&occurrence_candidate);
 
-        return weekdays_in_month[self.get_unsigned_nth_weekday_index_from_signed(weekdays_in_month.len() as i32)];
+        return weekdays_in_month.get(
+            self.get_unsigned_nth_weekday_index_from_signed(weekdays_in_month.len() as i32)
+        ).cloned().unwrap_or(occurrence_candidate);
     }
 }
