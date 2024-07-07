@@ -23,6 +23,8 @@ GEM
     ice_cube (0.16.4)
     memory_profiler (1.0.2)
     minitest (5.23.1)
+    montrose (0.16.0)
+      activesupport (>= 5.2, < 8)
     rake (13.2.1)
     rake-compiler (1.2.7)
       rake
@@ -54,6 +56,7 @@ DEPENDENCIES
   bundler (~> 2.5.9)
   coruscate!
   ice_cube
+  montrose
   rake (~> 13.2)
   rake-compiler (~> 1.2.0)
   rspec (~> 3.0)

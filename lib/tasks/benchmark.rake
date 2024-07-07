@@ -5,9 +5,10 @@ require "active_support/core_ext/integer/time"
 require "active_support/core_ext/time"
 require "active_support/testing/time_helpers"
 require "benchmark"
-require "ice_cube"
 require "benchmark/ips"
 require "benchmark/memory"
+require "ice_cube"
+require "montrose"
 
 desc "Run benchmarks"
 task :benchmark do
@@ -24,6 +25,16 @@ task :benchmark do
   ice_cube_schedule.add_exception_time(now + 3.days)
   ice_cube_schedule.add_exception_time(now + 4.days)
   ice_cube_schedule.add_exception_time(now + 5.days)
+
+  montrose_schedule = Montrose::Schedule.build do |s|
+    # N.B. Not a truly apples-to-apples comparison, as Montrose doesn't support
+    # exclusion checks.
+    s << Montrose.weekly(on: :monday, until: (Time.current + 1.year).to_date, starts: Date.current)
+    s << Montrose.weekly(on: :tuesday, until: (Time.current + 1.year).to_date, starts: Date.current)
+    s << Montrose.weekly(on: :wednesday, until: (Time.current + 1.year).to_date, starts: Date.current)
+    s << Montrose.weekly(on: :thursday, until: (Time.current + 1.year).to_date, starts: Date.current)
+    s << Montrose.weekly(on: :friday, until: (Time.current + 1.year).to_date, starts: Date.current)
+  end
 
   coruscate_schedule = Coruscate::Schedule.new(
     starts_at: Time.current,
@@ -65,12 +76,17 @@ task :benchmark do
     coruscate_schedule.occurrences.size
   end
 
+  def generate_montrose_occurrences(montrose_schedule)
+    montrose_schedule.events.to_a.size
+  end
+
   puts "Verifying generated occurrences are the same length:"
   puts generate_coruscate_occurrences(coruscate_schedule) == generate_ice_cube_occurrences(ice_cube_schedule)
 
   puts "Benchmarking Iterations Per Second (IPS)"
   Benchmark.ips do |x|
     x.report("IceCube:") { generate_ice_cube_occurrences(ice_cube_schedule) }
+    x.report("Montrose:") { generate_montrose_occurrences(montrose_schedule) }
     x.report("Coruscate:") { generate_coruscate_occurrences(coruscate_schedule) }
   end
 
@@ -78,6 +94,7 @@ task :benchmark do
   puts "Benchmarking Memory Use"
   Benchmark.memory do |x|
     x.report("IceCube:") { generate_ice_cube_occurrences(ice_cube_schedule) }
+    x.report("Montrose:") { generate_montrose_occurrences(montrose_schedule) }
     x.report("Coruscate:") { generate_coruscate_occurrences(coruscate_schedule) }
 
     x.compare!
