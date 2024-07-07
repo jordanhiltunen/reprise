@@ -56,7 +56,42 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Initialize a new schedule
+
+All schedules must be initialized with a start time, end time, and time zone.
+
+```ruby
+starts_at = Time.current.in_time_zone("Hawaii")
+ends_at = Time.current + 4.weeks
+
+schedule = Coruscate::Schedule.new(starts_at:, ends_at:, time_zone: "Hawaii")
+
+# 2. Define recurring series
+schedule.repeat_weekly(:sunday, time_of_day: { hour: 9, minute: 30 }, duration_in_seconds: 60)
+````
+
+### Add recurring event series
+
+```ruby
+# When a time_of_day is required, you can pass an hour/minute/second hash:
+schedule.repeat_weekly(:sunday, time_of_day: { hour: 9, minute: 30 }, duration_in_seconds: 60)
+
+# Or, you can pass a `Time` value:
+time = Time.new(2024, 6, 30, 0, 0, 0, "-10:00")
+schedule.repeat_weekly(:sunday, time_of_day: time, duration_in_seconds: 60)
+
+# You can repeat monthly by the nth day; e.g. the third Tuesday of every month:
+schedule.repeat_monthly_by_nth_weekday(:tuesday, 2, { hour: 1, minute: 2, second: 3 }, 300)
+
+# Or monthly by day; e.g. the 12th of every month:
+schedule.repeat_monthly_by_day(12, { hour: 1, minute: 2, second: 3 }, 300)
+
+# Or hourly: 
+schedule.repeat_hourly(
+        initial_time_of_day: { hour: 1, minute: 2, second: 3 },
+        duration_in_seconds: 300
+)
+```
 
 ## Development
 
