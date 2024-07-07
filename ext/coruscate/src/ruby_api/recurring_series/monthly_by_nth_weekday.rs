@@ -1,9 +1,9 @@
-use chrono::{Datelike, DateTime, Days, Duration, Months, Weekday};
+use chrono::{Datelike, DateTime, Days, Duration, Months, NaiveTime, Weekday};
 use chrono_tz::Tz;
 use magnus::Symbol;
 use crate::ruby_api::occurrence::Occurrence;
 use crate::ruby_api::time_of_day::TimeOfDay;
-use crate::ruby_api::traits::Recurrable;
+use crate::ruby_api::traits::{CustomRecurrable, Recurrable};
 
 #[derive(Debug, Clone)]
 pub(crate) struct MonthlyByNthWeekday {
@@ -70,37 +70,13 @@ impl MonthlyByNthWeekday {
             (collection_size - self.nth_weekday.abs()) as usize
         }
     }
-}
 
-impl Recurrable for MonthlyByNthWeekday {
-    // We override the trait definition because the logic required to expand this recurring series
-    // differs substantially from the others.
-    fn generate_occurrences(&self, starts_at: DateTime<Tz>, ends_at: DateTime<Tz>) -> Vec<Occurrence> {
-        let mut occurrences = Vec::new();
-        let mut current_weekdays_in_examined_month : Vec<DateTime<Tz>> = Vec::new();
-
-        return match self.first_occurrence_datetime(&starts_at, &ends_at) {
-            None => { occurrences }
-            Some(first_occurrence_datetime) => {
-                let mut current_occurrence_datetime = first_occurrence_datetime;
-
-                while current_occurrence_datetime < ends_at {
-                    current_weekdays_in_examined_month = self.identify_all_weekdays_in_month_of(&current_occurrence_datetime);
-                    let potential_match = current_weekdays_in_examined_month.get(self.get_unsigned_nth_weekday_index_from_signed(current_weekdays_in_examined_month.len() as i32));
-
-                    if potential_match.is_some() {
-                        occurrences.push(Occurrence {
-                            starts_at_unix_timestamp: current_occurrence_datetime.timestamp(),
-                            ends_at_unix_timestamp: (current_occurrence_datetime + Duration::seconds(self.get_occurrence_duration_in_seconds())).timestamp()
-                        });
-                    }
-
-                    current_occurrence_datetime = self.next_occurrence_candidate(&current_occurrence_datetime);
-                }
-
-                occurrences
-            }
-        }
+    fn naive_starts_at_time(&self) -> NaiveTime {
+        return NaiveTime::from_hms_opt(
+            self.get_time_of_day().hour,
+            self.get_time_of_day().minute,
+            self.get_time_of_day().second,
+        ).unwrap();
     }
 
     fn get_time_of_day(&self) -> &TimeOfDay {
@@ -110,37 +86,37 @@ impl Recurrable for MonthlyByNthWeekday {
     fn get_occurrence_duration_in_seconds(&self) -> i64 {
         return self.duration_in_seconds;
     }
+}
 
-    fn generate_first_occurrence_candidate(&self, starts_at: &DateTime<Tz>) -> DateTime<Tz> {
-        let weekdays_in_month = self.identify_all_weekdays_in_month_of(starts_at);
+impl CustomRecurrable for MonthlyByNthWeekday {
+    // We override the trait definition because the logic required to expand this recurring series
+    // differs substantially from the others.
+    fn generate_occurrences(&self, starts_at: DateTime<Tz>, ends_at: DateTime<Tz>) -> Vec<Occurrence> {
+        let mut occurrences = Vec::new();
+        let mut current_weekdays_in_examined_month : Vec<DateTime<Tz>> = Vec::new();
+        let mut current_examined_datetime = starts_at;
 
-        return weekdays_in_month.get(
-            self.get_unsigned_nth_weekday_index_from_signed(weekdays_in_month.len() as i32)
-        ).cloned().unwrap_or(*starts_at);
-    }
+        while current_examined_datetime < ends_at {
+            current_weekdays_in_examined_month = self.identify_all_weekdays_in_month_of(&current_examined_datetime);
+            let potential_match = current_weekdays_in_examined_month.get(
+                self.get_unsigned_nth_weekday_index_from_signed(current_weekdays_in_examined_month.len() as i32)
+            );
 
-    fn occurrence_candidate_matches_criteria(&self, occurrence_candidate: &DateTime<Tz>) -> bool {
-        let weekdays_in_month = self.identify_all_weekdays_in_month_of(occurrence_candidate);
+            if potential_match.is_some() && *potential_match.unwrap() > starts_at && *potential_match.unwrap() < ends_at {
+                occurrences.push(Occurrence {
+                    starts_at_unix_timestamp: potential_match.unwrap().timestamp(),
+                    ends_at_unix_timestamp: (*potential_match.unwrap() + Duration::seconds(self.get_occurrence_duration_in_seconds())).timestamp()
+                });
+            }
 
-        let match_for_current_month = weekdays_in_month.get(
-            self.get_unsigned_nth_weekday_index_from_signed(weekdays_in_month.len() as i32)
-        ).cloned();
+            // Advance to the beginning of the next month.
+            current_examined_datetime = if current_examined_datetime.month() == 12 {
+                current_examined_datetime.with_year(current_examined_datetime.year() + 1).unwrap().with_month(1).unwrap().with_day(1).unwrap()
+            } else {
+                current_examined_datetime.with_month(current_examined_datetime.month() + 1).unwrap().with_day(1).unwrap()
+            };
+        }
 
-        return match_for_current_month.is_some() && &match_for_current_month.unwrap() == occurrence_candidate;
-    }
-
-    fn advance_to_find_first_occurrence_candidate(&self, occurrence_candidate: &DateTime<Tz>) -> DateTime<Tz> {
-        self.generate_first_occurrence_candidate(
-            &occurrence_candidate.checked_add_months(Months::new(1)).unwrap()
-        )
-    }
-
-    fn next_occurrence_candidate(&self, occurrence_candidate: &DateTime<Tz>) -> DateTime<Tz> {
-        let occurrence_candidate = occurrence_candidate.checked_add_months(Months::new(1)).unwrap();
-        let weekdays_in_month = self.identify_all_weekdays_in_month_of(&occurrence_candidate);
-
-        return weekdays_in_month.get(
-            self.get_unsigned_nth_weekday_index_from_signed(weekdays_in_month.len() as i32)
-        ).cloned().unwrap_or(occurrence_candidate);
+        occurrences
     }
 }

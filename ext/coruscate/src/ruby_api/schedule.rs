@@ -9,7 +9,7 @@ use chrono::{DateTime};
 use chrono_tz::Tz;
 use crate::ruby_api::occurrence::Occurrence;
 use crate::ruby_api::exclusion::Exclusion;
-use crate::ruby_api::traits::{HasOverlapAwareness, Recurrable};
+use crate::ruby_api::traits::{HasOverlapAwareness, CustomRecurrable, Recurrable};
 use crate::ruby_api::recurring_series::hourly::Hourly;
 use crate::ruby_api::recurring_series::weekly::Weekly;
 use crate::ruby_api::recurring_series::monthly_by_day::MonthlyByDay;
