@@ -42,7 +42,7 @@ RSpec.describe Coruscate::Schedule do
 
   describe "#occurrences" do
     let(:occurrences) do
-      schedule.repeat_weekly(:sunday, time_of_day: { hour: 0, minute: 1, second: 2 }, duration_in_seconds: 300)
+      schedule.repeat_weekly(:sunday, time_of_day: { hour: 0, minute: 1, second: 2 }, duration_in_seconds: event_duration_in_seconds)
       schedule.occurrences
     end
 
@@ -70,7 +70,7 @@ RSpec.describe Coruscate::Schedule do
 
   describe "#add_exclusion" do
     it "allows users to specify exclusions that result in removed occurrences" do
-      schedule.repeat_weekly(:sunday, time_of_day: { hour: 0, minute: 1, second: 2 }, duration_in_seconds: 300)
+      schedule.repeat_weekly(:sunday, time_of_day: { hour: 0, minute: 1, second: 2 }, duration_in_seconds: event_duration_in_seconds)
 
       expect(schedule.occurrences.size).to eq(4)
       expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) }).
@@ -195,7 +195,7 @@ RSpec.describe Coruscate::Schedule do
     let(:ends_at) { Time.current + 5.months }
 
     it "generates an array of monthly occurrences" do
-      schedule.repeat_monthly_by_day(12, { hour: 1, minute: 2, second: 3 }, 300)
+      schedule.repeat_monthly_by_day(12, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
 
       expect(schedule.occurrences.size).to eq(5)
       expect(
@@ -210,7 +210,7 @@ RSpec.describe Coruscate::Schedule do
     end
 
     it "handles indexing into non-universal day numbers" do
-      schedule.repeat_monthly_by_day(31, { hour: 1, minute: 2, second: 3 }, 300)
+      schedule.repeat_monthly_by_day(31, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
 
       expect(schedule.occurrences.size).to eq(4)
       expect(
