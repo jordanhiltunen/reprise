@@ -15,7 +15,7 @@ pub(crate) struct MonthlyByNthWeekday {
 
 impl MonthlyByNthWeekday {
     pub(crate) fn new(weekday_symbol: Symbol, nth_weekday: i32, time_of_day: TimeOfDay, duration_in_seconds: i64) -> MonthlyByNthWeekday {
-        let weekday = weekday_symbol.to_string().parse::<Weekday>().unwrap();
+        let weekday = weekday_symbol.to_string().parse::<Weekday>().expect("Weekday must parse successfully");
 
         return MonthlyByNthWeekday {
             weekday,
@@ -28,13 +28,7 @@ impl MonthlyByNthWeekday {
     fn identify_all_weekdays_in_month_of(&self, &datetime: &DateTime<Tz>) -> Vec<DateTime<Tz>> {
         let mut weekdays_in_month: Vec<DateTime<Tz>> = Vec::new();
         let start_of_month = datetime.with_day(1).unwrap().with_time(self.naive_starts_at_time()).unwrap();
-
-        // TODO: examine bookend edge cases
-        let end_of_month: DateTime<Tz> = if start_of_month.month() == 12 {
-            start_of_month.with_year(start_of_month.year() + 1).unwrap().with_month(1).unwrap()
-        } else {
-            start_of_month.with_month(datetime.month() + 1).unwrap()
-        };
+        let end_of_month: DateTime<Tz> = self.beginning_of_next_month_from(&start_of_month);
 
         let mut examined_datetime = start_of_month;
 
@@ -44,8 +38,9 @@ impl MonthlyByNthWeekday {
                 break;
             }
 
-            examined_datetime = examined_datetime.checked_add_days(Days::new(1)).unwrap().
-                with_time(self.naive_starts_at_time()).unwrap();
+            examined_datetime = examined_datetime
+                .checked_add_days(Days::new(1)).unwrap()
+                .with_time(self.naive_starts_at_time()).unwrap()
         }
 
         // Push the day and all remaining days with the same weekday into the collection.
@@ -71,6 +66,14 @@ impl MonthlyByNthWeekday {
         }
     }
 
+    fn get_time_of_day(&self) -> &TimeOfDay {
+        return &self.time_of_day;
+    }
+
+    fn get_occurrence_duration_in_seconds(&self) -> i64 {
+        return self.duration_in_seconds;
+    }
+
     fn naive_starts_at_time(&self) -> NaiveTime {
         return NaiveTime::from_hms_opt(
             self.get_time_of_day().hour,
@@ -79,12 +82,17 @@ impl MonthlyByNthWeekday {
         ).unwrap();
     }
 
-    fn get_time_of_day(&self) -> &TimeOfDay {
-        return &self.time_of_day;
-    }
-
-    fn get_occurrence_duration_in_seconds(&self) -> i64 {
-        return self.duration_in_seconds;
+    fn beginning_of_next_month_from(&self, datetime: &DateTime<Tz>) -> DateTime<Tz> {
+        return if datetime.month() == 12 {
+            datetime
+                .with_year(datetime.year() + 1).expect("Datetime must advance to the next year")
+                .with_month(1).expect("Datetime must be set to January")
+                .with_day(1).expect("Datetime must be set to the first day of the month ")
+        } else {
+            datetime
+                .with_month(datetime.month() + 1).expect("Datetime must advance to the next month")
+                .with_day(1).expect("Datetime must be set to the first of the month")
+        };
     }
 }
 
@@ -98,23 +106,22 @@ impl CustomRecurrable for MonthlyByNthWeekday {
 
         while current_examined_datetime < ends_at {
             current_weekdays_in_examined_month = self.identify_all_weekdays_in_month_of(&current_examined_datetime);
-            let potential_match = current_weekdays_in_examined_month.get(
-                self.get_unsigned_nth_weekday_index_from_signed(current_weekdays_in_examined_month.len() as i32)
-            );
 
-            if potential_match.is_some() && *potential_match.unwrap() > starts_at && *potential_match.unwrap() < ends_at {
-                occurrences.push(Occurrence {
-                    starts_at_unix_timestamp: potential_match.unwrap().timestamp(),
-                    ends_at_unix_timestamp: (*potential_match.unwrap() + Duration::seconds(self.get_occurrence_duration_in_seconds())).timestamp()
-                });
+            match current_weekdays_in_examined_month.get(
+                self.get_unsigned_nth_weekday_index_from_signed(current_weekdays_in_examined_month.len() as i32)
+            ) {
+                None => {}
+                Some(series_match) => {
+                    if *series_match > starts_at && *series_match < ends_at {
+                        occurrences.push(Occurrence {
+                            starts_at_unix_timestamp: series_match.timestamp(),
+                            ends_at_unix_timestamp: (*series_match + Duration::seconds(self.get_occurrence_duration_in_seconds())).timestamp()
+                        });
+                    }
+                }
             }
 
-            // Advance to the beginning of the next month.
-            current_examined_datetime = if current_examined_datetime.month() == 12 {
-                current_examined_datetime.with_year(current_examined_datetime.year() + 1).unwrap().with_month(1).unwrap().with_day(1).unwrap()
-            } else {
-                current_examined_datetime.with_month(current_examined_datetime.month() + 1).unwrap().with_day(1).unwrap()
-            };
+            current_examined_datetime = self.beginning_of_next_month_from(&current_examined_datetime);
         }
 
         occurrences

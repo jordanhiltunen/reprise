@@ -7,10 +7,26 @@ module Coruscate
 
   class Schedule
     extend ::Forwardable
+    # @!macro [new] time_of_day
+    #   @param time_of_day [Hash,Time,nil]
+    #     Either a local time value from which the hour, minute, and second
+    #     should be derived, or a hash containing at least one of +hour+, +minute+,
+    #     or +second+. If +nil+, the time of day will be inferred from the schedule's
+    #     +starts_at+ value.
+    #   @option time_of_day [Integer] :hour, >= 0 && <= 23
+    #   @option time_of_day [Integer] :minute, >= 0 && <= 59
+    #   @option time_of_day [Integer] :second, >= 0 && <= 59
+    #   @example
+    #     { hour: 1, minute: 30, second: 15 }
+    #   @raise [UnsupportedTypeError] if +time_of_day+ is neither a +Hash+ nor a +Time+.
+    #   @raise [InvalidHashError] if the hash representation of the time is invalid.
+    #   @raise [RangeError] if either the hour, minute, or second is out-of-range.
 
-    # All schedules must be constructed with a valid starts_at and ends_at time.
+    # @!macro [new] duration_in_seconds
+
+    # All schedules must be constructed with a valid +starts_at+ and +ends_at+ time.
     # Coruscate does not support infinitely-recurring schedules, or the bounding
-    # of schedules on the basis of an occurence count.
+    # of schedules on the basis of a maximum occurrence count.
     #
     # @param starts_at [Time]
     #   The beginning of the schedule; the earliest possible moment for a valid occurrence.
@@ -24,11 +40,36 @@ module Coruscate
       @starts_at = starts_at
       @ends_at = ends_at
       @time_zone = ActiveSupport::TimeZone::find_tzinfo(time_zone).identifier
+      @default_time_of_day = TimeOfDay.new(starts_at)
     end
 
     # @return [Array<Coruscate::Core::Occurrence>]
     def occurrences
       internal_schedule.occurrences
+    end
+
+    # @param weekday [Symbol] Accepts +:monday+, +:tuesday+, +:wednesday+, +:thursday+, or +:friday+.
+    # @!macro time_of_day
+    # @param duration_in_seconds [Integer]
+    # @return [void]
+    def repeat_weekly(weekday, time_of_day: nil, duration_in_seconds:)
+      internal_schedule.repeat_weekly(
+        weekday,
+        time_of_day: TimeOfDay.new(time_of_day || starts_at),
+        duration_in_seconds:
+      )
+    end
+
+    # @param day_number [Integer] The number of the day in the month; >= 1 && <= 31
+    # @!macro time_of_day
+    # @param duration_in_seconds [Integer]
+    # @return [void]
+    def repeat_monthly_by_day(day_number:, time_of_day:, duration_in_seconds:)
+      internal_schedule.repeat_weekly(
+        day_number,
+        time_of_day: TimeOfDay.new(time_of_day || starts_at),
+        duration_in_seconds:
+      )
     end
 
     def_delegators :internal_schedule,
@@ -41,7 +82,7 @@ module Coruscate
 
     private
 
-    attr_reader :starts_at, :ends_at, :time_zone
+    attr_reader :starts_at, :ends_at, :time_zone, :default_time_of_day
 
     def internal_schedule
       return @_internal_schedule if defined?(@_internal_schedule)

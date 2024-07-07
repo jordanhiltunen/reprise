@@ -271,6 +271,18 @@ RSpec.describe Coruscate::Schedule do
            )
     end
 
+    it "allows users to inspect occurrences" do
+      schedule.repeat_hourly(
+        initial_time_of_day: { hour: 1, minute: 2, second: 3 },
+        duration_in_seconds: 300
+      )
+
+      first_occurrence = schedule.occurrences.first
+      expect(first_occurrence.inspect).to eq(
+        "Occurrence { starts_at_unix_timestamp: 1719745323, ends_at_unix_timestamp: 1719745623 }"
+      )
+    end
+
     it "generates an array of hourly occurrences across a DST change" do
     end
   end

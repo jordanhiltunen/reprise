@@ -85,17 +85,17 @@ task :benchmark do
 
   puts "Benchmarking Iterations Per Second (IPS)"
   Benchmark.ips do |x|
-    x.report("IceCube:") { generate_ice_cube_occurrences(ice_cube_schedule) }
-    x.report("Montrose:") { generate_montrose_occurrences(montrose_schedule) }
-    x.report("Coruscate:") { generate_coruscate_occurrences(coruscate_schedule) }
+    x.report("IceCube") { generate_ice_cube_occurrences(ice_cube_schedule) }
+    x.report("Montrose") { generate_montrose_occurrences(montrose_schedule) }
+    x.report("Coruscate") { generate_coruscate_occurrences(coruscate_schedule) }
   end
 
   puts "---"
   puts "Benchmarking Memory Use"
   Benchmark.memory do |x|
-    x.report("IceCube:") { generate_ice_cube_occurrences(ice_cube_schedule) }
-    x.report("Montrose:") { generate_montrose_occurrences(montrose_schedule) }
-    x.report("Coruscate:") { generate_coruscate_occurrences(coruscate_schedule) }
+    x.report("IceCube") { generate_ice_cube_occurrences(ice_cube_schedule) }
+    x.report("Montrose") { generate_montrose_occurrences(montrose_schedule) }
+    x.report("Coruscate") { generate_coruscate_occurrences(coruscate_schedule) }
 
     x.compare!
   end
