@@ -11,8 +11,8 @@ RSpec.describe Coruscate::Schedule do
     Coruscate::Schedule.new(starts_at: starts_at, ends_at: ends_at, time_zone: time_zone)
   end
 
-  let(:starts_at) { Time.current }
-  let(:ends_at) { Time.current + 4.weeks }
+  let(:starts_at) { Time.current.in_time_zone("Hawaii") }
+  let(:ends_at) { (Time.current + 4.weeks).in_time_zone("Hawaii") }
   let(:time_zone) { "Hawaii" }
 
   before { travel_to Time.new(2024, 6, 30, 0, 0, 0, "-10:00") } # Hawaii
@@ -54,9 +54,9 @@ RSpec.describe Coruscate::Schedule do
       first_occurrence = occurrences.first
 
       expect(first_occurrence.start_time).to be_a(Time)
-      expect(first_occurrence.start_time.to_s).to eq("2024-06-30 06:01:02 -0400")
+      expect(first_occurrence.start_time.in_time_zone("Hawaii").to_s).to eq("2024-06-30 00:01:02 -1000")
       expect(first_occurrence.end_time).to be_a(Time)
-      expect(first_occurrence.end_time.to_s).to eq("2024-06-30 06:06:02 -0400")
+      expect(first_occurrence.end_time.in_time_zone("Hawaii").to_s).to eq("2024-06-30 00:06:02 -1000")
     end
 
     it "exposes an #inspect method on the occurrences" do
