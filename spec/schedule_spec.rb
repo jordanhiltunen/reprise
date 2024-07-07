@@ -40,6 +40,34 @@ RSpec.describe Coruscate::Schedule do
     end
   end
 
+  describe "#occurrences" do
+    let(:occurrences) do
+      schedule.repeat_weekly(:sunday, time_of_day: { hour: 0, minute: 1, second: 2 }, duration_in_seconds: 300)
+      schedule.occurrences
+    end
+
+    it "returns an array of Coruscate::Core::Occurrence" do
+      expect(occurrences.all? { |occurrence| occurrence.is_a?(Coruscate::Core::Occurrence) } ).to eq(true)
+    end
+
+    it "exposes #start_time and #end_time methods on the occurrences" do
+      first_occurrence = occurrences.first
+
+      expect(first_occurrence.start_time).to be_a(Time)
+      expect(first_occurrence.start_time.to_s).to eq("2024-06-30 06:01:02 -0400")
+      expect(first_occurrence.end_time).to be_a(Time)
+      expect(first_occurrence.end_time.to_s).to eq("2024-06-30 06:06:02 -0400")
+    end
+
+    it "exposes an #inspect method on the occurrences" do
+      first_occurrence = occurrences.first
+
+      expect(first_occurrence.inspect).to eq(
+        "Occurrence { starts_at_unix_timestamp: 1719741662, ends_at_unix_timestamp: 1719741962 }"
+      )
+    end
+  end
+
   describe "#add_exclusion" do
     it "allows users to specify exclusions that result in removed occurrences" do
       schedule.repeat_weekly(:sunday, time_of_day: { hour: 0, minute: 1, second: 2 }, duration_in_seconds: 300)
@@ -269,18 +297,6 @@ RSpec.describe Coruscate::Schedule do
               "Sun Jun 30 2024 04:02AM -1000",
               "Sun Jun 30 2024 05:02AM -1000"
            )
-    end
-
-    it "allows users to inspect occurrences" do
-      schedule.repeat_hourly(
-        initial_time_of_day: { hour: 1, minute: 2, second: 3 },
-        duration_in_seconds: 300
-      )
-
-      first_occurrence = schedule.occurrences.first
-      expect(first_occurrence.inspect).to eq(
-        "Occurrence { starts_at_unix_timestamp: 1719745323, ends_at_unix_timestamp: 1719745623 }"
-      )
     end
 
     it "generates an array of hourly occurrences across a DST change" do
