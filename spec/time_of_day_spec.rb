@@ -1,19 +1,23 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 RSpec.describe Coruscate::TimeOfDay do
-  describe ".new" do
+  describe "#initialize" do
     describe "errors" do
-      it "raises MissingArgumentError when no constructor params are given" do
-        expect { described_class.new }.to raise_error(Coruscate::TimeOfDay::MissingArgumentError)
+      it "raises UnsupportedTypeError when an unsupported time_of_day is given" do
+        expect { described_class.new(5) }.to raise_error(
+          Coruscate::TimeOfDay::UnsupportedTypeError, "Integer is not a supported type"
+        )
       end
 
       it "raises InvalidHashError when the hms_opts hash contains unexpected keys" do
-        expect { described_class.new(hms_opts: { years: 12 }) }.
+        expect { described_class.new({ years: 12 }) }.
           to raise_error(Coruscate::TimeOfDay::InvalidHashError)
       end
 
       it "raises RangeError when the time of day is out-of-range" do
-        expect { described_class.new(hms_opts: { hour: 25 }) }.
+        expect { described_class.new({ hour: 25 }) }.
           to raise_error(Coruscate::TimeOfDay::RangeError)
       end
     end
@@ -22,7 +26,7 @@ RSpec.describe Coruscate::TimeOfDay do
   describe "#to_h" do
     context "when initialized with a local time" do
       it "returns a hash representation of the local time" do
-        time_of_day = described_class.new(time: Time.new(2024, 6, 30, 8, 45, 10, "-10:00"))
+        time_of_day = described_class.new(Time.new(2024, 6, 30, 8, 45, 10, "-10:00"))
 
         expect(time_of_day.to_h).to eq(
           {
@@ -36,7 +40,7 @@ RSpec.describe Coruscate::TimeOfDay do
 
     context "when initialized with hms_opts" do
       it "returns default values of 0 for hms options that are not set" do
-        time_of_day = described_class.new(hms_opts: { minute: 30 })
+        time_of_day = described_class.new({ minute: 30 })
 
         expect(time_of_day.to_h).to eq(
           {
