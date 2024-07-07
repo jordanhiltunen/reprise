@@ -106,8 +106,12 @@ impl MutSchedule {
         self.0.write().recurring_series.push(RecurringSeries::Weekly(weekly_series));
     }
 
-    pub(crate) fn repeat_monthly_by_day(&self, day_number: u32, time_of_day_ruby_hash: RHash, duration_in_seconds: i64) {
-        let time_of_day = TimeOfDay::new_from_ruby_hash(time_of_day_ruby_hash);
+    pub(crate) fn repeat_monthly_by_day(&self, day_number: u32, kw: RHash) {
+        let args: scan_args::KwArgs<(RHash, i64), (), ()> = scan_args::get_kwargs(
+            kw, &["time_of_day", "duration_in_seconds"], &[],
+        ).unwrap();
+        let (time_of_day, duration_in_seconds): (RHash, i64) = args.required;
+        let time_of_day = TimeOfDay::new_from_ruby_hash(time_of_day);
         let monthly_series = MonthlyByDay::new(day_number, time_of_day, duration_in_seconds);
         self.0.write().recurring_series.push(RecurringSeries::MonthlyByDay(monthly_series));
     }
@@ -149,7 +153,7 @@ pub fn init() -> Result<(), Error> {
     class.define_method("add_exclusions", method!(MutSchedule::add_exclusions, 1))?;
     class.define_method("repeat_hourly", method!(MutSchedule::repeat_hourly, 1))?;
     class.define_method("repeat_weekly", method!(MutSchedule::repeat_weekly, 2))?;
-    class.define_method("repeat_monthly_by_day", method!(MutSchedule::repeat_monthly_by_day, 3))?;
+    class.define_method("repeat_monthly_by_day", method!(MutSchedule::repeat_monthly_by_day, 2))?;
     class.define_method("repeat_monthly_by_nth_weekday", method!(MutSchedule::repeat_monthly_by_nth_weekday, 4))?;
 
     Ok(())
