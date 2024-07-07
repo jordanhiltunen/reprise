@@ -8,12 +8,13 @@ require "benchmark/memory"
 
 RSpec.describe Coruscate::Schedule do
   subject(:schedule) do
-    Coruscate::Schedule.new(starts_at: starts_at, ends_at: ends_at, time_zone: time_zone)
+    Coruscate::Schedule.new(starts_at:, ends_at:, time_zone:)
   end
 
-  let(:starts_at) { Time.current.in_time_zone("Hawaii") }
-  let(:ends_at) { (Time.current + 4.weeks).in_time_zone("Hawaii") }
   let(:time_zone) { "Hawaii" }
+  let(:starts_at) { Time.current.in_time_zone(time_zone) }
+  let(:ends_at) { (Time.current + 4.weeks).in_time_zone(time_zone) }
+  let(:event_duration_in_seconds) { 300 }
 
   before { travel_to Time.new(2024, 6, 30, 0, 0, 0, "-10:00") } # Hawaii
 
@@ -25,8 +26,8 @@ RSpec.describe Coruscate::Schedule do
     context "when the time zone is invalid" do
       let(:time_zone) { "nonsense" }
 
-      it "raises a `TZInfo::InvalidTimezoneIdentifier` error" do
-        expect { schedule }.to raise_error(TZInfo::InvalidTimezoneIdentifier, "Invalid identifier: nonsense")
+      it "raises an ArgumentError" do
+        expect { schedule }.to raise_error(ArgumentError, "Invalid Timezone: nonsense")
       end
     end
 
@@ -34,8 +35,8 @@ RSpec.describe Coruscate::Schedule do
       # https://github.com/tzinfo/tzinfo/issues/53#issuecomment-235852722
       let(:time_zone) { "CEST" }
 
-      it "raises a `TZInfo::InvalidTimezoneIdentifier` error" do
-        expect { schedule }.to raise_error(TZInfo::InvalidTimezoneIdentifier, "Invalid identifier: CEST")
+      it "raises an ArgumentError" do
+        expect { schedule }.to raise_error(ArgumentError, "Invalid Timezone: CEST")
       end
     end
   end
@@ -54,9 +55,9 @@ RSpec.describe Coruscate::Schedule do
       first_occurrence = occurrences.first
 
       expect(first_occurrence.start_time).to be_a(Time)
-      expect(first_occurrence.start_time.in_time_zone("Hawaii").to_s).to eq("2024-06-30 00:01:02 -1000")
+      expect(first_occurrence.start_time.in_time_zone(time_zone).to_s).to eq("2024-06-30 00:01:02 -1000")
       expect(first_occurrence.end_time).to be_a(Time)
-      expect(first_occurrence.end_time.in_time_zone("Hawaii").to_s).to eq("2024-06-30 00:06:02 -1000")
+      expect(first_occurrence.end_time.in_time_zone(time_zone).to_s).to eq("2024-06-30 00:06:02 -1000")
     end
 
     it "exposes an #inspect method on the occurrences" do
@@ -82,8 +83,8 @@ RSpec.describe Coruscate::Schedule do
            )
 
       schedule.add_exclusion(
-        starts_at_unix_timestamp: (Time.current.in_time_zone("Hawaii") - 30.minutes).to_i,
-        ends_at_unix_timestamp: (Time.current.in_time_zone("Hawaii") + 5.minutes).to_i
+        starts_at_unix_timestamp: (Time.current.in_time_zone(time_zone) - 30.minutes).to_i,
+        ends_at_unix_timestamp: (Time.current.in_time_zone(time_zone) + 5.minutes).to_i
       )
 
       expect(schedule.occurrences.size).to eq(3)
@@ -112,12 +113,12 @@ RSpec.describe Coruscate::Schedule do
       schedule.add_exclusions(
         [
           [
-            (Time.current.in_time_zone("Hawaii") - 30.minutes).to_i,
-            (Time.current.in_time_zone("Hawaii") + 5.minutes).to_i
+            (Time.current.in_time_zone(time_zone) - 30.minutes).to_i,
+            (Time.current.in_time_zone(time_zone) + 5.minutes).to_i
           ],
           [
-            (Time.current.in_time_zone("Hawaii") + 7.days).to_i,
-            (Time.current.in_time_zone("Hawaii") + 8.days).to_i
+            (Time.current.in_time_zone(time_zone) + 7.days).to_i,
+            (Time.current.in_time_zone(time_zone) + 8.days).to_i
           ]
         ]
       )
@@ -139,7 +140,7 @@ RSpec.describe Coruscate::Schedule do
 
       expect(schedule.occurrences.size).to eq(11)
       expect(
-        schedule.occurrences.map { |o| o.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z") }
+        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
              "Tue Jul 16 2024 01:02AM -1000",
              "Tue Aug 20 2024 01:02AM -1000",
@@ -160,7 +161,7 @@ RSpec.describe Coruscate::Schedule do
 
       expect(schedule.occurrences.size).to eq(10)
       expect(
-        schedule.occurrences.map { |o| o.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z") }
+        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
              "Fri Jul 26 2024 01:02AM -1000",
              "Fri Aug 30 2024 01:02AM -1000",
@@ -181,7 +182,7 @@ RSpec.describe Coruscate::Schedule do
 
       expect(schedule.occurrences.size).to eq(4)
       expect(
-        schedule.occurrences.map { |o| o.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z") }
+        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
              "Wed Apr 30 2025 01:02AM -1000",
              "Wed Jan 29 2025 01:02AM -1000",
@@ -199,7 +200,7 @@ RSpec.describe Coruscate::Schedule do
 
       expect(schedule.occurrences.size).to eq(5)
       expect(
-        schedule.occurrences.map { |o| o.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z") }
+        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
              "Fri Jul 12 2024 01:02AM -1000",
              "Mon Aug 12 2024 01:02AM -1000",
@@ -214,7 +215,7 @@ RSpec.describe Coruscate::Schedule do
 
       expect(schedule.occurrences.size).to eq(4)
       expect(
-        schedule.occurrences.map { |o| o.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z") }
+        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
              "Wed Jul 31 2024 01:02AM -1000",
              "Sat Aug 31 2024 01:02AM -1000",
@@ -230,7 +231,7 @@ RSpec.describe Coruscate::Schedule do
 
       expect(schedule.occurrences.size).to eq(4)
       expect(
-        schedule.occurrences.map { |o| o.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z") }
+        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
              "Tue Jul  2 2024 01:02AM -1000",
              "Tue Jul  9 2024 01:02AM -1000",
@@ -244,7 +245,7 @@ RSpec.describe Coruscate::Schedule do
 
       expect(schedule.occurrences.size).to eq(4)
       expect(
-        schedule.occurrences.map { |o| o.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z") }
+        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
              "Tue Jul  2 2024 12:00AM -1000",
              "Tue Jul  9 2024 12:00AM -1000",
@@ -259,7 +260,7 @@ RSpec.describe Coruscate::Schedule do
 
       expect(schedule.occurrences.size).to eq(8)
       expect(
-        schedule.occurrences.map { |o| o.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z") }
+        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
              "Tue Jul  2 2024 01:02AM -1000",
              "Wed Jul  3 2024 02:03AM -1000",
@@ -303,7 +304,7 @@ RSpec.describe Coruscate::Schedule do
 
       expect(schedule.occurrences.size).to eq(5)
       expect(
-        schedule.occurrences.map { |o| o.start_time.in_time_zone("Hawaii").strftime("%a %b %e %Y %I:%M%p %z") }
+        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
               "Sun Jun 30 2024 01:02AM -1000",
               "Sun Jun 30 2024 02:02AM -1000",
