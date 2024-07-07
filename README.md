@@ -111,7 +111,7 @@ easily imported into GitHub pages.
 See: https://medium.com/make-school/a-cheatsheet-to-generate-documentation-for-your-rails-project-on-gh-pages-e28f6acfb9b9
 
 ```
-bundle exec yard doc -o ./docs
+bundle exec rake yard
 ```
 
 - [ ] TODO: When we have a decent 0.0.1, publish the yarddocs
