@@ -13,9 +13,8 @@ module Coruscate
     TIME_OF_DAY_ATTRIBUTES = DEFAULT_TIME_OF_DAY.keys.freeze
     attr_accessor *TIME_OF_DAY_ATTRIBUTES
 
-    # @private
     # @param [Time, Hash] time_of_day
-    #   Either a local time value from which the hour, minute, and second
+    #   Accepts either a local time value from which the hour, minute, and second
     #   should be derived, or a hash containing at least one of +hour+, +minute+,
     #   or +second+.
     # @option time_of_day [Integer] :hour, >= 0 && <= 23
