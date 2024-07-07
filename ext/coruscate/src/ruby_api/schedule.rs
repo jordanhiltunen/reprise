@@ -39,6 +39,13 @@ pub(crate) struct Schedule {
     pub(crate) time_zone: Tz,
     pub(crate) occurrences: Vec<Occurrence>,
     pub(crate) sorted_exclusions: SortedExclusions,
+    // There may be magnus-related quirks that make it more difficult to idiomatically accrete
+    // a collection of recurring series (e.g. something like Vec<dyn Recurrable> instead of
+    // using an enum; that will require lifetimes, and magnus does not currently support lifetimes
+    // on wrapped classes.
+    // - > error: deriving TypedData is not guaranteed to be correct for types with lifetimes,
+    //   > consider removing them, or use `#[magnus(unsafe_generics)]` to override this error.
+    // - cf. https://stackoverflow.com/a/58487065
     pub(crate) recurring_series: Vec<RecurringSeries>
 }
 
