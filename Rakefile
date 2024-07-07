@@ -4,11 +4,11 @@ require "bundler/gem_tasks"
 require "rspec/core/rake_task"
 require "rake/testtask"
 require "rake/extensiontask"
+require "yard"
 
 Rake.add_rakelib("lib/tasks")
 
 RSpec::Core::RakeTask.new(:spec)
-
 task :default => :spec
 
 task :dev do
@@ -34,6 +34,10 @@ Rake::ExtensionTask.new("coruscate", gemspec) do |ext|
     spec.dependencies.reject! { |dep| dep.name == "rb_sys" }
     spec.files.reject! { |file| File.fnmatch?("ext/*", file, File::FNM_EXTGLOB) }
   end
+end
+
+YARD::Rake::YardocTask.new do |t|
+  t.options = %w[--output-dir ./docs]
 end
 
 task :remove_ext do
