@@ -1,4 +1,4 @@
-use magnus::{class, Error, method, Module, Ruby, Time};
+use magnus::{class, Error, method, Module, Ruby, Time, typed_data};
 use crate::ruby_api::traits::HasOverlapAwareness;
 use crate::ruby_api::ruby_modules;
 
@@ -44,6 +44,7 @@ pub fn init() -> Result<(), Error> {
     let occurrence_class = ruby_modules::coruscate_core().define_class("Occurrence", class::object())?;
     occurrence_class.define_method("start_time", method!(Occurrence::start_time, 0))?;
     occurrence_class.define_method("end_time", method!(Occurrence::end_time, 0))?;
+    occurrence_class.define_method("inspect", method!(<Occurrence as typed_data::Inspect>::inspect, 0))?;
 
     Ok(())
 }
