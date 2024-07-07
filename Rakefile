@@ -5,15 +5,11 @@ require "rspec/core/rake_task"
 require "rake/testtask"
 require "rake/extensiontask"
 
-# Rake.add_rakelib("lib/tasks")
+Rake.add_rakelib("lib/tasks")
 
 RSpec::Core::RakeTask.new(:spec)
 
 task :default => :spec
-
-# Rake::ExtensionTask.new("coruscate") do |c|
-#   c.lib_dir = "lib/coruscate"
-# end
 
 task :dev do
   ENV["RB_SYS_CARGO_PROFILE"] = "dev"
