@@ -55,7 +55,7 @@ module Coruscate
     def repeat_weekly(weekday, time_of_day: nil, duration_in_seconds:)
       internal_schedule.repeat_weekly(
         weekday,
-        time_of_day: TimeOfDay.new(time_of_day || starts_at),
+        time_of_day: TimeOfDay.new(time_of_day || starts_at).to_h,
         duration_in_seconds:
       )
     end
@@ -64,10 +64,10 @@ module Coruscate
     # @!macro time_of_day
     # @param duration_in_seconds [Integer]
     # @return [void]
-    def repeat_monthly_by_day(day_number:, time_of_day:, duration_in_seconds:)
-      internal_schedule.repeat_weekly(
+    def repeat_monthly_by_day(day_number, time_of_day:, duration_in_seconds:)
+      internal_schedule.repeat_monthly_by_day(
         day_number,
-        time_of_day: TimeOfDay.new(time_of_day || starts_at),
+        time_of_day: TimeOfDay.new(time_of_day || starts_at).to_h,
         duration_in_seconds:
       )
     end
@@ -76,8 +76,6 @@ module Coruscate
                    :add_exclusion,
                    :add_exclusions,
                    :repeat_hourly,
-                   :repeat_weekly,
-                   :repeat_monthly_by_day,
                    :repeat_monthly_by_nth_weekday
 
     private
