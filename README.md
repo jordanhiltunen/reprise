@@ -119,33 +119,9 @@ bundle exec rake yard
 
 ## Benchmarks
 
-```
-rake benchmark
-```
+You can run benchmarks locally via `bundle exec rake benchmark`.
 
-```
-"Benchmarking Iterations Per Second (IPS)"
-ruby 3.3.2 (2024-05-30 revision e5a195edf6) [x86_64-darwin23]
-Warming up --------------------------------------
-            IceCube:     5.000 i/100ms
-          Coruscate:     1.829k i/100ms
-Calculating -------------------------------------
-            IceCube:     49.747 (± 6.0%) i/s -    250.000 in   5.046194s
-          Coruscate:     16.962k (± 9.1%) i/s -     84.134k in   5.008231s
-"Benchmarking Memory Use"
-Calculating -------------------------------------
-            IceCube:     2.126M memsize (     4.752k retained)
-                        36.324k objects (    47.000  retained)
-                        10.000  strings (     1.000  retained)
-          Coruscate:     9.296k memsize (   320.000  retained)
-                       165.000  objects (     7.000  retained)
-                         4.000  strings (     1.000  retained)
-
-Comparison:
-          Coruscate::       9296 allocated
-            IceCube::    2126296 allocated - 228.73x more
-
-```
+To view a list of past benchmarking results in CI, see [past runs of our Benchmark worfklow](https://github.com/jordanhiltunen/coruscate/actions/workflows/benchmark.yml).
 
 ## Contributing
 
