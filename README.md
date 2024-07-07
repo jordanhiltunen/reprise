@@ -3,7 +3,7 @@
 > /ˈkɒɹəskeɪt/
 > (intransitive) To give off light; to reflect in flashes; to sparkle.
 
-Coruscate is a shiny schedule expansion library that pursues style over substance.
+Coruscate is a shiny schedule expansion library that pursues speed first and foremost.
 While battle-tested gems like IceCube and Montrose provide incredibly flexible APIs
 to allow client applications to idiomatically construct recurring schedules with ease,
 Coruscate offers a very sparse API, opting instead to pursue blazingly-fast schedule
