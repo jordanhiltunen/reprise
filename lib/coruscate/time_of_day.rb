@@ -23,7 +23,7 @@ module Coruscate
     # @option hms_opts [Integer] :second, >= 0 && <= 59
     # @example
     #   { hour: 1, minute: 30, second: 15 }
-    # @raise [MissingArgumentError] if neither <code>time</code> nor an <code>hms_opts</code> hash is present.
+    # @raise [MissingArgumentError] if neither +time+ nor an +hms_opts+ hash is present.
     # @raise [InvalidHashError] if the hash representation of the time is invalid.
     # @raise [RangeError] if either the hour, minute, or second is out-of-range.
     def initialize(time: nil, hms_opts: {})
