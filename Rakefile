@@ -5,7 +5,7 @@ require "rspec/core/rake_task"
 require "rake/testtask"
 require "rake/extensiontask"
 
-Rake.add_rakelib("lib/tasks")
+# Rake.add_rakelib("lib/tasks")
 
 RSpec::Core::RakeTask.new(:spec)
 
