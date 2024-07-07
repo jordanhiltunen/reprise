@@ -22,7 +22,7 @@ task :benchmark do
   end
 
   ice_cube_schedule = IceCube::Schedule.new(schedule_start_time, end_time: schedule_end_time)
-  weekdays.each { |w|  ice_cube_schedule.add_recurrence_rule(IceCube::Rule.weekly(1).day(w).until(schedule_end_time)) }
+  weekdays.each { |w| ice_cube_schedule.add_recurrence_rule(IceCube::Rule.weekly(1).day(w).until(schedule_end_time)) }
   exclusions.each { |e| ice_cube_schedule.add_exception_time(e) }
 
   montrose_schedule = Montrose::Schedule.build do |s|
