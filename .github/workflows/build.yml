@@ -17,5 +17,5 @@ jobs:
           ruby-version: 3.3
           bundler-cache: true
       - run: bundle exec rake compile:coruscate
-      - run: bundle exec rspec
+      - run: bundle exec rspec --color
 #      - run: bundle exec yard --fail-on-warning # will restore when documentation is complete
