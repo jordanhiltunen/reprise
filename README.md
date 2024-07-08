@@ -3,6 +3,8 @@
 > /ˈkɒɹəskeɪt/
 > (intransitive) To give off light; to reflect in flashes; to sparkle.
 
+[![build](https://github.com/jordanhiltunen/coruscate/actions/workflows/build.yml/badge.svg)](https://github.com/jordanhiltunen/coruscate/actions/workflows/build.yml)
+
 Coruscate is a shiny schedule expansion library that pursues speed first and foremost.
 While battle-tested gems like IceCube and Montrose provide incredibly flexible APIs
 to allow client applications to idiomatically construct recurring schedules with ease,
