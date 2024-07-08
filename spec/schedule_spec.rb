@@ -217,6 +217,32 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
     end
   end
 
+  describe "#repeat_daily" do
+    let(:ends_at) { starts_at + 12.days }
+
+    it "generates an array of daily occurrences" do
+      schedule.repeat_daily(time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
+
+      expect(schedule.occurrences.size).to eq(12)
+      expect(
+        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
+      ).to contain_exactly(
+               "Sun Jun 30 2024 01:02AM -1000",
+               "Mon Jul  1 2024 01:02AM -1000",
+               "Tue Jul  2 2024 01:02AM -1000",
+               "Wed Jul  3 2024 01:02AM -1000",
+               "Thu Jul  4 2024 01:02AM -1000",
+               "Fri Jul  5 2024 01:02AM -1000",
+               "Sat Jul  6 2024 01:02AM -1000",
+               "Sun Jul  7 2024 01:02AM -1000",
+               "Mon Jul  8 2024 01:02AM -1000",
+               "Tue Jul  9 2024 01:02AM -1000",
+               "Wed Jul 10 2024 01:02AM -1000",
+               "Thu Jul 11 2024 01:02AM -1000"
+           )
+    end
+  end
+
   describe "#repeat_weekly" do
     it "generates an array of weekly occurrences" do
       schedule.repeat_weekly(:tuesday, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
