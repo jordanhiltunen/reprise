@@ -6,7 +6,7 @@ require "ice_cube"
 require "benchmark/ips"
 require "benchmark/memory"
 
-RSpec.describe Coruscate::Schedule do
+RSpec.describe Coruscate::Schedule, aggregate_failures: true do
   subject(:schedule) { Coruscate::Schedule.new(starts_at:, ends_at:, time_zone:) }
 
   let(:time_zone) { "Hawaii" }
