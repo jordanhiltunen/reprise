@@ -7,6 +7,9 @@ module Coruscate
 
   class Schedule
     extend ::Forwardable
+    # @!macro [new] weekday
+    #   @param weekday [Symbol] Accepts +:monday+, +:tuesday+, +:wednesday+, +:thursday+, or +:friday+.
+
     # @!macro [new] time_of_day
     #   @param time_of_day [Hash,Time,nil]
     #     Either a local time value from which the hour, minute, and second
@@ -48,7 +51,7 @@ module Coruscate
       internal_schedule.occurrences
     end
 
-    # @param weekday [Symbol] Accepts +:monday+, +:tuesday+, +:wednesday+, +:thursday+, or +:friday+.
+    # @!macro weekday
     # @!macro time_of_day
     # @param duration_in_seconds [Integer]
     # @return [void]
@@ -72,11 +75,24 @@ module Coruscate
       )
     end
 
+    # @!macro weekday
+    # @param nth_day [Integer] The nth weekday, 0-indexed; e.g. 0 might represent the first wednesday
+    # @!macro time_of_day
+    # @param duration_in_seconds [Integer]
+    # @return [void]
+    def repeat_monthly_by_nth_weekday(weekday, nth_day, time_of_day:, duration_in_seconds:)
+      internal_schedule.repeat_monthly_by_nth_weekday(
+        weekday,
+        nth_day,
+        time_of_day: TimeOfDay.new(time_of_day || starts_at).to_h,
+        duration_in_seconds:
+      )
+    end
+
     def_delegators :internal_schedule,
                    :add_exclusion,
                    :add_exclusions,
-                   :repeat_hourly,
-                   :repeat_monthly_by_nth_weekday
+                   :repeat_hourly
 
     private
 

@@ -134,7 +134,7 @@ RSpec.describe Coruscate::Schedule do
     let(:ends_at) { Time.current + 11.months }
 
     it "generates an array of monthly occurrences with a fixed weekday" do
-      schedule.repeat_monthly_by_nth_weekday(:tuesday, 2, { hour: 1, minute: 2, second: 3 }, 300)
+      schedule.repeat_monthly_by_nth_weekday(:tuesday, 2, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
 
       expect(schedule.occurrences.size).to eq(11)
       expect(
@@ -155,7 +155,7 @@ RSpec.describe Coruscate::Schedule do
     end
 
     it "allows negative indexing into the monthly occurrences" do
-      schedule.repeat_monthly_by_nth_weekday(:friday, -1, { hour: 1, minute: 2, second: 3 }, 300)
+      schedule.repeat_monthly_by_nth_weekday(:friday, -1, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
 
       expect(schedule.occurrences.size).to eq(10)
       expect(
@@ -176,7 +176,7 @@ RSpec.describe Coruscate::Schedule do
 
     it "can handle nth weekday edge cases that do not occur every month" do
       # The fifth (NB: 4; zeroth indexing) wednesday of a month is relatively rare.
-      schedule.repeat_monthly_by_nth_weekday(:wednesday, 4, { hour: 1, minute: 2, second: 3 }, 300)
+      schedule.repeat_monthly_by_nth_weekday(:wednesday, 4, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
 
       expect(schedule.occurrences.size).to eq(4)
       expect(

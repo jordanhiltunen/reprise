@@ -142,10 +142,12 @@ impl MutSchedule {
         &self,
         weekday_symbol: Symbol,
         nth_day: i32,
-        time_of_day_ruby_hash: RHash,
-        duration_in_seconds: i64,
+        kw: RHash
     ) {
-        let time_of_day = TimeOfDay::new_from_ruby_hash(time_of_day_ruby_hash);
+        let args: scan_args::KwArgs<(RHash, i64), (), ()> =
+            scan_args::get_kwargs(kw, &["time_of_day", "duration_in_seconds"], &[]).unwrap();
+        let (time_of_day, duration_in_seconds): (RHash, i64) = args.required;
+        let time_of_day = TimeOfDay::new_from_ruby_hash(time_of_day);
         let monthly_by_nth_weekday_series =
             MonthlyByNthWeekday::new(weekday_symbol, nth_day, time_of_day, duration_in_seconds);
         self.0
@@ -210,7 +212,7 @@ pub fn init() -> Result<(), Error> {
     )?;
     class.define_method(
         "repeat_monthly_by_nth_weekday",
-        method!(MutSchedule::repeat_monthly_by_nth_weekday, 4),
+        method!(MutSchedule::repeat_monthly_by_nth_weekday, 3),
     )?;
 
     Ok(())
