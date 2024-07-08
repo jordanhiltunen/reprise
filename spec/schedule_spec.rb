@@ -130,6 +130,161 @@ RSpec.describe Coruscate::Schedule do
     end
   end
 
+  describe "#repeat_hourly" do
+    let(:ends_at) { Time.current + 12.hours }
+
+    it "generates an array of hourly occurrences" do
+      schedule.repeat_hourly(
+        initial_time_of_day: { hour: 1, minute: 2, second: 3 },
+        duration_in_seconds: 300
+      )
+
+      expect(schedule.occurrences.size).to eq(11)
+      expect(
+        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
+      ).to contain_exactly(
+             "Sun Jun 30 2024 01:02AM -1000",
+             "Sun Jun 30 2024 02:02AM -1000",
+             "Sun Jun 30 2024 03:02AM -1000",
+             "Sun Jun 30 2024 04:02AM -1000",
+             "Sun Jun 30 2024 05:02AM -1000",
+             "Sun Jun 30 2024 06:02AM -1000",
+             "Sun Jun 30 2024 07:02AM -1000",
+             "Sun Jun 30 2024 08:02AM -1000",
+             "Sun Jun 30 2024 09:02AM -1000",
+             "Sun Jun 30 2024 10:02AM -1000",
+             "Sun Jun 30 2024 11:02AM -1000"
+           )
+    end
+
+    context "when the schedule straddles a DST change" do
+      let(:starts_at) { Time.new(2024, 3, 9, 22, 0, 0) }
+      let(:ends_at) { starts_at + 12.hours }
+      let(:time_zone) { "America/Los_Angeles" }
+
+      it "generates an array of hourly occurrences across a DST change" do
+        schedule.repeat_hourly(
+          initial_time_of_day: { hour: 22, minute: 2, second: 3 },
+          duration_in_seconds: 300
+        )
+
+        expect(schedule.occurrences.size).to eq(9)
+        expect(
+          schedule.occurrences.map { |o| localized_occurrence_start_time(o) }
+        ).to contain_exactly(
+               "Sat Mar  9 2024 10:02PM -0800",
+               "Sat Mar  9 2024 11:02PM -0800",
+               "Sun Mar 10 2024 01:02AM -0800",
+               # N.B. Notice the DST jump to 3:02 AM.
+               # https://www.timeanddate.com/news/time/usa-start-dst-2024.html
+               "Sun Mar 10 2024 03:02AM -0700",
+               "Sun Mar 10 2024 04:02AM -0700",
+               "Sun Mar 10 2024 05:02AM -0700",
+               "Sun Mar 10 2024 06:02AM -0700",
+               "Sun Mar 10 2024 07:02AM -0700",
+               "Sun Mar 10 2024 12:02AM -0800"
+             )
+      end
+    end
+
+    context "when the schedule straddles a Standard Time change" do
+      let(:starts_at) { Time.new(2024, 11, 2, 22, 0, 0) }
+      let(:ends_at) { starts_at + 12.hours }
+      let(:time_zone) { "America/Los_Angeles" }
+
+      it "generates an array of hourly occurrences across a Standard Time change" do
+        schedule.repeat_hourly(
+          initial_time_of_day: { hour: 22, minute: 2, second: 3 },
+          duration_in_seconds: 300
+        )
+
+        expect(schedule.occurrences.size).to eq(9)
+        expect(
+          schedule.occurrences.map { |o| localized_occurrence_start_time(o) }
+        ).to contain_exactly(
+               "Sat Nov  2 2024 10:02PM -0700",
+               "Sat Nov  2 2024 11:02PM -0700",
+               "Sun Nov  3 2024 12:02AM -0700",
+               "Sun Nov  3 2024 01:02AM -0700",
+               # N.B. Note the jump one hour back
+               "Sun Nov  3 2024 01:02AM -0800",
+               "Sun Nov  3 2024 02:02AM -0800",
+               "Sun Nov  3 2024 03:02AM -0800",
+               "Sun Nov  3 2024 04:02AM -0800",
+               "Sun Nov  3 2024 05:02AM -0800",
+               )
+      end
+    end
+  end
+
+  describe "#repeat_weekly" do
+    it "generates an array of weekly occurrences" do
+      schedule.repeat_weekly(:tuesday, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
+
+      expect(schedule.occurrences.size).to eq(4)
+      expect(
+        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
+      ).to contain_exactly(
+             "Tue Jul  2 2024 01:02AM -1000",
+             "Tue Jul  9 2024 01:02AM -1000",
+             "Tue Jul 16 2024 01:02AM -1000",
+             "Tue Jul 23 2024 01:02AM -1000"
+           )
+    end
+
+    it "will use the start time of the schedule if a time_of_day for the series is not given" do
+      schedule.repeat_weekly(:tuesday, duration_in_seconds: 300)
+
+      expect(schedule.occurrences.size).to eq(4)
+      expect(
+        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
+      ).to contain_exactly(
+             "Tue Jul  2 2024 12:00AM -1000",
+             "Tue Jul  9 2024 12:00AM -1000",
+             "Tue Jul 16 2024 12:00AM -1000",
+             "Tue Jul 23 2024 12:00AM -1000"
+           )
+    end
+
+    it "supports the accumulation of occurrences from multiple recurring series" do
+      schedule.repeat_weekly(:tuesday, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
+      schedule.repeat_weekly(:wednesday, time_of_day: { hour: 2, minute: 3, second: 4 }, duration_in_seconds: 300)
+
+      expect(schedule.occurrences.size).to eq(8)
+      expect(
+        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
+      ).to contain_exactly(
+             "Tue Jul  2 2024 01:02AM -1000",
+             "Wed Jul  3 2024 02:03AM -1000",
+             "Tue Jul  9 2024 01:02AM -1000",
+             "Wed Jul 10 2024 02:03AM -1000",
+             "Tue Jul 16 2024 01:02AM -1000",
+             "Wed Jul 17 2024 02:03AM -1000",
+             "Tue Jul 23 2024 01:02AM -1000",
+             "Wed Jul 24 2024 02:03AM -1000"
+           )
+    end
+
+    context "when the schedule crosses a daylight savings change" do
+      let(:starts_at) { Time.new(2024, 3, 2, 0, 0, 0) }
+      let(:ends_at) { starts_at + 4.weeks }
+      let(:time_zone) { "America/Los_Angeles" }
+
+      it "holds the local occurrence time constant across the DST change" do
+        schedule.repeat_weekly(:sunday, time_of_day: { hour: 0, minute: 1, second: 2 }, duration_in_seconds: 300)
+
+        expect(
+          schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
+        ).to contain_exactly(
+               "Sun Mar  3 2024 12:01AM -0800",
+               "Sun Mar 10 2024 12:01AM -0800",
+               "Sun Mar 17 2024 12:01AM -0700",
+               "Sun Mar 24 2024 12:01AM -0700"
+             )
+      end
+    end
+  end
+
   describe "#repeat_monthly_by_nth_weekday" do
     let(:ends_at) { Time.current + 11.months }
 
@@ -220,161 +375,6 @@ RSpec.describe Coruscate::Schedule do
              "Mon Sep 30 2024 01:02AM -1000", # UGH
              "Wed Oct 30 2024 01:02AM -1000"
            )
-    end
-  end
-
-  describe "#repeat_weekly" do
-    it "generates an array of weekly occurrences" do
-      schedule.repeat_weekly(:tuesday, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
-
-      expect(schedule.occurrences.size).to eq(4)
-      expect(
-        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
-      ).to contain_exactly(
-             "Tue Jul  2 2024 01:02AM -1000",
-             "Tue Jul  9 2024 01:02AM -1000",
-             "Tue Jul 16 2024 01:02AM -1000",
-             "Tue Jul 23 2024 01:02AM -1000"
-           )
-    end
-
-    it "will use the start time of the schedule if a time_of_day for the series is not given" do
-      schedule.repeat_weekly(:tuesday, duration_in_seconds: 300)
-
-      expect(schedule.occurrences.size).to eq(4)
-      expect(
-        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
-      ).to contain_exactly(
-             "Tue Jul  2 2024 12:00AM -1000",
-             "Tue Jul  9 2024 12:00AM -1000",
-             "Tue Jul 16 2024 12:00AM -1000",
-             "Tue Jul 23 2024 12:00AM -1000"
-           )
-    end
-
-    it "supports the accumulation of occurrences from multiple recurring series" do
-      schedule.repeat_weekly(:tuesday, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
-      schedule.repeat_weekly(:wednesday, time_of_day: { hour: 2, minute: 3, second: 4 }, duration_in_seconds: 300)
-
-      expect(schedule.occurrences.size).to eq(8)
-      expect(
-        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
-      ).to contain_exactly(
-             "Tue Jul  2 2024 01:02AM -1000",
-             "Wed Jul  3 2024 02:03AM -1000",
-             "Tue Jul  9 2024 01:02AM -1000",
-             "Wed Jul 10 2024 02:03AM -1000",
-             "Tue Jul 16 2024 01:02AM -1000",
-             "Wed Jul 17 2024 02:03AM -1000",
-             "Tue Jul 23 2024 01:02AM -1000",
-             "Wed Jul 24 2024 02:03AM -1000"
-           )
-    end
-
-    context "when the schedule crosses a daylight savings change" do
-      let(:starts_at) { Time.new(2024, 3, 2, 0, 0, 0) }
-      let(:ends_at) { starts_at + 4.weeks }
-      let(:time_zone) { "America/Los_Angeles" }
-
-      it "holds the local occurrence time constant across the DST change" do
-        schedule.repeat_weekly(:sunday, time_of_day: { hour: 0, minute: 1, second: 2 }, duration_in_seconds: 300)
-
-        expect(
-          schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
-        ).to contain_exactly(
-               "Sun Mar  3 2024 12:01AM -0800",
-               "Sun Mar 10 2024 12:01AM -0800",
-               "Sun Mar 17 2024 12:01AM -0700",
-               "Sun Mar 24 2024 12:01AM -0700"
-             )
-      end
-    end
-  end
-
-  describe "#repeat_hourly" do
-    let(:ends_at) { Time.current + 12.hours }
-
-    it "generates an array of hourly occurrences" do
-      schedule.repeat_hourly(
-        initial_time_of_day: { hour: 1, minute: 2, second: 3 },
-        duration_in_seconds: 300
-      )
-
-      expect(schedule.occurrences.size).to eq(11)
-      expect(
-        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
-      ).to contain_exactly(
-             "Sun Jun 30 2024 01:02AM -1000",
-             "Sun Jun 30 2024 02:02AM -1000",
-             "Sun Jun 30 2024 03:02AM -1000",
-             "Sun Jun 30 2024 04:02AM -1000",
-             "Sun Jun 30 2024 05:02AM -1000",
-             "Sun Jun 30 2024 06:02AM -1000",
-             "Sun Jun 30 2024 07:02AM -1000",
-             "Sun Jun 30 2024 08:02AM -1000",
-             "Sun Jun 30 2024 09:02AM -1000",
-             "Sun Jun 30 2024 10:02AM -1000",
-             "Sun Jun 30 2024 11:02AM -1000"
-      )
-    end
-
-    context "when the schedule straddles a DST change" do
-      let(:starts_at) { Time.new(2024, 3, 9, 22, 0, 0) }
-      let(:ends_at) { starts_at + 12.hours }
-      let(:time_zone) { "America/Los_Angeles" }
-
-      it "generates an array of hourly occurrences across a DST change" do
-        schedule.repeat_hourly(
-          initial_time_of_day: { hour: 22, minute: 2, second: 3 },
-          duration_in_seconds: 300
-        )
-
-        expect(schedule.occurrences.size).to eq(9)
-        expect(
-          schedule.occurrences.map { |o| localized_occurrence_start_time(o) }
-        ).to contain_exactly(
-               "Sat Mar  9 2024 10:02PM -0800",
-               "Sat Mar  9 2024 11:02PM -0800",
-               "Sun Mar 10 2024 01:02AM -0800",
-               # N.B. Notice the DST jump to 3:02 AM.
-               # https://www.timeanddate.com/news/time/usa-start-dst-2024.html
-               "Sun Mar 10 2024 03:02AM -0700",
-               "Sun Mar 10 2024 04:02AM -0700",
-               "Sun Mar 10 2024 05:02AM -0700",
-               "Sun Mar 10 2024 06:02AM -0700",
-               "Sun Mar 10 2024 07:02AM -0700",
-               "Sun Mar 10 2024 12:02AM -0800"
-             )
-      end
-    end
-
-    context "when the schedule straddles a Standard Time change" do
-      let(:starts_at) { Time.new(2024, 11, 2, 22, 0, 0) }
-      let(:ends_at) { starts_at + 12.hours }
-      let(:time_zone) { "America/Los_Angeles" }
-
-      it "generates an array of hourly occurrences across a Standard Time change" do
-        schedule.repeat_hourly(
-          initial_time_of_day: { hour: 22, minute: 2, second: 3 },
-          duration_in_seconds: 300
-        )
-
-        expect(schedule.occurrences.size).to eq(9)
-        expect(
-          schedule.occurrences.map { |o| localized_occurrence_start_time(o) }
-        ).to contain_exactly(
-               "Sat Nov  2 2024 10:02PM -0700",
-               "Sat Nov  2 2024 11:02PM -0700",
-               "Sun Nov  3 2024 12:02AM -0700",
-               "Sun Nov  3 2024 01:02AM -0700",
-               # N.B. Note the jump one hour back
-               "Sun Nov  3 2024 01:02AM -0800",
-               "Sun Nov  3 2024 02:02AM -0800",
-               "Sun Nov  3 2024 03:02AM -0800",
-               "Sun Nov  3 2024 04:02AM -0800",
-               "Sun Nov  3 2024 05:02AM -0800",
-            )
-      end
     end
   end
 end
