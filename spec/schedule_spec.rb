@@ -219,7 +219,7 @@ RSpec.describe Coruscate::Schedule do
              "Sat Aug 31 2024 01:02AM -1000",
              "Mon Sep 30 2024 01:02AM -1000", # UGH
              "Wed Oct 30 2024 01:02AM -1000"
-      )
+           )
     end
   end
 
@@ -272,9 +272,9 @@ RSpec.describe Coruscate::Schedule do
     end
 
     context "when the schedule crosses a daylight savings change" do
-      let!(:starts_at) { Time.new(2024, 3, 2, 0, 0, 0) }
-      let!(:ends_at) { starts_at + 4.weeks }
-      let!(:time_zone) { "America/Los_Angeles" }
+      let(:starts_at) { Time.new(2024, 3, 2, 0, 0, 0) }
+      let(:ends_at) { starts_at + 4.weeks }
+      let(:time_zone) { "America/Los_Angeles" }
 
       it "holds the local occurrence time constant across the DST change" do
         schedule.repeat_weekly(:sunday, time_of_day: { hour: 0, minute: 1, second: 2 }, duration_in_seconds: 300)
@@ -304,18 +304,18 @@ RSpec.describe Coruscate::Schedule do
       expect(
         schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
-              "Sun Jun 30 2024 01:02AM -1000",
-              "Sun Jun 30 2024 02:02AM -1000",
-              "Sun Jun 30 2024 03:02AM -1000",
-              "Sun Jun 30 2024 04:02AM -1000",
-              "Sun Jun 30 2024 05:02AM -1000"
+             "Sun Jun 30 2024 01:02AM -1000",
+             "Sun Jun 30 2024 02:02AM -1000",
+             "Sun Jun 30 2024 03:02AM -1000",
+             "Sun Jun 30 2024 04:02AM -1000",
+             "Sun Jun 30 2024 05:02AM -1000"
            )
     end
 
     context "when the schedule straddles a DST change" do
-      let!(:starts_at) { Time.new(2024, 3, 9, 22, 0, 0) }
-      let!(:ends_at) { starts_at + 12.hours }
-      let!(:time_zone) { "America/Los_Angeles" }
+      let(:starts_at) { Time.new(2024, 3, 9, 22, 0, 0) }
+      let(:ends_at) { starts_at + 12.hours }
+      let(:time_zone) { "America/Los_Angeles" }
 
       it "generates an array of hourly occurrences across a DST change" do
         schedule.repeat_hourly(
@@ -343,9 +343,9 @@ RSpec.describe Coruscate::Schedule do
     end
 
     context "when the schedule straddles a Standard Time change" do
-      let!(:starts_at) { Time.new(2024, 11, 2, 22, 0, 0) }
-      let!(:ends_at) { starts_at + 12.hours }
-      let!(:time_zone) { "America/Los_Angeles" }
+      let(:starts_at) { Time.new(2024, 11, 2, 22, 0, 0) }
+      let(:ends_at) { starts_at + 12.hours }
+      let(:time_zone) { "America/Los_Angeles" }
 
       it "generates an array of hourly occurrences across a Standard Time change" do
         schedule.repeat_hourly(
