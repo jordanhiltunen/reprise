@@ -292,7 +292,7 @@ RSpec.describe Coruscate::Schedule do
   end
 
   describe "#repeat_hourly" do
-    let(:ends_at) { Time.current + 6.hours }
+    let(:ends_at) { Time.current + 12.hours }
 
     it "generates an array of hourly occurrences" do
       schedule.repeat_hourly(
@@ -300,7 +300,7 @@ RSpec.describe Coruscate::Schedule do
         duration_in_seconds: 300
       )
 
-      expect(schedule.occurrences.size).to eq(5)
+      expect(schedule.occurrences.size).to eq(11)
       expect(
         schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
@@ -308,8 +308,14 @@ RSpec.describe Coruscate::Schedule do
              "Sun Jun 30 2024 02:02AM -1000",
              "Sun Jun 30 2024 03:02AM -1000",
              "Sun Jun 30 2024 04:02AM -1000",
-             "Sun Jun 30 2024 05:02AM -1000"
-           )
+             "Sun Jun 30 2024 05:02AM -1000",
+             "Sun Jun 30 2024 06:02AM -1000",
+             "Sun Jun 30 2024 07:02AM -1000",
+             "Sun Jun 30 2024 08:02AM -1000",
+             "Sun Jun 30 2024 09:02AM -1000",
+             "Sun Jun 30 2024 10:02AM -1000",
+             "Sun Jun 30 2024 11:02AM -1000"
+      )
     end
 
     context "when the schedule straddles a DST change" do
@@ -323,7 +329,7 @@ RSpec.describe Coruscate::Schedule do
           duration_in_seconds: 300
         )
 
-        # expect(schedule.occurrences.size).to eq(9) # TEMP
+        expect(schedule.occurrences.size).to eq(9)
         expect(
           schedule.occurrences.map { |o| localized_occurrence_start_time(o) }
         ).to contain_exactly(
@@ -353,7 +359,7 @@ RSpec.describe Coruscate::Schedule do
           duration_in_seconds: 300
         )
 
-        # expect(schedule.occurrences.size).to eq(9) # TEMP
+        expect(schedule.occurrences.size).to eq(9)
         expect(
           schedule.occurrences.map { |o| localized_occurrence_start_time(o) }
         ).to contain_exactly(
