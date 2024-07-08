@@ -7,9 +7,7 @@ require "benchmark/ips"
 require "benchmark/memory"
 
 RSpec.describe Coruscate::Schedule do
-  subject(:schedule) do
-    Coruscate::Schedule.new(starts_at:, ends_at:, time_zone:)
-  end
+  subject(:schedule) { Coruscate::Schedule.new(starts_at:, ends_at:, time_zone:) }
 
   let(:time_zone) { "Hawaii" }
   let(:starts_at) { Time.current.in_time_zone(time_zone) }
