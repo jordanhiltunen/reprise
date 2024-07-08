@@ -15,6 +15,7 @@ use magnus::{class, function, method};
 use magnus::{scan_args, Error, Module, RHash, Symbol};
 use parking_lot::RwLock;
 use std::sync::Arc;
+use crate::ruby_api::recurring_series::daily::Daily;
 
 type UnixTimestamp = i64;
 type Second = i64;
@@ -22,6 +23,7 @@ type Second = i64;
 #[derive(Debug, Clone)]
 enum RecurringSeries {
     Hourly(Hourly),
+    Daily(Daily),
     Weekly(Weekly),
     MonthlyByDay(MonthlyByDay),
     MonthlyByNthWeekday(MonthlyByNthWeekday),
@@ -114,6 +116,19 @@ impl MutSchedule {
             .push(RecurringSeries::Hourly(hourly_series));
     }
 
+    pub(crate) fn repeat_daily(&self, kw: RHash) {
+        let args: scan_args::KwArgs<(RHash, i64), (), ()> =
+            scan_args::get_kwargs(kw, &["time_of_day", "duration_in_seconds"], &[])
+                .unwrap();
+        let (time_of_day, duration_in_seconds): (RHash, i64) = args.required;
+        let time_of_day = TimeOfDay::new_from_ruby_hash(time_of_day);
+        let daily_series = Daily::new(time_of_day, duration_in_seconds);
+        self.0
+            .write()
+            .recurring_series
+            .push(RecurringSeries::Daily(daily_series));
+    }
+
     pub(crate) fn repeat_weekly(&self, weekday_symbol: Symbol, kw: RHash) {
         let args: scan_args::KwArgs<(RHash, i64), (), ()> =
             scan_args::get_kwargs(kw, &["time_of_day", "duration_in_seconds"], &[]).unwrap();
@@ -174,6 +189,10 @@ impl MutSchedule {
                         self_reference.local_starts_at_datetime,
                         self_reference.local_ends_at_datetime,
                     ),
+                    RecurringSeries::Daily(daily) => daily.generate_occurrences(
+                        self_reference.local_starts_at_datetime,
+                        self_reference.local_ends_at_datetime,
+                    ),
                     RecurringSeries::Weekly(weekly) => weekly.generate_occurrences(
                         self_reference.local_starts_at_datetime,
                         self_reference.local_ends_at_datetime,
@@ -205,6 +224,7 @@ pub fn init() -> Result<(), Error> {
     class.define_method("add_exclusion", method!(MutSchedule::add_exclusion, 1))?;
     class.define_method("add_exclusions", method!(MutSchedule::add_exclusions, 1))?;
     class.define_method("repeat_hourly", method!(MutSchedule::repeat_hourly, 1))?;
+    class.define_method("repeat_daily", method!(MutSchedule::repeat_daily, 1))?;
     class.define_method("repeat_weekly", method!(MutSchedule::repeat_weekly, 2))?;
     class.define_method(
         "repeat_monthly_by_day",
