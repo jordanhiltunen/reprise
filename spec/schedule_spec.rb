@@ -46,7 +46,7 @@ RSpec.describe Coruscate::Schedule do
     end
 
     it "returns an array of Coruscate::Core::Occurrence" do
-      expect(occurrences.all? { |occurrence| occurrence.is_a?(Coruscate::Core::Occurrence) } ).to eq(true)
+      expect(occurrences.all? { |occurrence| occurrence.is_a?(Coruscate::Core::Occurrence) }).to eq(true)
     end
 
     it "exposes #start_time and #end_time methods on the occurrences" do
@@ -312,7 +312,63 @@ RSpec.describe Coruscate::Schedule do
            )
     end
 
-    it "generates an array of hourly occurrences across a DST change" do
+    context "when the schedule straddles a DST change" do
+      let!(:starts_at) { Time.new(2024, 3, 9, 22, 0, 0) }
+      let!(:ends_at) { starts_at + 12.hours }
+      let!(:time_zone) { "America/Los_Angeles" }
+
+      it "generates an array of hourly occurrences across a DST change" do
+        schedule.repeat_hourly(
+          initial_time_of_day: { hour: 22, minute: 2, second: 3 },
+          duration_in_seconds: 300
+        )
+
+        expect(schedule.occurrences.size).to eq(9)
+        expect(
+          schedule.occurrences.map { |o| localized_occurrence_start_time(o) }
+        ).to contain_exactly(
+               "Sat Mar  9 2024 10:02PM -0800",
+               "Sat Mar  9 2024 11:02PM -0800",
+               "Sun Mar 10 2024 01:02AM -0800",
+               # N.B. Notice the DST jump to 3:02 AM.
+               # https://www.timeanddate.com/news/time/usa-start-dst-2024.html
+               "Sun Mar 10 2024 03:02AM -0700",
+               "Sun Mar 10 2024 04:02AM -0700",
+               "Sun Mar 10 2024 05:02AM -0700",
+               "Sun Mar 10 2024 06:02AM -0700",
+               "Sun Mar 10 2024 07:02AM -0700",
+               "Sun Mar 10 2024 12:02AM -0800"
+             )
+      end
+    end
+
+    context "when the schedule straddles a Standard Time change" do
+      let!(:starts_at) { Time.new(2024, 11, 2, 22, 0, 0) }
+      let!(:ends_at) { starts_at + 12.hours }
+      let!(:time_zone) { "America/Los_Angeles" }
+
+      it "generates an array of hourly occurrences across a Standard Time change" do
+        schedule.repeat_hourly(
+          initial_time_of_day: { hour: 22, minute: 2, second: 3 },
+          duration_in_seconds: 300
+        )
+
+        expect(schedule.occurrences.size).to eq(9)
+        expect(
+          schedule.occurrences.map { |o| localized_occurrence_start_time(o) }
+        ).to contain_exactly(
+               "Sat Nov  2 2024 10:02PM -0700",
+               "Sat Nov  2 2024 11:02PM -0700",
+               "Sun Nov  3 2024 12:02AM -0700",
+               "Sun Nov  3 2024 01:02AM -0700",
+               # N.B. Note the jump one hour back
+               "Sun Nov  3 2024 01:02AM -0800",
+               "Sun Nov  3 2024 02:02AM -0800",
+               "Sun Nov  3 2024 03:02AM -0800",
+               "Sun Nov  3 2024 04:02AM -0800",
+               "Sun Nov  3 2024 05:02AM -0800",
+            )
+      end
     end
   end
 end
