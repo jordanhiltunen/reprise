@@ -81,8 +81,8 @@ RSpec.describe Coruscate::Schedule do
            )
 
       schedule.add_exclusion(
-        starts_at_unix_timestamp: (Time.current.in_time_zone(time_zone) - 30.minutes).to_i,
-        ends_at_unix_timestamp: (Time.current.in_time_zone(time_zone) + 5.minutes).to_i
+        starts_at: Time.current.in_time_zone(time_zone) - 30.minutes,
+        ends_at: Time.current.in_time_zone(time_zone) + 5.minutes
       )
 
       expect(schedule.occurrences.size).to eq(3)

@@ -89,8 +89,22 @@ module Coruscate
       )
     end
 
+    # Add a time interval between which no occurrences are valid.
+    # Any occurrences that overlap with an exclusion are removed.
+    # @param starts_at [Time]
+    # @param ends_at [Time]
+    def add_exclusion(starts_at:, ends_at:)
+      internal_schedule.add_exclusion(
+        starts_at_unix_timestamp: starts_at.to_i,
+        ends_at_unix_timestamp: ends_at.to_i,
+      )
+    end
+
+    # def add_exclusions()
+    #
+    # end
+
     def_delegators :internal_schedule,
-                   :add_exclusion,
                    :add_exclusions,
                    :repeat_hourly
 
