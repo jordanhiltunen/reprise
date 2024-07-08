@@ -131,7 +131,7 @@ RSpec.describe Coruscate::Schedule do
   end
 
   describe "#repeat_hourly" do
-    let(:ends_at) { Time.current + 12.hours }
+    let(:ends_at) { Time.current.in_time_zone(time_zone) + 12.hours }
 
     it "generates an array of hourly occurrences" do
       schedule.repeat_hourly(
@@ -158,7 +158,7 @@ RSpec.describe Coruscate::Schedule do
     end
 
     context "when the schedule straddles a DST change" do
-      let(:starts_at) { Time.new(2024, 3, 9, 22, 0, 0) }
+      let(:starts_at) { Time.new(2024, 3, 9, 22, 0, 0).in_time_zone(time_zone) }
       let(:ends_at) { starts_at + 12.hours }
       let(:time_zone) { "America/Los_Angeles" }
 
@@ -188,7 +188,7 @@ RSpec.describe Coruscate::Schedule do
     end
 
     context "when the schedule straddles a Standard Time change" do
-      let(:starts_at) { Time.new(2024, 11, 2, 22, 0, 0) }
+      let(:starts_at) { Time.new(2024, 11, 2, 22, 0, 0).in_time_zone(time_zone) }
       let(:ends_at) { starts_at + 12.hours }
       let(:time_zone) { "America/Los_Angeles" }
 
