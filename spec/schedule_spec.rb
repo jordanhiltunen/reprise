@@ -135,7 +135,7 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
 
     it "generates an array of hourly occurrences" do
       schedule.repeat_hourly(
-        initial_time_of_day: { hour: 1, minute: 2, second: 3 },
+        time_of_day: { hour: 1, minute: 2, second: 3 },
         duration_in_seconds: 300
       )
 
@@ -157,6 +157,28 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
            )
     end
 
+    context "when an interval is included" do
+      it "generates an array of every nth occurrence" do
+        schedule.repeat_hourly(
+          time_of_day: { hour: 1, minute: 2, second: 3 },
+          duration_in_seconds: 300,
+          interval: 2
+        )
+
+        expect(schedule.occurrences.size).to eq(6)
+        expect(
+          schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
+        ).to contain_exactly(
+               "Sun Jun 30 2024 01:02AM -1000",
+               "Sun Jun 30 2024 03:02AM -1000",
+               "Sun Jun 30 2024 05:02AM -1000",
+               "Sun Jun 30 2024 07:02AM -1000",
+               "Sun Jun 30 2024 09:02AM -1000",
+               "Sun Jun 30 2024 11:02AM -1000"
+             )
+      end
+    end
+
     context "when the schedule straddles a DST change" do
       let(:time_zone) { "America/Los_Angeles" }
       let(:starts_at) { Time.new(2024, 3, 9, 22, 0, 0).in_time_zone(time_zone) }
@@ -164,7 +186,7 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
 
       it "generates an array of hourly occurrences across a DST change" do
         schedule.repeat_hourly(
-          initial_time_of_day: { hour: 22, minute: 2, second: 3 },
+          time_of_day: { hour: 22, minute: 2, second: 3 },
           duration_in_seconds: 300
         )
 
@@ -194,7 +216,7 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
 
       it "generates an array of hourly occurrences across a Standard Time change" do
         schedule.repeat_hourly(
-          initial_time_of_day: { hour: 22, minute: 2, second: 3 },
+          time_of_day: { hour: 22, minute: 2, second: 3 },
           duration_in_seconds: 300
         )
 

@@ -52,20 +52,26 @@ module Coruscate
     # @!macro time_of_day
     # @param duration_in_seconds [Integer]
     # @return [void]
-    def repeat_hourly(time_of_day: nil, duration_in_seconds:)
+    def repeat_hourly(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil)
       internal_schedule.repeat_hourly(
-        time_of_day: TimeOfDay.new(time_of_day || starts_at).to_h,
-        duration_in_seconds:
+        time_of_day: TimeOfDay.new(time_of_day || self.starts_at).to_h,
+        duration_in_seconds:,
+        interval:,
+        starts_at_unix_timestamp: starts_at.presence&.to_i,
+        ends_at_unix_timestamp: ends_at.presence&.to_i
       )
     end
 
     # @!macro time_of_day
     # @param duration_in_seconds [Integer]
     # @return [void]
-    def repeat_daily(time_of_day: nil, duration_in_seconds:)
+    def repeat_daily(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil)
       internal_schedule.repeat_daily(
-        time_of_day: TimeOfDay.new(time_of_day || starts_at).to_h,
-        duration_in_seconds:
+        time_of_day: TimeOfDay.new(time_of_day || self.starts_at).to_h,
+        duration_in_seconds:,
+        interval:,
+        starts_at_unix_timestamp: starts_at.presence&.to_i,
+        ends_at_unix_timestamp: ends_at.presence&.to_i
       )
     end
 
@@ -78,11 +84,14 @@ module Coruscate
     # @example with a local time for +time_of_day+
     #   local_time = Time.current.in_time_zone(my_current_time_zone)
     #   schedule.repeat_weekly(:monday, time_of_day: local_time, duration_in_seconds: 30)
-    def repeat_weekly(weekday, time_of_day: nil, duration_in_seconds:)
+    def repeat_weekly(weekday, time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil)
       internal_schedule.repeat_weekly(
         weekday,
-        time_of_day: TimeOfDay.new(time_of_day || starts_at).to_h,
-        duration_in_seconds:
+        time_of_day: TimeOfDay.new(time_of_day || self.starts_at).to_h,
+        duration_in_seconds:,
+        interval:,
+        starts_at_unix_timestamp: starts_at.presence&.to_i,
+        ends_at_unix_timestamp: ends_at.presence&.to_i
       )
     end
 
@@ -92,11 +101,14 @@ module Coruscate
     # @return [void]
     # @example
     #   schedule.repeat_monthly_by_day(15, time_of_day: { hour: 9 }, duration_in_seconds: 30)
-    def repeat_monthly_by_day(day_number, time_of_day:, duration_in_seconds:)
+    def repeat_monthly_by_day(day_number, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil)
       internal_schedule.repeat_monthly_by_day(
         day_number,
-        time_of_day: TimeOfDay.new(time_of_day || starts_at).to_h,
-        duration_in_seconds:
+        time_of_day: TimeOfDay.new(time_of_day || self.starts_at).to_h,
+        duration_in_seconds:,
+        interval:,
+        starts_at_unix_timestamp: starts_at.presence&.to_i,
+        ends_at_unix_timestamp: ends_at.presence&.to_i
       )
     end
 
@@ -105,12 +117,15 @@ module Coruscate
     # @!macro time_of_day
     # @param duration_in_seconds [Integer]
     # @return [void]
-    def repeat_monthly_by_nth_weekday(weekday, nth_day, time_of_day:, duration_in_seconds:)
+    def repeat_monthly_by_nth_weekday(weekday, nth_day, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil)
       internal_schedule.repeat_monthly_by_nth_weekday(
         weekday,
         nth_day,
-        time_of_day: TimeOfDay.new(time_of_day || starts_at).to_h,
-        duration_in_seconds:
+        time_of_day: TimeOfDay.new(time_of_day || self.starts_at).to_h,
+        duration_in_seconds:,
+        interval:,
+        starts_at_unix_timestamp: starts_at.presence&.to_i,
+        ends_at_unix_timestamp: ends_at.presence&.to_i
       )
     end
 
@@ -130,8 +145,7 @@ module Coruscate
     # end
 
     def_delegators :internal_schedule,
-                   :add_exclusions,
-                   :repeat_hourly
+                   :add_exclusions
 
     private
 

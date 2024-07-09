@@ -2,29 +2,32 @@ use crate::ruby_api::time_of_day::TimeOfDay;
 use crate::ruby_api::traits::Recurrable;
 use chrono::{DateTime, Days};
 use chrono_tz::Tz;
+use crate::ruby_api::series_options::SeriesOptions;
 
 #[derive(Debug, Clone)]
 pub(crate) struct Daily {
-    pub(crate) time_of_day: TimeOfDay,
-    pub(crate) duration_in_seconds: i64,
+    pub(crate) series_options: SeriesOptions
 }
 
 impl Daily {
-    pub(crate) fn new(time_of_day: TimeOfDay, duration_in_seconds: i64) -> Daily {
+    pub(crate) fn new(series_options: SeriesOptions) -> Daily {
         return Daily {
-            time_of_day,
-            duration_in_seconds,
+            series_options
         };
     }
 }
 
 impl Recurrable for Daily {
+    fn get_series_options(&self) -> &SeriesOptions {
+        return &self.series_options
+    }
+
     fn get_time_of_day(&self) -> &TimeOfDay {
-        return &self.time_of_day;
+        return &self.series_options.time_of_day;
     }
 
     fn get_occurrence_duration_in_seconds(&self) -> i64 {
-        return self.duration_in_seconds;
+        return self.series_options.duration_in_seconds;
     }
 
     fn occurrence_candidate_matches_criteria(&self, _occurrence_candidate: &DateTime<Tz>) -> bool {

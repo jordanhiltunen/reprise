@@ -16,8 +16,9 @@ use magnus::{scan_args, Error, Module, RHash, Symbol};
 use parking_lot::RwLock;
 use std::sync::Arc;
 use crate::ruby_api::recurring_series::daily::Daily;
+use crate::ruby_api::series_options::SeriesOptions;
 
-type UnixTimestamp = i64;
+pub(crate) type UnixTimestamp = i64;
 type Second = i64;
 
 #[derive(Debug, Clone)]
@@ -76,6 +77,10 @@ impl MutSchedule {
         })))
     }
 
+    pub(crate) fn time_zone(&self) -> Tz {
+        return self.0.read().time_zone;
+    }
+
     pub(crate) fn add_exclusions(&self, exclusions: Vec<(i64, i64)>) {
         let mut converted_exclusions = exclusions
             .iter()
@@ -104,12 +109,8 @@ impl MutSchedule {
     }
 
     pub(crate) fn repeat_hourly(&self, kw: RHash) {
-        let args: scan_args::KwArgs<(RHash, i64), (), ()> =
-            scan_args::get_kwargs(kw, &["initial_time_of_day", "duration_in_seconds"], &[])
-                .unwrap();
-        let (initial_time_of_day, duration_in_seconds): (RHash, i64) = args.required;
-        let time_of_day = TimeOfDay::new_from_ruby_hash(initial_time_of_day);
-        let hourly_series = Hourly::new(time_of_day, duration_in_seconds);
+        let series_options = SeriesOptions::new(self.time_zone().clone(), kw);
+        let hourly_series = Hourly::new(series_options);
         self.0
             .write()
             .recurring_series
@@ -117,12 +118,8 @@ impl MutSchedule {
     }
 
     pub(crate) fn repeat_daily(&self, kw: RHash) {
-        let args: scan_args::KwArgs<(RHash, i64), (), ()> =
-            scan_args::get_kwargs(kw, &["time_of_day", "duration_in_seconds"], &[])
-                .unwrap();
-        let (time_of_day, duration_in_seconds): (RHash, i64) = args.required;
-        let time_of_day = TimeOfDay::new_from_ruby_hash(time_of_day);
-        let daily_series = Daily::new(time_of_day, duration_in_seconds);
+        let series_options = SeriesOptions::new(self.time_zone().clone(), kw);
+        let daily_series = Daily::new(series_options);
         self.0
             .write()
             .recurring_series
@@ -130,11 +127,8 @@ impl MutSchedule {
     }
 
     pub(crate) fn repeat_weekly(&self, weekday_symbol: Symbol, kw: RHash) {
-        let args: scan_args::KwArgs<(RHash, i64), (), ()> =
-            scan_args::get_kwargs(kw, &["time_of_day", "duration_in_seconds"], &[]).unwrap();
-        let (time_of_day, duration_in_seconds): (RHash, i64) = args.required;
-        let time_of_day = TimeOfDay::new_from_ruby_hash(time_of_day);
-        let weekly_series = Weekly::new(weekday_symbol, time_of_day, duration_in_seconds);
+        let series_options = SeriesOptions::new(self.time_zone().clone(), kw);
+        let weekly_series = Weekly::new(weekday_symbol, series_options);
         self.0
             .write()
             .recurring_series
@@ -142,11 +136,8 @@ impl MutSchedule {
     }
 
     pub(crate) fn repeat_monthly_by_day(&self, day_number: u32, kw: RHash) {
-        let args: scan_args::KwArgs<(RHash, i64), (), ()> =
-            scan_args::get_kwargs(kw, &["time_of_day", "duration_in_seconds"], &[]).unwrap();
-        let (time_of_day, duration_in_seconds): (RHash, i64) = args.required;
-        let time_of_day = TimeOfDay::new_from_ruby_hash(time_of_day);
-        let monthly_series = MonthlyByDay::new(day_number, time_of_day, duration_in_seconds);
+        let series_options = SeriesOptions::new(self.time_zone().clone(), kw);
+        let monthly_series = MonthlyByDay::new(day_number, series_options);
         self.0
             .write()
             .recurring_series
@@ -159,12 +150,9 @@ impl MutSchedule {
         nth_day: i32,
         kw: RHash
     ) {
-        let args: scan_args::KwArgs<(RHash, i64), (), ()> =
-            scan_args::get_kwargs(kw, &["time_of_day", "duration_in_seconds"], &[]).unwrap();
-        let (time_of_day, duration_in_seconds): (RHash, i64) = args.required;
-        let time_of_day = TimeOfDay::new_from_ruby_hash(time_of_day);
+        let series_options = SeriesOptions::new(self.time_zone().clone(), kw);
         let monthly_by_nth_weekday_series =
-            MonthlyByNthWeekday::new(weekday_symbol, nth_day, time_of_day, duration_in_seconds);
+            MonthlyByNthWeekday::new(weekday_symbol, nth_day, series_options);
         self.0
             .write()
             .recurring_series

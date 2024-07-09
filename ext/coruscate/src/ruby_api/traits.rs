@@ -1,6 +1,7 @@
 use chrono::{DateTime, Duration, NaiveTime};
 use chrono_tz::Tz;
 use crate::ruby_api::occurrence::Occurrence;
+use crate::ruby_api::series_options::SeriesOptions;
 use crate::ruby_api::time_of_day::TimeOfDay;
 
 pub(crate) trait HasOverlapAwareness {
@@ -19,6 +20,7 @@ pub(crate) trait CustomRecurrable {
 
 // https://stackoverflow.com/a/64298897
 pub(crate) trait Recurrable: std::fmt::Debug {
+    fn get_series_options(&self) -> &SeriesOptions;
     fn generate_occurrences(&self, starts_at: DateTime<Tz>, ends_at: DateTime<Tz>) -> Vec<Occurrence> {
         let mut occurrences = Vec::new();
 
@@ -36,7 +38,11 @@ pub(crate) trait Recurrable: std::fmt::Debug {
                     current_occurrence_datetime = self.next_occurrence_candidate(&current_occurrence_datetime);
                 }
 
-                occurrences
+                if self.get_series_options().interval > 1 {
+                    occurrences.into_iter().step_by(self.get_series_options().interval as usize).collect()
+                } else {
+                    occurrences
+                }
             }
         }
     }

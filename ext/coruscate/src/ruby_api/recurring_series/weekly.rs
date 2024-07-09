@@ -1,35 +1,38 @@
 use chrono::{Datelike, DateTime, Days, Weekday};
 use chrono_tz::Tz;
 use magnus::Symbol;
+use crate::ruby_api::series_options::SeriesOptions;
 use crate::ruby_api::time_of_day::TimeOfDay;
 use crate::ruby_api::traits::{Recurrable};
 
 #[derive(Debug, Clone)]
 pub(crate) struct Weekly {
     pub(crate) weekday: Weekday,
-    pub(crate) time_of_day: TimeOfDay,
-    pub(crate) duration_in_seconds: i64
+    pub(crate) series_options: SeriesOptions
 }
 
 impl Weekly {
-    pub(crate) fn new(weekday_symbol: Symbol, time_of_day: TimeOfDay, duration_in_seconds: i64) -> Weekly {
+    pub(crate) fn new(weekday_symbol: Symbol, series_options: SeriesOptions) -> Weekly {
         let weekday = weekday_symbol.to_string().parse::<Weekday>().unwrap();
 
         return Weekly {
             weekday,
-            time_of_day,
-            duration_in_seconds,
+            series_options
         }
     }
 }
 
 impl Recurrable for Weekly {
+    fn get_series_options(&self) -> &SeriesOptions {
+        return &self.series_options;
+    }
+
     fn get_time_of_day(&self) -> &TimeOfDay {
-        return &self.time_of_day;
+        return &self.series_options.time_of_day;
     }
 
     fn get_occurrence_duration_in_seconds(&self) -> i64 {
-        return self.duration_in_seconds;
+        return self.series_options.duration_in_seconds;
     }
 
     fn occurrence_candidate_matches_criteria(&self, occurrence_candidate: &DateTime<Tz>) -> bool {

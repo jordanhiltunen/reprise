@@ -1,7 +1,8 @@
-use chrono::{Datelike, DateTime, Days, Duration, Months, NaiveTime, Weekday};
+use chrono::{Datelike, DateTime, Days, Duration, NaiveTime, Weekday};
 use chrono_tz::Tz;
 use magnus::Symbol;
 use crate::ruby_api::occurrence::Occurrence;
+use crate::ruby_api::series_options::SeriesOptions;
 use crate::ruby_api::time_of_day::TimeOfDay;
 use crate::ruby_api::traits::{CustomRecurrable, Recurrable};
 
@@ -9,19 +10,17 @@ use crate::ruby_api::traits::{CustomRecurrable, Recurrable};
 pub(crate) struct MonthlyByNthWeekday {
     pub(crate) weekday: Weekday,
     pub(crate) nth_weekday: i32,
-    pub(crate) time_of_day: TimeOfDay,
-    pub(crate) duration_in_seconds: i64,
+    pub(crate) series_options: SeriesOptions,
 }
 
 impl MonthlyByNthWeekday {
-    pub(crate) fn new(weekday_symbol: Symbol, nth_weekday: i32, time_of_day: TimeOfDay, duration_in_seconds: i64) -> MonthlyByNthWeekday {
+    pub(crate) fn new(weekday_symbol: Symbol, nth_weekday: i32, series_options: SeriesOptions) -> MonthlyByNthWeekday {
         let weekday = weekday_symbol.to_string().parse::<Weekday>().expect("Weekday must parse successfully");
 
         return MonthlyByNthWeekday {
             weekday,
             nth_weekday,
-            time_of_day,
-            duration_in_seconds,
+            series_options
         }
     }
 
@@ -67,11 +66,11 @@ impl MonthlyByNthWeekday {
     }
 
     fn get_time_of_day(&self) -> &TimeOfDay {
-        return &self.time_of_day;
+        return &self.series_options.time_of_day;
     }
 
     fn get_occurrence_duration_in_seconds(&self) -> i64 {
-        return self.duration_in_seconds;
+        return self.series_options.duration_in_seconds;
     }
 
     fn naive_starts_at_time(&self) -> NaiveTime {
@@ -101,11 +100,10 @@ impl CustomRecurrable for MonthlyByNthWeekday {
     // differs substantially from the others.
     fn generate_occurrences(&self, starts_at: DateTime<Tz>, ends_at: DateTime<Tz>) -> Vec<Occurrence> {
         let mut occurrences = Vec::new();
-        let mut current_weekdays_in_examined_month : Vec<DateTime<Tz>> = Vec::new();
         let mut current_examined_datetime = starts_at;
 
         while current_examined_datetime < ends_at {
-            current_weekdays_in_examined_month = self.identify_all_weekdays_in_month_of(&current_examined_datetime);
+            let current_weekdays_in_examined_month = self.identify_all_weekdays_in_month_of(&current_examined_datetime);
 
             match current_weekdays_in_examined_month.get(
                 self.get_unsigned_nth_weekday_index_from_signed(current_weekdays_in_examined_month.len() as i32)
