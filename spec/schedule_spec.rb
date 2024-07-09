@@ -205,7 +205,6 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
                "Sun Mar 10 2024 05:02AM -0700",
                "Sun Mar 10 2024 06:02AM -0700",
                "Sun Mar 10 2024 07:02AM -0700",
-               "Sun Mar 10 2024 12:02AM -0800"
              )
       end
     end
