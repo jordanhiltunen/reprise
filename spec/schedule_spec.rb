@@ -212,7 +212,7 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
     context "when the schedule straddles a Standard Time change" do
       let(:time_zone) { "America/Los_Angeles" }
       let(:starts_at) { Time.new(2024, 11, 2, 22, 0, 0).in_time_zone(time_zone) }
-      let(:ends_at) { (starts_at + 12.hours).in_time_zone(time_zone) }
+      let(:ends_at) { Time.new(2024, 11, 3, 9, 0, 0).in_time_zone(time_zone) }
 
       it "generates an array of hourly occurrences across a Standard Time change", focus: true do # TEMP
         schedule.repeat_hourly(
