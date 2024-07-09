@@ -181,8 +181,8 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
 
     context "when the schedule straddles a DST change" do
       let(:time_zone) { "America/Los_Angeles" }
-      let(:starts_at) { Time.new(2024, 3, 9, 22, 0, 0).in_time_zone(time_zone) }
-      let(:ends_at) { starts_at + 12.hours }
+      let(:starts_at) { Time.new(2024, 3, 9, 22, 0, 0, "-0800") }
+      let(:ends_at) { Time.new(2024, 3, 10, 8, 0, 0, "-0700") }
 
       it "generates an array of hourly occurrences across a DST change" do
         schedule.repeat_hourly(
@@ -196,6 +196,7 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
         ).to contain_exactly(
                "Sat Mar  9 2024 10:02PM -0800",
                "Sat Mar  9 2024 11:02PM -0800",
+               "Sun Mar 10 2024 12:02AM -0800",
                "Sun Mar 10 2024 01:02AM -0800",
                # N.B. Notice the DST jump to 3:02 AM.
                # https://www.timeanddate.com/news/time/usa-start-dst-2024.html
@@ -211,16 +212,16 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
 
     context "when the schedule straddles a Standard Time change" do
       let(:time_zone) { "America/Los_Angeles" }
-      let(:starts_at) { Time.new(2024, 11, 2, 22, 0, 0).in_time_zone(time_zone) }
+      let(:starts_at) { Time.new(2024, 11, 2, 22, 0, 0, "-0700") }
       let(:ends_at) { Time.new(2024, 11, 3, 6, 0, 0, "-0800") }
 
-      it "generates an array of hourly occurrences across a Standard Time change", focus: true do # TEMP
+      it "generates an array of hourly occurrences across a Standard Time change" do
         schedule.repeat_hourly(
           time_of_day: { hour: 22, minute: 2, second: 3 },
           duration_in_seconds: 300
         )
 
-        # expect(schedule.occurrences.size).to eq(9)
+        expect(schedule.occurrences.size).to eq(9)
         expect(
           schedule.occurrences.map { |o| localized_occurrence_start_time(o) }
         ).to contain_exactly(
