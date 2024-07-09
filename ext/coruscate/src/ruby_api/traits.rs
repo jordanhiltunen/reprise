@@ -24,18 +24,17 @@ pub(crate) trait Recurrable: std::fmt::Debug {
     fn generate_occurrences(&self, starts_at: DateTime<Tz>, ends_at: DateTime<Tz>) -> Vec<Occurrence> {
         let mut occurrences = Vec::new();
 
+        // If the series itself has its own defined bookends, respect those; otherwise, fall back to the
+        // bookends passed by the parent schedule.
+        let starts_at = self.get_series_options().local_starts_at_datetime().unwrap_or(starts_at);
+        let ends_at = self.get_series_options().local_ends_at_datetime().unwrap_or(ends_at);
+
         return match self.first_occurrence_datetime(&starts_at, &ends_at) {
             None => { occurrences }
             Some(first_occurrence_datetime) => {
                 let mut current_occurrence_datetime = first_occurrence_datetime;
 
-                dbg!("schedule bookends", starts_at, ends_at);
-                dbg!("examining occurrence", current_occurrence_datetime);
-
                 while current_occurrence_datetime < ends_at {
-
-                    dbg!("examining occurrence", current_occurrence_datetime);
-
                     occurrences.push(Occurrence {
                         starts_at_unix_timestamp: current_occurrence_datetime.timestamp(),
                         ends_at_unix_timestamp: (current_occurrence_datetime + Duration::seconds(self.get_occurrence_duration_in_seconds())).timestamp()
@@ -44,6 +43,7 @@ pub(crate) trait Recurrable: std::fmt::Debug {
                     current_occurrence_datetime = self.next_occurrence_candidate(&current_occurrence_datetime);
                 }
 
+                // Only collect every Nth occurrence if an interval has been requested.
                 if self.get_series_options().interval > 1 {
                     occurrences.into_iter().step_by(self.get_series_options().interval as usize).collect()
                 } else {
