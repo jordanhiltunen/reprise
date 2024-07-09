@@ -5,6 +5,10 @@ require "forwardable"
 module Coruscate
   class Error < StandardError; end
 
+  # @note On the interface of this class: all of the methods on +Coruscate::Schedule+ could have been
+  #   transparently delegated to +Coruscate::Core::Schedule+, the internal schedule class that is
+  #   implemented in Rust; instead, we define explicit proxy methods primarily for documentation purposes,
+  #   to make it easier to generate YARD docs and to offer decent autocomplete support in IDEs.
   class Schedule
     extend ::Forwardable
     # @!macro [new] weekday
