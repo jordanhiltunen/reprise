@@ -29,7 +29,13 @@ pub(crate) trait Recurrable: std::fmt::Debug {
             Some(first_occurrence_datetime) => {
                 let mut current_occurrence_datetime = first_occurrence_datetime;
 
+                dbg!("schedule bookends", starts_at, ends_at);
+                dbg!("examining occurrence", current_occurrence_datetime);
+
                 while current_occurrence_datetime < ends_at {
+
+                    dbg!("examining occurrence", current_occurrence_datetime);
+
                     occurrences.push(Occurrence {
                         starts_at_unix_timestamp: current_occurrence_datetime.timestamp(),
                         ends_at_unix_timestamp: (current_occurrence_datetime + Duration::seconds(self.get_occurrence_duration_in_seconds())).timestamp()
