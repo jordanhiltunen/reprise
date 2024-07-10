@@ -1,4 +1,5 @@
 use crate::ruby_api::exclusion::Exclusion;
+use crate::ruby_api::interval::Interval;
 use crate::ruby_api::occurrence::Occurrence;
 use crate::ruby_api::recurring_series::hourly::Hourly;
 use crate::ruby_api::recurring_series::monthly_by_day::MonthlyByDay;
@@ -6,8 +7,7 @@ use crate::ruby_api::recurring_series::monthly_by_nth_weekday::MonthlyByNthWeekd
 use crate::ruby_api::recurring_series::weekly::Weekly;
 use crate::ruby_api::ruby_modules;
 use crate::ruby_api::sorted_exclusions::SortedExclusions;
-use crate::ruby_api::time_of_day::TimeOfDay;
-use crate::ruby_api::traits::{CustomRecurrable, HasOverlapAwareness, Recurrable};
+use crate::ruby_api::traits::{Recurrable};
 use chrono::DateTime;
 use chrono_tz::Tz;
 use magnus::prelude::*;
@@ -172,6 +172,7 @@ impl MutSchedule {
             .recurring_series
             .iter()
             .map(|series| {
+                // series.generate_occurrences(self_reference.local_starts_at_datetime, self_reference.local_ends_at_datetime)
                 return match series {
                     RecurringSeries::Hourly(hourly) => hourly.generate_occurrences(
                         self_reference.local_starts_at_datetime,
