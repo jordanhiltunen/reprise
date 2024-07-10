@@ -20,33 +20,17 @@ impl Recurrable for Hourly {
         return &self.series_options;
     }
 
-    fn get_time_of_day(&self) -> &TimeOfDay {
-        return &self.series_options.time_of_day;
+    fn next_occurrence_candidate(&self, datetime_cursor: &DateTime<Tz>) -> Option<DateTime<Tz>> {
+        // no-op; we ensure that every time we advance the cursor, we are doing so to
+        // the next valid occurrence.
+        return Some(datetime_cursor.clone());
     }
 
-    fn get_occurrence_duration_in_seconds(&self) -> i64 {
-        return self.series_options.duration_in_seconds;
-    }
-
-    fn occurrence_candidate_matches_criteria(&self, _occurrence_candidate: &DateTime<Tz>) -> bool {
-        // we can essentially no-op for hourly increments; we're not checking for specific
-        // characteristics like the day of the week.
-        return true;
-    }
-
-    fn advance_to_find_first_occurrence_candidate(
-        &self,
-        occurrence_candidate: &DateTime<Tz>,
-    ) -> DateTime<Tz> {
-        // same implementation
-        return self.next_occurrence_candidate(occurrence_candidate);
-    }
-
-    fn next_occurrence_candidate(&self, occurrence_candidate: &DateTime<Tz>) -> DateTime<Tz> {
+    fn advance_datetime_cursor(&self, datetime_cursor: &DateTime<Tz>) -> DateTime<Tz> {
         // We can't operate exclusively on DateTime<Tz> values, as it will lead to
         // invalid or ambiguous times when crossing DST / Standard Time transitions.
         // https://docs.rs/chrono/latest/chrono/struct.DateTime.html#method.with_hour
-        let utc_occurrence_candidate = occurrence_candidate.to_utc();
+        let utc_occurrence_candidate = datetime_cursor.to_utc();
 
         let new_utc_occurrence_candidate = if utc_occurrence_candidate.hour() == 23 {
             utc_occurrence_candidate
@@ -60,6 +44,6 @@ impl Recurrable for Hourly {
                 .unwrap()
         };
 
-        return new_utc_occurrence_candidate.with_timezone(&occurrence_candidate.timezone());
+        return new_utc_occurrence_candidate.with_timezone(&datetime_cursor.timezone());
     }
 }

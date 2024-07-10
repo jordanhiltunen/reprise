@@ -24,35 +24,31 @@ impl Recurrable for MonthlyByDay {
         return &self.series_options;
     }
 
-    fn get_time_of_day(&self) -> &TimeOfDay {
-        return &self.series_options.time_of_day;
+    fn next_occurrence_candidate(&self, datetime_cursor: &DateTime<Tz>) -> Option<DateTime<Tz>> {
+        return if datetime_cursor.day() == self.day_number {
+            Some(datetime_cursor).cloned()
+        } else {
+            None
+        }
     }
 
-    fn get_occurrence_duration_in_seconds(&self) -> i64 {
-        return self.series_options.duration_in_seconds;
-    }
-
-    fn occurrence_candidate_matches_criteria(&self, occurrence_candidate: &DateTime<Tz>) -> bool {
-        occurrence_candidate.day() == self.day_number
-    }
-
-    fn advance_to_find_first_occurrence_candidate(
-        &self,
-        occurrence_candidate: &DateTime<Tz>,
-    ) -> DateTime<Tz> {
-        // We add days until we hit the desired day number.
-        occurrence_candidate
-            .checked_add_days(Days::new(1))
-            .unwrap()
-            .with_time(self.naive_starts_at_time())
-            .unwrap()
-    }
-
-    fn next_occurrence_candidate(&self, occurrence_candidate: &DateTime<Tz>) -> DateTime<Tz> {
-        occurrence_candidate
-            .checked_add_months(Months::new(1))
-            .unwrap()
-            .with_time(self.naive_starts_at_time())
-            .unwrap()
+    fn advance_datetime_cursor(&self, datetime_cursor: &DateTime<Tz>) -> DateTime<Tz> {
+        if datetime_cursor.day() == self.day_number {
+            // If the current value already falls on the right day, moving forward
+            // we only need to increment by month.
+            datetime_cursor
+                .checked_add_months(Months::new(1))
+                .unwrap()
+                .with_time(self.naive_starts_at_time())
+                .unwrap()
+        } else {
+            // If we are not yet on the right day, we need to increment by day
+            // TODO: consider using with_day() instead so we don't have to increment.
+            datetime_cursor
+                .checked_add_days(Days::new(1))
+                .unwrap()
+                .with_time(self.naive_starts_at_time())
+                .unwrap()
+        }
     }
 }

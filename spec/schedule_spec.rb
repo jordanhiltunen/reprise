@@ -437,14 +437,13 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
     it "handles indexing into non-universal day numbers" do
       schedule.repeat_monthly_by_day(31, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
 
-      expect(schedule.occurrences.size).to eq(4)
+      expect(schedule.occurrences.size).to eq(3)
       expect(
         schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
              "Wed Jul 31 2024 01:02AM -1000",
              "Sat Aug 31 2024 01:02AM -1000",
-             "Mon Sep 30 2024 01:02AM -1000", # UGH
-             "Wed Oct 30 2024 01:02AM -1000"
+             "Thu Oct 31 2024 01:02AM -1000",
            )
     end
   end

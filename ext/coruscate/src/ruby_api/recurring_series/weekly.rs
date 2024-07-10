@@ -27,25 +27,26 @@ impl Recurrable for Weekly {
         return &self.series_options;
     }
 
-    fn get_time_of_day(&self) -> &TimeOfDay {
-        return &self.series_options.time_of_day;
+    fn next_occurrence_candidate(&self, datetime_cursor: &DateTime<Tz>) -> Option<DateTime<Tz>> {
+        return if self.occurrence_candidate_matches_criteria(datetime_cursor) {
+            Some(datetime_cursor).cloned()
+        } else {
+            None
+        }
     }
 
-    fn get_occurrence_duration_in_seconds(&self) -> i64 {
-        return self.series_options.duration_in_seconds;
+    fn advance_datetime_cursor(&self, datetime_cursor: &DateTime<Tz>) -> DateTime<Tz> {
+        // If the current candidate matches the criteria, we can advance by 1-week moving forward.
+        return if self.occurrence_candidate_matches_criteria(datetime_cursor) {
+            datetime_cursor.checked_add_days(Days::new(7)).
+                unwrap().with_time(self.naive_starts_at_time()).unwrap()
+        } else {
+            datetime_cursor.checked_add_days(Days::new(1)).
+                unwrap().with_time(self.naive_starts_at_time()).unwrap()
+        }
     }
 
     fn occurrence_candidate_matches_criteria(&self, occurrence_candidate: &DateTime<Tz>) -> bool {
         return occurrence_candidate.weekday() == self.weekday;
-    }
-
-    fn advance_to_find_first_occurrence_candidate(&self, occurrence_candidate: &DateTime<Tz>) -> DateTime<Tz> {
-        occurrence_candidate.checked_add_days(Days::new(1)).
-            unwrap().with_time(self.naive_starts_at_time()).unwrap()
-    }
-
-    fn next_occurrence_candidate(&self, occurrence_candidate: &DateTime<Tz>) -> DateTime<Tz> {
-        occurrence_candidate.checked_add_days(Days::new(7)).
-            unwrap().with_time(self.naive_starts_at_time()).unwrap()
     }
 }
