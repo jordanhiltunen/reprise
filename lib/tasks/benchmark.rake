@@ -41,7 +41,7 @@ task :benchmark do
     )
   end
   exclusions.each do |e|
-    coruscate_schedule.add_exclusion(starts_at_unix_timestamp: e.beginning_of_day.to_i, ends_at_unix_timestamp: e.end_of_day.to_i)
+    coruscate_schedule.add_exclusion(starts_at: e.beginning_of_day, ends_at: e.end_of_day)
   end
 
   def generate_ice_cube_occurrences(ice_cube_schedule)
