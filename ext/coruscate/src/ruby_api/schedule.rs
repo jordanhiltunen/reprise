@@ -1,13 +1,14 @@
 use crate::ruby_api::exclusion::Exclusion;
-use crate::ruby_api::interval::Interval;
 use crate::ruby_api::occurrence::Occurrence;
+use crate::ruby_api::recurring_series::daily::Daily;
 use crate::ruby_api::recurring_series::hourly::Hourly;
 use crate::ruby_api::recurring_series::monthly_by_day::MonthlyByDay;
 use crate::ruby_api::recurring_series::monthly_by_nth_weekday::MonthlyByNthWeekday;
 use crate::ruby_api::recurring_series::weekly::Weekly;
 use crate::ruby_api::ruby_modules;
+use crate::ruby_api::series_options::SeriesOptions;
 use crate::ruby_api::sorted_exclusions::SortedExclusions;
-use crate::ruby_api::traits::{Recurrable};
+use crate::ruby_api::traits::{Recurrable, RecurringSeries};
 use chrono::DateTime;
 use chrono_tz::Tz;
 use magnus::prelude::*;
@@ -15,20 +16,9 @@ use magnus::{class, function, method};
 use magnus::{scan_args, Error, Module, RHash, Symbol};
 use parking_lot::RwLock;
 use std::sync::Arc;
-use crate::ruby_api::recurring_series::daily::Daily;
-use crate::ruby_api::series_options::SeriesOptions;
 
 pub(crate) type UnixTimestamp = i64;
 type Second = i64;
-
-#[derive(Debug, Clone)]
-enum RecurringSeries {
-    Hourly(Hourly),
-    Daily(Daily),
-    Weekly(Weekly),
-    MonthlyByDay(MonthlyByDay),
-    MonthlyByNthWeekday(MonthlyByNthWeekday),
-}
 
 #[derive(Debug)]
 pub(crate) struct Schedule {
@@ -39,13 +29,6 @@ pub(crate) struct Schedule {
     pub(crate) time_zone: Tz,
     pub(crate) occurrences: Vec<Occurrence>,
     pub(crate) sorted_exclusions: SortedExclusions,
-    // There may be magnus-related quirks that make it more difficult to idiomatically accrete
-    // a collection of recurring series (e.g. something like Vec<dyn Recurrable> instead of
-    // using an enum; that will require lifetimes, and magnus does not currently support lifetimes
-    // on wrapped classes.
-    // - > error: deriving TypedData is not guaranteed to be correct for types with lifetimes,
-    //   > consider removing them, or use `#[magnus(unsafe_generics)]` to override this error.
-    // - cf. https://stackoverflow.com/a/58487065
     pub(crate) recurring_series: Vec<RecurringSeries>,
 }
 
@@ -148,7 +131,7 @@ impl MutSchedule {
         &self,
         weekday_symbol: Symbol,
         nth_day: i32,
-        kw: RHash
+        kw: RHash,
     ) {
         let series_options = SeriesOptions::new(self.time_zone().clone(), kw);
         let monthly_by_nth_weekday_series =
@@ -172,32 +155,10 @@ impl MutSchedule {
             .recurring_series
             .iter()
             .map(|series| {
-                // series.generate_occurrences(self_reference.local_starts_at_datetime, self_reference.local_ends_at_datetime)
-                return match series {
-                    RecurringSeries::Hourly(hourly) => hourly.generate_occurrences(
-                        self_reference.local_starts_at_datetime,
-                        self_reference.local_ends_at_datetime,
-                    ),
-                    RecurringSeries::Daily(daily) => daily.generate_occurrences(
-                        self_reference.local_starts_at_datetime,
-                        self_reference.local_ends_at_datetime,
-                    ),
-                    RecurringSeries::Weekly(weekly) => weekly.generate_occurrences(
-                        self_reference.local_starts_at_datetime,
-                        self_reference.local_ends_at_datetime,
-                    ),
-                    RecurringSeries::MonthlyByDay(monthly_by_day) => monthly_by_day
-                        .generate_occurrences(
-                            self_reference.local_starts_at_datetime,
-                            self_reference.local_ends_at_datetime,
-                        ),
-                    RecurringSeries::MonthlyByNthWeekday(monthly_by_nth_weekday) => {
-                        monthly_by_nth_weekday.generate_occurrences(
-                            self_reference.local_starts_at_datetime,
-                            self_reference.local_ends_at_datetime,
-                        )
-                    }
-                };
+                series.generate_occurrences(
+                    self_reference.local_starts_at_datetime,
+                    self_reference.local_ends_at_datetime,
+                )
             })
             .flatten()
             .filter(|o| !self_reference.sorted_exclusions.is_occurrence_excluded(o))

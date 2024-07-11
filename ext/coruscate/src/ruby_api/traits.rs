@@ -1,8 +1,14 @@
 use crate::ruby_api::occurrence::Occurrence;
+use crate::ruby_api::recurring_series::daily::Daily;
+use crate::ruby_api::recurring_series::hourly::Hourly;
+use crate::ruby_api::recurring_series::monthly_by_day::MonthlyByDay;
+use crate::ruby_api::recurring_series::monthly_by_nth_weekday::MonthlyByNthWeekday;
+use crate::ruby_api::recurring_series::weekly::Weekly;
 use crate::ruby_api::series_options::SeriesOptions;
 use crate::ruby_api::time_of_day::TimeOfDay;
 use chrono::{DateTime, Duration, NaiveTime};
 use chrono_tz::Tz;
+use enum_dispatch::enum_dispatch;
 
 pub(crate) trait HasOverlapAwareness {
     fn get_starts_at_unix_timestamp(&self) -> i64;
@@ -14,7 +20,17 @@ pub(crate) trait HasOverlapAwareness {
     }
 }
 
-// https://stackoverflow.com/a/64298897
+#[enum_dispatch]
+#[derive(Debug)]
+pub enum RecurringSeries {
+    Hourly,
+    Daily,
+    Weekly,
+    MonthlyByDay,
+    MonthlyByNthWeekday,
+}
+
+#[enum_dispatch(RecurringSeries)]
 pub(crate) trait Recurrable: std::fmt::Debug {
     fn get_series_options(&self) -> &SeriesOptions;
 
@@ -32,7 +48,7 @@ pub(crate) trait Recurrable: std::fmt::Debug {
             self.get_time_of_day().minute,
             self.get_time_of_day().second,
         )
-            .unwrap();
+        .unwrap();
     }
 
     fn generate_occurrences(
@@ -53,28 +69,27 @@ pub(crate) trait Recurrable: std::fmt::Debug {
             .local_ends_at_datetime()
             .unwrap_or(ends_at);
 
-        let mut datetime_cursor =
-            starts_at.with_time(self.naive_starts_at_time()).unwrap();
+        let mut datetime_cursor = starts_at.with_time(self.naive_starts_at_time()).unwrap();
 
         while datetime_cursor < ends_at {
-            let occurrence_candidate_datetime_option = self.next_occurrence_candidate(&datetime_cursor);
+            let occurrence_candidate_datetime_option =
+                self.next_occurrence_candidate(&datetime_cursor);
 
             if let Some(occurrence_candidate_datetime) = occurrence_candidate_datetime_option {
-                if occurrence_candidate_datetime > starts_at &&
-                    occurrence_candidate_datetime < ends_at
+                if occurrence_candidate_datetime > starts_at
+                    && occurrence_candidate_datetime < ends_at
                 {
                     occurrences.push(Occurrence {
                         starts_at_unix_timestamp: occurrence_candidate_datetime.timestamp(),
                         ends_at_unix_timestamp: (occurrence_candidate_datetime
                             + Duration::seconds(self.get_occurrence_duration_in_seconds()))
-                            .timestamp(),
-                        label: self.get_series_options().label()
+                        .timestamp(),
+                        label: self.get_series_options().label(),
                     });
                 }
             }
 
-            datetime_cursor =
-                self.advance_datetime_cursor(&datetime_cursor);
+            datetime_cursor = self.advance_datetime_cursor(&datetime_cursor);
         }
 
         // Only collect every Nth occurrence if an interval has been requested.
@@ -86,10 +101,6 @@ pub(crate) trait Recurrable: std::fmt::Debug {
         } else {
             occurrences
         }
-    }
-
-    fn generate_first_occurrence_candidate(&self, starts_at: &DateTime<Tz>) -> DateTime<Tz> {
-        return starts_at.with_time(self.naive_starts_at_time()).unwrap();
     }
 
     fn next_occurrence_candidate(&self, datetime_cursor: &DateTime<Tz>) -> Option<DateTime<Tz>>;
