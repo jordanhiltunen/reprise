@@ -90,7 +90,7 @@ schedule.repeat_monthly_by_day(12, { hour: 1, minute: 2, second: 3 }, 300)
 
 # Or hourly: 
 schedule.repeat_hourly(
-        initial_time_of_day: { hour: 1, minute: 2, second: 3 },
+        time_of_day: { hour: 1, minute: 2, second: 3 },
         duration_in_seconds: 300
 )
 ```
