@@ -68,6 +68,7 @@ pub(crate) trait Recurrable: std::fmt::Debug {
                         ends_at_unix_timestamp: (occurrence_candidate_datetime
                             + Duration::seconds(self.get_occurrence_duration_in_seconds()))
                             .timestamp(),
+                        label: self.get_series_options().label()
                     });
                 }
             }

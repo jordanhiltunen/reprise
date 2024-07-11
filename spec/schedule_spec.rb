@@ -37,7 +37,11 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
 
   describe "#occurrences" do
     let(:occurrences) do
-      schedule.repeat_weekly(:sunday, time_of_day: { hour: 0, minute: 1, second: 2 }, duration_in_seconds: event_duration_in_seconds)
+      schedule.repeat_weekly(
+        :sunday,
+        time_of_day: { hour: 0, minute: 1, second: 2 },
+        duration_in_seconds: event_duration_in_seconds,
+        label: "My Weekly Occurrence")
       schedule.occurrences
     end
 
@@ -54,11 +58,17 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
       expect(first_occurrence.end_time.in_time_zone(time_zone).to_s).to eq("2024-06-30 00:06:02 -1000")
     end
 
+    it "exposes an optional label on each occurrence" do
+      first_occurrence = occurrences.first
+
+      expect(first_occurrence.label).to eq("My Weekly Occurrence")
+    end
+
     it "exposes an #inspect method on the occurrences" do
       first_occurrence = occurrences.first
 
       expect(first_occurrence.inspect).to eq(
-        "Occurrence { starts_at_unix_timestamp: 1719741662, ends_at_unix_timestamp: 1719741962 }"
+        "Occurrence { starts_at_unix_timestamp: 1719741662, ends_at_unix_timestamp: 1719741962, label: Some(\"My Weekly Occurrence\") }"
       )
     end
   end
