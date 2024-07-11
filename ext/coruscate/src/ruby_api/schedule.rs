@@ -151,7 +151,7 @@ impl MutSchedule {
         // and it is a simple substitution over iter(), schedule expansion is not computationally
         // demanding enough for it to really matter. Relative to IceCube, sequential processing is
         // ~500x faster, and parallel, only ~200x.
-        return self_reference
+        let mut occurrences = self_reference
             .recurring_series
             .iter()
             .map(|series| {
@@ -162,7 +162,12 @@ impl MutSchedule {
             })
             .flatten()
             .filter(|o| !self_reference.sorted_exclusions.is_occurrence_excluded(o))
-            .collect();
+            .collect::<Vec<Occurrence>>();
+
+        occurrences
+            .sort_unstable_by(|a, b| a.starts_at_unix_timestamp.cmp(&b.starts_at_unix_timestamp));
+
+        return occurrences;
     }
 }
 
