@@ -58,6 +58,20 @@ module Coruscate
     # @!macro time_of_day
     # @param duration_in_seconds [Integer]
     # @return [void]
+    def repeat_minutely(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)
+      internal_schedule.repeat_minutely(
+        time_of_day: TimeOfDay.new(time_of_day || self.starts_at).to_h,
+        duration_in_seconds:,
+        interval:,
+        starts_at_unix_timestamp: starts_at.presence&.to_i,
+        ends_at_unix_timestamp: ends_at.presence&.to_i,
+        label:
+      )
+    end
+
+    # @!macro time_of_day
+    # @param duration_in_seconds [Integer]
+    # @return [void]
     def repeat_hourly(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)
       internal_schedule.repeat_hourly(
         time_of_day: TimeOfDay.new(time_of_day || self.starts_at).to_h,

@@ -9,7 +9,15 @@ module TimeZoneHelpers
     Time.new(2024, 3, 9, 22, 0, 0, "-0800")
   end
 
+  def minutes_before_los_angeles_transition_to_dst
+    Time.new(2024, 3, 10, 1, 58, 0, "-0800")
+  end
+
   def hours_before_los_angeles_transition_to_st
     Time.new(2024, 11, 2, 22, 0, 0, "-0700")
+  end
+
+  def minutes_before_los_angeles_transition_to_st
+    Time.new(2024, 11, 3, 0, 59, 0, "-0700")
   end
 end

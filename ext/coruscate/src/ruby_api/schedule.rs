@@ -1,6 +1,7 @@
 use crate::ruby_api::exclusion::Exclusion;
 use crate::ruby_api::occurrence::Occurrence;
 use crate::ruby_api::recurring_series::daily::Daily;
+use crate::ruby_api::recurring_series::minutely::Minutely;
 use crate::ruby_api::recurring_series::hourly::Hourly;
 use crate::ruby_api::recurring_series::monthly_by_day::MonthlyByDay;
 use crate::ruby_api::recurring_series::monthly_by_nth_weekday::MonthlyByNthWeekday;
@@ -89,6 +90,15 @@ impl MutSchedule {
             starts_at_unix_timestamp,
             ends_at_unix_timestamp,
         });
+    }
+
+    pub(crate) fn repeat_minutely(&self, kw: RHash) {
+        let series_options = SeriesOptions::new(self.time_zone().clone(), kw);
+        let minutely_series = Minutely::new(series_options);
+        self.0
+            .write()
+            .recurring_series
+            .push(RecurringSeries::Minutely(minutely_series));
     }
 
     pub(crate) fn repeat_hourly(&self, kw: RHash) {

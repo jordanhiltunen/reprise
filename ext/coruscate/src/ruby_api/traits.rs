@@ -4,6 +4,7 @@ use crate::ruby_api::recurring_series::hourly::Hourly;
 use crate::ruby_api::recurring_series::monthly_by_day::MonthlyByDay;
 use crate::ruby_api::recurring_series::monthly_by_nth_weekday::MonthlyByNthWeekday;
 use crate::ruby_api::recurring_series::weekly::Weekly;
+use crate::ruby_api::recurring_series::minutely::Minutely;
 use crate::ruby_api::series_options::SeriesOptions;
 use crate::ruby_api::time_of_day::TimeOfDay;
 use chrono::{DateTime, Duration, NaiveTime};
@@ -28,6 +29,7 @@ pub enum RecurringSeries {
     Weekly,
     MonthlyByDay,
     MonthlyByNthWeekday,
+    Minutely
 }
 
 #[enum_dispatch(RecurringSeries)]
@@ -70,6 +72,7 @@ pub(crate) trait Recurrable: std::fmt::Debug {
             .unwrap_or(ends_at);
 
         let mut datetime_cursor = starts_at.with_time(self.naive_starts_at_time()).unwrap();
+        let mut datetime_cursor = starts_at.with_time(self.naive_starts_at_time()).latest().unwrap();
 
         while datetime_cursor < ends_at {
             let occurrence_candidate_datetime_option =
