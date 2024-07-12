@@ -28,11 +28,7 @@ impl Recurrable for Minutely {
     fn advance_datetime_cursor(&self, datetime_cursor: &DateTime<Tz>) -> DateTime<Tz> {
         // We can't operate exclusively on DateTime<Tz> values, as it will lead to
         // invalid or ambiguous times when crossing DST / Standard Time transitions.
-        let new_datetime_cursor_option = datetime_cursor.checked_add_signed(TimeDelta::minutes(1));
-
-        dbg!("advancing datetime cursor", new_datetime_cursor_option);
-
-        return match new_datetime_cursor_option {
+        return match datetime_cursor.checked_add_signed(TimeDelta::minutes(1)) {
             None => return datetime_cursor
                 .to_utc()
                 .checked_add_signed(TimeDelta::minutes(1))

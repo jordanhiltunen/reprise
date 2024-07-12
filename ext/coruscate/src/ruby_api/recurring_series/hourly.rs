@@ -1,7 +1,6 @@
 use crate::ruby_api::series_options::SeriesOptions;
-use crate::ruby_api::time_of_day::TimeOfDay;
 use crate::ruby_api::traits::Recurrable;
-use chrono::{DateTime, Days, Timelike};
+use chrono::{DateTime, TimeDelta};
 use chrono_tz::Tz;
 
 #[derive(Debug, Clone)]
@@ -30,20 +29,13 @@ impl Recurrable for Hourly {
         // We can't operate exclusively on DateTime<Tz> values, as it will lead to
         // invalid or ambiguous times when crossing DST / Standard Time transitions.
         // https://docs.rs/chrono/latest/chrono/struct.DateTime.html#method.with_hour
-        let utc_occurrence_candidate = datetime_cursor.to_utc();
-
-        let new_utc_occurrence_candidate = if utc_occurrence_candidate.hour() == 23 {
-            utc_occurrence_candidate
-                .checked_add_days(Days::new(1))
+        return match datetime_cursor.checked_add_signed(TimeDelta::hours(1)) {
+            None => datetime_cursor
+                .to_utc()
+                .checked_add_signed(TimeDelta::hours(1))
                 .unwrap()
-                .with_hour(0)
-                .unwrap()
-        } else {
-            utc_occurrence_candidate
-                .with_hour(utc_occurrence_candidate.hour() + 1)
-                .unwrap()
-        };
-
-        return new_utc_occurrence_candidate.with_timezone(&datetime_cursor.timezone());
+                .with_timezone(&datetime_cursor.timezone()),
+            Some(datetime_cursor) => datetime_cursor,
+        }
     }
 }
