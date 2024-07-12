@@ -188,6 +188,7 @@ pub fn init() -> Result<(), Error> {
     class.define_method("occurrences", method!(MutSchedule::occurrences, 0))?;
     class.define_method("add_exclusion", method!(MutSchedule::add_exclusion, 1))?;
     class.define_method("add_exclusions", method!(MutSchedule::add_exclusions, 1))?;
+    class.define_method("repeat_minutely", method!(MutSchedule::repeat_minutely, 1))?;
     class.define_method("repeat_hourly", method!(MutSchedule::repeat_hourly, 1))?;
     class.define_method("repeat_daily", method!(MutSchedule::repeat_daily, 1))?;
     class.define_method("repeat_weekly", method!(MutSchedule::repeat_weekly, 2))?;
