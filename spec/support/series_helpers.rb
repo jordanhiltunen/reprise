@@ -12,4 +12,10 @@ module SeriesHelpers
   def series_options(series_options = {})
     DEFAULT_SERIES_OPTIONS.merge(series_options)
   end
+
+  def localized_occurrence_start_and_end_time(occurrence)
+    [occurrence.start_time, occurrence.end_time]
+      .map { |o| o.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
+      .join(" - ")
+  end
 end
