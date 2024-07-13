@@ -174,9 +174,6 @@ impl MutSchedule {
         starts_at_unix_timestamp: i64,
         ends_at_unix_timestamp: i64,
     ) -> Vec<Occurrence> {
-        let longest_occurrence_duration_in_seconds =
-            self.longest_occurrence_duration_in_seconds().unwrap_or(0);
-
         let interval = Interval::new(
             starts_at_unix_timestamp,
             ends_at_unix_timestamp,
@@ -186,6 +183,8 @@ impl MutSchedule {
         // By constraining the examined window of occurrences to the requested interval,
         // +/- the duration of the longest registered event, we can conservatively expand 
         // the schedule and iterate over only the occurrences that could conceivably overlap.
+        let longest_occurrence_duration_in_seconds =
+            self.longest_occurrence_duration_in_seconds().unwrap_or(0);
         let examined_window_starts_at =
             Some(interval.starts_at() - TimeDelta::seconds(longest_occurrence_duration_in_seconds));
         let examined_window_ends_at =
