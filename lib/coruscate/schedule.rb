@@ -170,15 +170,17 @@ module Coruscate
     # end
 
     # @return [boolean]
-    def occurs_between?(starts_at:, ends_at:)
-      occurrences_between(starts_at:, ends_at:).any?
+    def occurs_between?(starts_at, ends_at, include_overlapping: false)
+      occurrences_between(starts_at, ends_at, include_overlapping:).any?
     end
 
     # @return [Array<Coruscate::Core::Occurrence>]
-    def occurrences_between(starts_at:, ends_at:)
-      internal_schedule.occurrences_overlapping_with_interval(
-        starts_at.to_i, ends_at.to_i
-      )
+    def occurrences_between(starts_at, ends_at, include_overlapping: false)
+      if include_overlapping
+        internal_schedule.occurrences_overlapping_with_interval(starts_at.to_i, ends_at.to_i)
+      else
+        internal_schedule.occurrences_contained_within_interval(starts_at.to_i, ends_at.to_i)
+      end
     end
 
     def_delegators :internal_schedule,
