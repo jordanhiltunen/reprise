@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "bundler/setup"
 require "coruscate"
 require "active_support"

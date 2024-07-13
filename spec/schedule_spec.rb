@@ -41,7 +41,8 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
         :sunday,
         time_of_day: { hour: 0, minute: 1, second: 2 },
         duration_in_seconds: event_duration_in_seconds,
-        label: "My Weekly Occurrence")
+        label: "My Weekly Occurrence"
+      )
       schedule.occurrences
     end
 
@@ -78,13 +79,13 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
       schedule.repeat_weekly(:sunday, time_of_day: { hour: 0, minute: 1, second: 2 }, duration_in_seconds: event_duration_in_seconds)
 
       expect(schedule.occurrences.size).to eq(4)
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) }).
-        to contain_exactly(
-             "Sun Jun 30 2024 12:01AM -1000",
-             "Sun Jul  7 2024 12:01AM -1000",
-             "Sun Jul 14 2024 12:01AM -1000",
-             "Sun Jul 21 2024 12:01AM -1000"
-           )
+      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+        .to contain_exactly(
+          "Sun Jun 30 2024 12:01AM -1000",
+          "Sun Jul  7 2024 12:01AM -1000",
+          "Sun Jul 14 2024 12:01AM -1000",
+          "Sun Jul 21 2024 12:01AM -1000"
+        )
 
       schedule.add_exclusion(
         starts_at: Time.current.in_time_zone(time_zone) - 30.minutes,
@@ -92,12 +93,12 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
       )
 
       expect(schedule.occurrences.size).to eq(3)
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) }).
-        to contain_exactly(
-             "Sun Jul  7 2024 12:01AM -1000",
-             "Sun Jul 14 2024 12:01AM -1000",
-             "Sun Jul 21 2024 12:01AM -1000"
-           )
+      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+        .to contain_exactly(
+          "Sun Jul  7 2024 12:01AM -1000",
+          "Sun Jul 14 2024 12:01AM -1000",
+          "Sun Jul 21 2024 12:01AM -1000"
+        )
     end
   end
 
@@ -106,13 +107,13 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
       schedule.repeat_weekly(:sunday, time_of_day: { hour: 0, minute: 1, second: 2 }, duration_in_seconds: 300)
 
       expect(schedule.occurrences.size).to eq(4)
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) }).
-        to contain_exactly(
-             "Sun Jun 30 2024 12:01AM -1000",
-             "Sun Jul  7 2024 12:01AM -1000",
-             "Sun Jul 14 2024 12:01AM -1000",
-             "Sun Jul 21 2024 12:01AM -1000"
-           )
+      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+        .to contain_exactly(
+          "Sun Jun 30 2024 12:01AM -1000",
+          "Sun Jul  7 2024 12:01AM -1000",
+          "Sun Jul 14 2024 12:01AM -1000",
+          "Sun Jul 21 2024 12:01AM -1000"
+        )
 
       schedule.add_exclusions(
         [
@@ -128,11 +129,11 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
       )
 
       expect(schedule.occurrences.size).to eq(2)
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) }).
-        to contain_exactly(
-             "Sun Jul 14 2024 12:01AM -1000",
-             "Sun Jul 21 2024 12:01AM -1000"
-           )
+      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+        .to contain_exactly(
+          "Sun Jul 14 2024 12:01AM -1000",
+          "Sun Jul 21 2024 12:01AM -1000"
+        )
     end
   end
 
@@ -144,11 +145,11 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
       expect(
         schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
-             "Tue Jul  2 2024 01:02AM -1000",
-             "Tue Jul  9 2024 01:02AM -1000",
-             "Tue Jul 16 2024 01:02AM -1000",
-             "Tue Jul 23 2024 01:02AM -1000"
-           )
+        "Tue Jul  2 2024 01:02AM -1000",
+        "Tue Jul  9 2024 01:02AM -1000",
+        "Tue Jul 16 2024 01:02AM -1000",
+        "Tue Jul 23 2024 01:02AM -1000"
+      )
     end
 
     it "will use the start time of the schedule if a time_of_day for the series is not given" do
@@ -158,11 +159,11 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
       expect(
         schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
-             "Tue Jul  2 2024 12:00AM -1000",
-             "Tue Jul  9 2024 12:00AM -1000",
-             "Tue Jul 16 2024 12:00AM -1000",
-             "Tue Jul 23 2024 12:00AM -1000"
-           )
+        "Tue Jul  2 2024 12:00AM -1000",
+        "Tue Jul  9 2024 12:00AM -1000",
+        "Tue Jul 16 2024 12:00AM -1000",
+        "Tue Jul 23 2024 12:00AM -1000"
+      )
     end
 
     it "supports the accumulation of occurrences from multiple recurring series" do
@@ -173,15 +174,15 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
       expect(
         schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
-             "Tue Jul  2 2024 01:02AM -1000",
-             "Wed Jul  3 2024 02:03AM -1000",
-             "Tue Jul  9 2024 01:02AM -1000",
-             "Wed Jul 10 2024 02:03AM -1000",
-             "Tue Jul 16 2024 01:02AM -1000",
-             "Wed Jul 17 2024 02:03AM -1000",
-             "Tue Jul 23 2024 01:02AM -1000",
-             "Wed Jul 24 2024 02:03AM -1000"
-           )
+        "Tue Jul  2 2024 01:02AM -1000",
+        "Wed Jul  3 2024 02:03AM -1000",
+        "Tue Jul  9 2024 01:02AM -1000",
+        "Wed Jul 10 2024 02:03AM -1000",
+        "Tue Jul 16 2024 01:02AM -1000",
+        "Wed Jul 17 2024 02:03AM -1000",
+        "Tue Jul 23 2024 01:02AM -1000",
+        "Wed Jul 24 2024 02:03AM -1000"
+      )
     end
 
     it "supports the accumulation of occurrences from multiple recurring series with their own independent bookends" do
@@ -196,15 +197,15 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
       expect(
         schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
-             "Wed Aug  7 2024 04:07AM -1000",
-             "Wed Jul  3 2024 04:07AM -1000",
-             "Wed Jul 10 2024 04:07AM -1000",
-             "Tue Jul 16 2024 09:00AM -1000", # Tuesday series comes in 2 weeks later.
-             "Wed Jul 17 2024 04:07AM -1000",
-             "Tue Jul 23 2024 09:00AM -1000",
-             "Wed Jul 24 2024 04:07AM -1000",
-             "Wed Jul 31 2024 04:07AM -1000",
-           )
+        "Wed Aug  7 2024 04:07AM -1000",
+        "Wed Jul  3 2024 04:07AM -1000",
+        "Wed Jul 10 2024 04:07AM -1000",
+        "Tue Jul 16 2024 09:00AM -1000", # Tuesday series comes in 2 weeks later.
+        "Wed Jul 17 2024 04:07AM -1000",
+        "Tue Jul 23 2024 09:00AM -1000",
+        "Wed Jul 24 2024 04:07AM -1000",
+        "Wed Jul 31 2024 04:07AM -1000"
+      )
     end
 
     context "when the schedule crosses a daylight savings change" do
@@ -218,11 +219,11 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
         expect(
           schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
         ).to contain_exactly(
-               "Sun Mar  3 2024 12:01AM -0800",
-               "Sun Mar 10 2024 12:01AM -0800",
-               "Sun Mar 17 2024 12:01AM -0700",
-               "Sun Mar 24 2024 12:01AM -0700"
-             )
+          "Sun Mar  3 2024 12:01AM -0800",
+          "Sun Mar 10 2024 12:01AM -0800",
+          "Sun Mar 17 2024 12:01AM -0700",
+          "Sun Mar 24 2024 12:01AM -0700"
+        )
       end
     end
   end
@@ -237,38 +238,40 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
       expect(
         schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
-             "Tue Jul 16 2024 01:02AM -1000",
-             "Tue Aug 20 2024 01:02AM -1000",
-             "Tue Sep 17 2024 01:02AM -1000",
-             "Tue Oct 15 2024 01:02AM -1000",
-             "Tue Nov 19 2024 01:02AM -1000",
-             "Tue Dec 17 2024 01:02AM -1000",
-             "Tue Jan 21 2025 01:02AM -1000",
-             "Tue Feb 18 2025 01:02AM -1000",
-             "Tue Mar 18 2025 01:02AM -1000",
-             "Tue Apr 15 2025 01:02AM -1000",
-             "Tue May 20 2025 01:02AM -1000"
-           )
+        "Tue Jul 16 2024 01:02AM -1000",
+        "Tue Aug 20 2024 01:02AM -1000",
+        "Tue Sep 17 2024 01:02AM -1000",
+        "Tue Oct 15 2024 01:02AM -1000",
+        "Tue Nov 19 2024 01:02AM -1000",
+        "Tue Dec 17 2024 01:02AM -1000",
+        "Tue Jan 21 2025 01:02AM -1000",
+        "Tue Feb 18 2025 01:02AM -1000",
+        "Tue Mar 18 2025 01:02AM -1000",
+        "Tue Apr 15 2025 01:02AM -1000",
+        "Tue May 20 2025 01:02AM -1000"
+      )
     end
 
     it "allows negative indexing into the monthly occurrences" do
-      schedule.repeat_monthly_by_nth_weekday(:friday, -1, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
+      schedule.repeat_monthly_by_nth_weekday(
+        :friday, -1, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300
+      )
 
       expect(schedule.occurrences.size).to eq(10)
       expect(
         schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
-             "Fri Jul 26 2024 01:02AM -1000",
-             "Fri Aug 30 2024 01:02AM -1000",
-             "Fri Sep 27 2024 01:02AM -1000",
-             "Fri Oct 25 2024 01:02AM -1000",
-             "Fri Nov 29 2024 01:02AM -1000",
-             "Fri Dec 27 2024 01:02AM -1000",
-             "Fri Jan 31 2025 01:02AM -1000",
-             "Fri Feb 28 2025 01:02AM -1000",
-             "Fri Mar 28 2025 01:02AM -1000",
-             "Fri Apr 25 2025 01:02AM -1000",
-           )
+        "Fri Jul 26 2024 01:02AM -1000",
+        "Fri Aug 30 2024 01:02AM -1000",
+        "Fri Sep 27 2024 01:02AM -1000",
+        "Fri Oct 25 2024 01:02AM -1000",
+        "Fri Nov 29 2024 01:02AM -1000",
+        "Fri Dec 27 2024 01:02AM -1000",
+        "Fri Jan 31 2025 01:02AM -1000",
+        "Fri Feb 28 2025 01:02AM -1000",
+        "Fri Mar 28 2025 01:02AM -1000",
+        "Fri Apr 25 2025 01:02AM -1000"
+      )
     end
 
     it "can handle nth weekday edge cases that do not occur every month" do
@@ -279,11 +282,11 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
       expect(
         schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
-             "Wed Apr 30 2025 01:02AM -1000",
-             "Wed Jan 29 2025 01:02AM -1000",
-             "Wed Jul 31 2024 01:02AM -1000",
-             "Wed Oct 30 2024 01:02AM -1000"
-           )
+        "Wed Apr 30 2025 01:02AM -1000",
+        "Wed Jan 29 2025 01:02AM -1000",
+        "Wed Jul 31 2024 01:02AM -1000",
+        "Wed Oct 30 2024 01:02AM -1000"
+      )
     end
   end
 
@@ -297,12 +300,12 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
       expect(
         schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
-             "Fri Jul 12 2024 01:02AM -1000",
-             "Mon Aug 12 2024 01:02AM -1000",
-             "Sat Oct 12 2024 01:02AM -1000",
-             "Thu Sep 12 2024 01:02AM -1000",
-             "Tue Nov 12 2024 01:02AM -1000"
-           )
+        "Fri Jul 12 2024 01:02AM -1000",
+        "Mon Aug 12 2024 01:02AM -1000",
+        "Sat Oct 12 2024 01:02AM -1000",
+        "Thu Sep 12 2024 01:02AM -1000",
+        "Tue Nov 12 2024 01:02AM -1000"
+      )
     end
 
     it "handles indexing into non-universal day numbers" do
@@ -312,10 +315,10 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
       expect(
         schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       ).to contain_exactly(
-             "Wed Jul 31 2024 01:02AM -1000",
-             "Sat Aug 31 2024 01:02AM -1000",
-             "Thu Oct 31 2024 01:02AM -1000",
-           )
+        "Wed Jul 31 2024 01:02AM -1000",
+        "Sat Aug 31 2024 01:02AM -1000",
+        "Thu Oct 31 2024 01:02AM -1000"
+      )
     end
   end
 end

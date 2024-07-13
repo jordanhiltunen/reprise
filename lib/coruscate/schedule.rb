@@ -46,7 +46,7 @@ module Coruscate
     def initialize(starts_at:, ends_at:, time_zone:)
       @starts_at = starts_at
       @ends_at = ends_at
-      @time_zone = ActiveSupport::TimeZone::find_tzinfo(time_zone).identifier
+      @time_zone = ActiveSupport::TimeZone.find_tzinfo(time_zone).identifier
       @default_time_of_day = TimeOfDay.new(starts_at)
     end
 
@@ -161,7 +161,7 @@ module Coruscate
     def add_exclusion(starts_at:, ends_at:)
       internal_schedule.add_exclusion(
         starts_at_unix_timestamp: starts_at.to_i,
-        ends_at_unix_timestamp: ends_at.to_i,
+        ends_at_unix_timestamp: ends_at.to_i
       )
     end
 

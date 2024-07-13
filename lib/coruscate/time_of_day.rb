@@ -11,7 +11,7 @@ module Coruscate
 
     DEFAULT_TIME_OF_DAY = { hour: 0, minute: 0, second: 0 }.freeze
     TIME_OF_DAY_ATTRIBUTES = DEFAULT_TIME_OF_DAY.keys.freeze
-    attr_accessor *TIME_OF_DAY_ATTRIBUTES
+    attr_accessor(*TIME_OF_DAY_ATTRIBUTES)
 
     # @param [Time, Hash] time_of_day
     #   Accepts either a local time value from which the hour, minute, and second

@@ -12,13 +12,13 @@ RSpec.describe Coruscate::TimeOfDay do
       end
 
       it "raises InvalidHashError when the hms_opts hash contains unexpected keys" do
-        expect { described_class.new({ years: 12 }) }.
-          to raise_error(Coruscate::TimeOfDay::InvalidHashError)
+        expect { described_class.new({ years: 12 }) }
+          .to raise_error(Coruscate::TimeOfDay::InvalidHashError)
       end
 
       it "raises RangeError when the time of day is out-of-range" do
-        expect { described_class.new({ hour: 25 }) }.
-          to raise_error(Coruscate::TimeOfDay::RangeError)
+        expect { described_class.new({ hour: 25 }) }
+          .to raise_error(Coruscate::TimeOfDay::RangeError)
       end
     end
   end
