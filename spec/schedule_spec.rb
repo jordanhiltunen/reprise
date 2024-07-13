@@ -3,6 +3,8 @@
 require "spec_helper"
 
 RSpec.describe Coruscate::Schedule, aggregate_failures: true do
+  include SeriesHelpers
+
   subject(:schedule) { Coruscate::Schedule.new(starts_at:, ends_at:, time_zone:) }
 
   let(:time_zone) { "Hawaii" }
@@ -71,6 +73,44 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
       expect(first_occurrence.inspect).to eq(
         "Occurrence { starts_at_unix_timestamp: 1719741662, ends_at_unix_timestamp: 1719741962, label: Some(\"My Weekly Occurrence\") }"
       )
+    end
+  end
+
+  describe "#occurrences_between" do
+    it "returns the occurrences that transpire at least in part during a given interval" do
+      schedule.repeat_weekly(:sunday, **series_options)
+
+      expect(schedule.occurrences.size).to eq(4)
+      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+        .to contain_exactly(
+          "Sun Jul  7 2024 10:15PM -1000",
+          "Sun Jul 14 2024 10:15PM -1000",
+          "Sun Jul 21 2024 10:15PM -1000",
+          "Sun Jun 30 2024 10:15PM -1000"
+        )
+
+      occurrences_between = schedule.occurrences_between(
+        starts_at: starts_at + 3.days,
+        ends_at: ends_at - 10.days
+      )
+
+      expect(occurrences_between.map { |o| localized_occurrence_start_time(o) })
+        .to contain_exactly(
+          "Sun Jul  7 2024 10:15PM -1000",
+          "Sun Jul 14 2024 10:15PM -1000"
+        )
+    end
+  end
+
+  describe "#occurs_between?" do
+    before { schedule.repeat_weekly(:sunday, **series_options) }
+
+    it "returns true when at least one occurrence overlaps with a given interval" do
+      expect(schedule.occurs_between?(starts_at: starts_at + 3.days, ends_at: ends_at - 10.days)).to eq(true)
+    end
+
+    it "returns false when at least one occurrence overlaps with a given interval" do
+      expect(schedule.occurs_between?(starts_at: starts_at + 1.day, ends_at: starts_at + 2.days)).to eq(false)
     end
   end
 
