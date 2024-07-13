@@ -11,6 +11,7 @@ mod time_of_day;
 mod ruby_modules;
 mod sorted_exclusions;
 pub mod interval;
+pub mod clock;
 
 pub fn init() -> Result<(), Error> {
     schedule::init()?;
