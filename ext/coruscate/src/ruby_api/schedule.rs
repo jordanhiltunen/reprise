@@ -22,6 +22,10 @@ use std::sync::Arc;
 pub(crate) type UnixTimestamp = i64;
 type Second = i64;
 
+trait OccurrenceFilter {
+    fn apply_filter(occurrence: &Occurrence) -> Option<&Occurrence>;
+}
+
 #[derive(Debug)]
 pub(crate) struct Schedule {
     pub(crate) starts_at_unix_timestamp: UnixTimestamp,
@@ -165,8 +169,24 @@ impl MutSchedule {
             ));
     }
 
-    pub fn occurrences_contained_within_interval() {
-        // todo!
+    pub fn occurrences_contained_within_interval(
+        &self,
+        starts_at_unix_timestamp: i64,
+        ends_at_unix_timestamp: i64,
+    ) -> Vec<Occurrence> {
+        let interval = Interval::new(
+            starts_at_unix_timestamp,
+            ends_at_unix_timestamp,
+            self.time_zone(),
+        );
+
+        let occurrence_filter = |o: &Occurrence| -> bool { o.contains(&interval) };
+
+        return self.generate_occurrences(
+            Some(interval.starts_at()),
+            Some(interval.ends_at()),
+            Some(&occurrence_filter),
+        );
     }
 
     pub fn occurrences_overlapping_with_interval(
@@ -181,7 +201,7 @@ impl MutSchedule {
         );
 
         // By constraining the examined window of occurrences to the requested interval,
-        // +/- the duration of the longest registered event, we can conservatively expand 
+        // +/- the duration of the longest registered event, we can conservatively expand
         // the schedule and iterate over only the occurrences that could conceivably overlap.
         let longest_occurrence_duration_in_seconds =
             self.longest_occurrence_duration_in_seconds().unwrap_or(0);
@@ -190,11 +210,13 @@ impl MutSchedule {
         let examined_window_ends_at =
             Some(interval.ends_at() + TimeDelta::seconds(longest_occurrence_duration_in_seconds));
 
-        return self
-            .generate_occurrences(examined_window_starts_at, examined_window_ends_at)
-            .into_iter()
-            .filter(|o| o.overlaps_with(&interval))
-            .collect();
+        let occurrence_filter = |o: &Occurrence| -> bool { o.overlaps_with(&interval) };
+
+        return self.generate_occurrences(
+            examined_window_starts_at,
+            examined_window_ends_at,
+            Some(&occurrence_filter),
+        );
     }
 
     pub fn occurrences(&self) -> Vec<Occurrence> {
@@ -205,6 +227,7 @@ impl MutSchedule {
         &self,
         starts_at: Option<DateTime<Tz>>,
         ends_at: Option<DateTime<Tz>>,
+        occurrence_filter: Option<&dyn Fn(&Occurrence) -> bool>,
     ) -> Vec<Occurrence> {
         let self_reference = self.0.read();
         let starts_at = starts_at.unwrap_or(self_reference.local_starts_at_datetime);

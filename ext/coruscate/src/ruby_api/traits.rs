@@ -19,6 +19,11 @@ pub(crate) trait HasOverlapAwareness {
         return (self.get_starts_at_unix_timestamp() < other.get_ends_at_unix_timestamp())
             && (other.get_starts_at_unix_timestamp() < self.get_ends_at_unix_timestamp());
     }
+
+    fn contains<T: HasOverlapAwareness>(&self, other: &T) -> bool {
+        return (self.get_starts_at_unix_timestamp() <= other.get_starts_at_unix_timestamp())
+            && (self.get_ends_at_unix_timestamp() >= other.get_ends_at_unix_timestamp());
+    }
 }
 
 #[enum_dispatch]
