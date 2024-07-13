@@ -165,7 +165,10 @@ impl MutSchedule {
             ));
     }
 
-    pub(crate) fn occurrences(&self) -> Vec<Occurrence> {
+    pub fn occurrences_contained_within_interval() {
+        // todo!
+    }
+
     pub fn occurrences_overlapping_with_interval(
         &self,
         starts_at_unix_timestamp: i64,
