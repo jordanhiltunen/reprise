@@ -1,16 +1,17 @@
 use crate::ruby_api::exclusion::Exclusion;
+use crate::ruby_api::interval::Interval;
 use crate::ruby_api::occurrence::Occurrence;
 use crate::ruby_api::recurring_series::daily::Daily;
-use crate::ruby_api::recurring_series::minutely::Minutely;
 use crate::ruby_api::recurring_series::hourly::Hourly;
+use crate::ruby_api::recurring_series::minutely::Minutely;
 use crate::ruby_api::recurring_series::monthly_by_day::MonthlyByDay;
 use crate::ruby_api::recurring_series::monthly_by_nth_weekday::MonthlyByNthWeekday;
 use crate::ruby_api::recurring_series::weekly::Weekly;
 use crate::ruby_api::ruby_modules;
 use crate::ruby_api::series_options::SeriesOptions;
 use crate::ruby_api::sorted_exclusions::SortedExclusions;
-use crate::ruby_api::traits::{Recurrable, RecurringSeries};
-use chrono::DateTime;
+use crate::ruby_api::traits::{HasOverlapAwareness, Recurrable, RecurringSeries};
+use chrono::{DateTime, TimeDelta};
 use chrono_tz::Tz;
 use magnus::prelude::*;
 use magnus::{class, function, method};
@@ -63,6 +64,16 @@ impl MutSchedule {
 
     pub(crate) fn time_zone(&self) -> Tz {
         return self.0.read().time_zone;
+    }
+
+    fn longest_occurrence_duration_in_seconds(&self) -> Option<i64> {
+        return self
+            .0
+            .read()
+            .recurring_series
+            .iter()
+            .map(|s| s.get_occurrence_duration_in_seconds())
+            .max();
     }
 
     pub(crate) fn add_exclusions(&self, exclusions: Vec<(i64, i64)>) {
@@ -155,7 +166,47 @@ impl MutSchedule {
     }
 
     pub(crate) fn occurrences(&self) -> Vec<Occurrence> {
+    pub fn occurrences_overlapping_with_interval(
+        &self,
+        starts_at_unix_timestamp: i64,
+        ends_at_unix_timestamp: i64,
+    ) -> Vec<Occurrence> {
+        let longest_occurrence_duration_in_seconds =
+            self.longest_occurrence_duration_in_seconds().unwrap_or(0);
+
+        let interval = Interval::new(
+            starts_at_unix_timestamp,
+            ends_at_unix_timestamp,
+            self.time_zone(),
+        );
+
+        // By constraining the examined window of occurrences to the requested interval,
+        // +/- the duration of the longest registered event, we can conservatively expand 
+        // the schedule and iterate over only the occurrences that could conceivably overlap.
+        let examined_window_starts_at =
+            Some(interval.starts_at() - TimeDelta::seconds(longest_occurrence_duration_in_seconds));
+        let examined_window_ends_at =
+            Some(interval.ends_at() + TimeDelta::seconds(longest_occurrence_duration_in_seconds));
+
+        return self
+            .generate_occurrences(examined_window_starts_at, examined_window_ends_at)
+            .into_iter()
+            .filter(|o| o.overlaps_with(&interval))
+            .collect();
+    }
+
+    pub fn occurrences(&self) -> Vec<Occurrence> {
+        return self.generate_occurrences(None, None);
+    }
+
+    fn generate_occurrences(
+        &self,
+        starts_at: Option<DateTime<Tz>>,
+        ends_at: Option<DateTime<Tz>>,
+    ) -> Vec<Occurrence> {
         let self_reference = self.0.read();
+        let starts_at = starts_at.unwrap_or(self_reference.local_starts_at_datetime);
+        let ends_at = ends_at.unwrap_or(self_reference.local_ends_at_datetime);
 
         // Even though we are structurally equipped to use par_iter() here to parallelize,
         // and it is a simple substitution over iter(), schedule expansion is not computationally
@@ -164,12 +215,7 @@ impl MutSchedule {
         let mut occurrences = self_reference
             .recurring_series
             .iter()
-            .map(|series| {
-                series.generate_occurrences(
-                    self_reference.local_starts_at_datetime,
-                    self_reference.local_ends_at_datetime,
-                )
-            })
+            .map(|series| series.generate_occurrences(starts_at, ends_at))
             .flatten()
             .filter(|o| !self_reference.sorted_exclusions.is_occurrence_excluded(o))
             .collect::<Vec<Occurrence>>();
@@ -186,6 +232,10 @@ pub fn init() -> Result<(), Error> {
 
     class.define_singleton_method("new", function!(MutSchedule::new, 3))?;
     class.define_method("occurrences", method!(MutSchedule::occurrences, 0))?;
+    class.define_method(
+        "occurrences_overlapping_with_interval",
+        method!(MutSchedule::occurrences_overlapping_with_interval, 2),
+    )?;
     class.define_method("add_exclusion", method!(MutSchedule::add_exclusion, 1))?;
     class.define_method("add_exclusions", method!(MutSchedule::add_exclusions, 1))?;
     class.define_method("repeat_minutely", method!(MutSchedule::repeat_minutely, 1))?;
