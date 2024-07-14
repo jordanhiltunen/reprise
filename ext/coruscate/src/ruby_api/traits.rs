@@ -2,10 +2,10 @@ use crate::ruby_api::clock::set_datetime_cursor_safely;
 use crate::ruby_api::occurrence::Occurrence;
 use crate::ruby_api::recurring_series::daily::Daily;
 use crate::ruby_api::recurring_series::hourly::Hourly;
+use crate::ruby_api::recurring_series::minutely::Minutely;
 use crate::ruby_api::recurring_series::monthly_by_day::MonthlyByDay;
 use crate::ruby_api::recurring_series::monthly_by_nth_weekday::MonthlyByNthWeekday;
 use crate::ruby_api::recurring_series::weekly::Weekly;
-use crate::ruby_api::recurring_series::minutely::Minutely;
 use crate::ruby_api::series_options::SeriesOptions;
 use crate::ruby_api::time_of_day::TimeOfDay;
 use chrono::{DateTime, Duration, NaiveTime};
@@ -30,12 +30,12 @@ pub(crate) trait HasOverlapAwareness {
 #[enum_dispatch]
 #[derive(Debug)]
 pub enum RecurringSeries {
+    Minutely,
     Hourly,
     Daily,
     Weekly,
     MonthlyByDay,
     MonthlyByNthWeekday,
-    Minutely
 }
 
 #[enum_dispatch(RecurringSeries)]
