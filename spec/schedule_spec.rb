@@ -14,10 +14,6 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
 
   before { travel_to Time.new(2024, 6, 30, 0, 0, 0, "-10:00") } # Hawaii
 
-  def localized_occurrence_start_time(occurrence)
-    occurrence.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z")
-  end
-
   describe "#initialize" do
     context "when the time zone is invalid" do
       let(:time_zone) { "nonsense" }
