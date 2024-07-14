@@ -9,22 +9,4 @@ module TimeZoneHelpers
   # Standard Time (ST) will begin at 2:00 am on Sunday, November 3, 2024; the clocks are turned
   # back by one hour.
   ONE_MINUTE_BEFORE_LA_TRANSITION_TO_ST_2024 = Time.new(2024, 11, 3, 0, 59, 0, "-0700").freeze
-
-  module_function
-
-  def hours_before_los_angeles_transition_to_dst
-    Time.new(2024, 3, 9, 22, 0, 0, "-0800")
-  end
-
-  def minutes_before_los_angeles_transition_to_dst
-    Time.new(2024, 3, 10, 1, 58, 0, "-0800")
-  end
-
-  def hours_before_los_angeles_transition_to_st
-    Time.new(2024, 11, 2, 22, 0, 0, "-0700")
-  end
-
-  def minutes_before_los_angeles_transition_to_st
-    Time.new(2024, 11, 3, 0, 59, 0, "-0700")
-  end
 end
