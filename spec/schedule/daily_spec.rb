@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../support/series_helpers"
-require_relative "../support/time_zone_helpers"
+require "spec_helper"
 
 RSpec.describe "#repeat_daily", aggregate_failures: true do
   include SeriesHelpers
