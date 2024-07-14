@@ -32,10 +32,10 @@ RSpec.describe "#repeat_minutely", aggregate_failures: true do
 
     expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
       .to contain_exactly(
-        "Sun Jun 30 2024 12:01AM -0700",
-        "Sun Jun 30 2024 12:02AM -0700",
-        "Sun Jun 30 2024 12:03AM -0700",
-        "Sun Jun 30 2024 12:04AM -0700"
+        "Sun Mar 10 2024 03:00AM -0700",
+        "Sun Mar 10 2024 03:01AM -0700",
+        "Sun Mar 10 2024 03:02AM -0700",
+        "Sun Mar 10 2024 03:03AM -0700"
       )
   end
 
@@ -47,11 +47,11 @@ RSpec.describe "#repeat_minutely", aggregate_failures: true do
 
       expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
         .to contain_exactly(
-          "Sun Jun 30 2024 12:01AM -0700",
-          "Sun Jun 30 2024 12:03AM -0700",
-          "Sun Jun 30 2024 12:05AM -0700",
-          "Sun Jun 30 2024 12:07AM -0700",
-          "Sun Jun 30 2024 12:09AM -0700"
+          "Sun Mar 10 2024 03:00AM -0700",
+          "Sun Mar 10 2024 03:02AM -0700",
+          "Sun Mar 10 2024 03:04AM -0700",
+          "Sun Mar 10 2024 03:06AM -0700",
+          "Sun Mar 10 2024 03:08AM -0700"
         )
     end
   end
