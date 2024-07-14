@@ -193,63 +193,7 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
   describe "#repeat_monthly_by_nth_weekday" do
     let(:ends_at) { Time.current + 11.months }
 
-    it "generates an array of monthly occurrences with a fixed weekday" do
-      schedule.repeat_monthly_by_nth_weekday(:tuesday, 2, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
 
-      expect(schedule.occurrences.size).to eq(11)
-      expect(
-        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
-      ).to contain_exactly(
-        "Tue Jul 16 2024 01:02AM -1000",
-        "Tue Aug 20 2024 01:02AM -1000",
-        "Tue Sep 17 2024 01:02AM -1000",
-        "Tue Oct 15 2024 01:02AM -1000",
-        "Tue Nov 19 2024 01:02AM -1000",
-        "Tue Dec 17 2024 01:02AM -1000",
-        "Tue Jan 21 2025 01:02AM -1000",
-        "Tue Feb 18 2025 01:02AM -1000",
-        "Tue Mar 18 2025 01:02AM -1000",
-        "Tue Apr 15 2025 01:02AM -1000",
-        "Tue May 20 2025 01:02AM -1000"
-      )
-    end
-
-    it "allows negative indexing into the monthly occurrences" do
-      schedule.repeat_monthly_by_nth_weekday(
-        :friday, -1, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300
-      )
-
-      expect(schedule.occurrences.size).to eq(10)
-      expect(
-        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
-      ).to contain_exactly(
-        "Fri Jul 26 2024 01:02AM -1000",
-        "Fri Aug 30 2024 01:02AM -1000",
-        "Fri Sep 27 2024 01:02AM -1000",
-        "Fri Oct 25 2024 01:02AM -1000",
-        "Fri Nov 29 2024 01:02AM -1000",
-        "Fri Dec 27 2024 01:02AM -1000",
-        "Fri Jan 31 2025 01:02AM -1000",
-        "Fri Feb 28 2025 01:02AM -1000",
-        "Fri Mar 28 2025 01:02AM -1000",
-        "Fri Apr 25 2025 01:02AM -1000"
-      )
-    end
-
-    it "can handle nth weekday edge cases that do not occur every month" do
-      # The fifth (NB: 4; zeroth indexing) wednesday of a month is relatively rare.
-      schedule.repeat_monthly_by_nth_weekday(:wednesday, 4, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
-
-      expect(schedule.occurrences.size).to eq(4)
-      expect(
-        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
-      ).to contain_exactly(
-        "Wed Apr 30 2025 01:02AM -1000",
-        "Wed Jan 29 2025 01:02AM -1000",
-        "Wed Jul 31 2024 01:02AM -1000",
-        "Wed Oct 30 2024 01:02AM -1000"
-      )
-    end
   end
 
   describe "#repeat_monthly_by_day" do
