@@ -39,9 +39,9 @@ impl Recurrable for Weekly {
     fn advance_datetime_cursor(&self, datetime_cursor: &DateTime<Tz>) -> DateTime<Tz> {
         // If the current candidate matches the criteria, we can advance by 1-week moving forward.
         return if self.occurrence_candidate_matches_criteria(datetime_cursor) {
-            return advance_time_safely(datetime_cursor, TimeDelta::days(7), self.naive_starts_at_time());
+            advance_time_safely(datetime_cursor, TimeDelta::days(7), self.naive_starts_at_time())
         } else {
-            return advance_time_safely(datetime_cursor, TimeDelta::days(1), self.naive_starts_at_time());
+            advance_time_safely(datetime_cursor, TimeDelta::days(1), self.naive_starts_at_time())
         }
     }
 
