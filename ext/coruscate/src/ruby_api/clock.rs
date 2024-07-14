@@ -21,7 +21,7 @@ pub(crate) fn advance_time_safely(
 
             return datetime_cursor_utc
                 .checked_add_signed(time_delta)
-                .expect("UTC datetime must be advanced")
+                .expect("UTC datetime should advance")
                 .with_timezone(&timezone);
         }
         Some(new_datetime_cursor) => new_datetime_cursor,
