@@ -12,10 +12,6 @@ RSpec.describe "#repeat_hourly", aggregate_failures: true do
   let(:ends_at) { starts_at + 6.hours }
   let(:time_zone) { TimeZoneHelpers::LOS_ANGELES_TIME_ZONE }
 
-  def localized_occurrence_start_time(occurrence)
-    occurrence.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z")
-  end
-
   before { travel_to Time.new(2024, 6, 30, 0, 0, 0, "-07:00") }
 
   it "generates an array of daily occurrences" do
