@@ -40,6 +40,28 @@ RSpec.describe "#repeat_weekly", aggregate_failures: true do
       )
   end
 
+  context "when the schedule starts on a transition from Standard Time (ST) to Daylight Savings Time (DST)" do
+    let(:starts_at) do
+      (TimeZoneHelpers::ONE_MINUTE_BEFORE_LA_TRANSITION_TO_DST_2024).in_time_zone(time_zone)
+    end
+
+    it "generates an array of occurrences starting from the DST change" do
+      schedule.repeat_weekly(:sunday, time_of_day: { hour: 2, minute: 15 }, duration_in_seconds: 30.minutes)
+
+      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+        .to contain_exactly(
+          # N.B. The first occurrence begins
+          # after the local time gap, one
+          # hour forward.
+          "Sun Mar 10 2024 03:15AM -0700",
+          "Sun Mar 17 2024 02:15AM -0700",
+          "Sun Mar 24 2024 02:15AM -0700",
+          "Sun Mar 31 2024 02:15AM -0700",
+          "Sun Apr  7 2024 02:15AM -0700",
+        )
+    end
+  end
+
   context "when the schedule crosses a transition from Standard Time (ST) to Daylight Savings Time (DST)" do
     let(:starts_at) do
       (TimeZoneHelpers::ONE_MINUTE_BEFORE_LA_TRANSITION_TO_DST_2024 - 1.week).in_time_zone(time_zone)
