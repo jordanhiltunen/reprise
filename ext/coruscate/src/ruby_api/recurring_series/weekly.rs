@@ -1,6 +1,7 @@
-use chrono::{Datelike, DateTime, Days, Weekday};
+use chrono::{Datelike, DateTime, Days, TimeDelta, Weekday};
 use chrono_tz::Tz;
 use magnus::Symbol;
+use crate::ruby_api::clock::advance_time_safely;
 use crate::ruby_api::series_options::SeriesOptions;
 use crate::ruby_api::time_of_day::TimeOfDay;
 use crate::ruby_api::traits::{Recurrable};
@@ -38,11 +39,9 @@ impl Recurrable for Weekly {
     fn advance_datetime_cursor(&self, datetime_cursor: &DateTime<Tz>) -> DateTime<Tz> {
         // If the current candidate matches the criteria, we can advance by 1-week moving forward.
         return if self.occurrence_candidate_matches_criteria(datetime_cursor) {
-            datetime_cursor.checked_add_days(Days::new(7)).
-                unwrap().with_time(self.naive_starts_at_time()).unwrap()
+            return advance_time_safely(datetime_cursor, TimeDelta::days(7), self.naive_starts_at_time());
         } else {
-            datetime_cursor.checked_add_days(Days::new(1)).
-                unwrap().with_time(self.naive_starts_at_time()).unwrap()
+            return advance_time_safely(datetime_cursor, TimeDelta::days(1), self.naive_starts_at_time());
         }
     }
 
