@@ -179,7 +179,7 @@ impl MutSchedule {
         return self.generate_occurrences(
             Some(interval.starts_at()),
             Some(interval.ends_at())
-        ).into_iter().filter(|o| o.contains(&interval)).collect();
+        ).into_iter().filter(|o| interval.contains(o)).collect();
     }
 
     pub fn occurrences_overlapping_with_interval(
@@ -206,7 +206,7 @@ impl MutSchedule {
         return self.generate_occurrences(
             examined_window_starts_at,
             examined_window_ends_at
-        ).into_iter().filter(|o| o.overlaps_with(&interval)).collect();
+        ).into_iter().filter(|o| interval.overlaps_with(o)).collect();
     }
 
     pub fn occurrences(&self) -> Vec<Occurrence> {
