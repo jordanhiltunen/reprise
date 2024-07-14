@@ -1,8 +1,9 @@
 use crate::ruby_api::series_options::SeriesOptions;
 use crate::ruby_api::time_of_day::TimeOfDay;
 use crate::ruby_api::traits::Recurrable;
-use chrono::{DateTime, Datelike, Days, Months};
+use chrono::{DateTime, Datelike, Days, Months, TimeDelta};
 use chrono_tz::Tz;
+use crate::ruby_api::clock::advance_time_safely;
 
 #[derive(Debug, Clone)]
 pub(crate) struct MonthlyByDay {
@@ -33,22 +34,24 @@ impl Recurrable for MonthlyByDay {
     }
 
     fn advance_datetime_cursor(&self, datetime_cursor: &DateTime<Tz>) -> DateTime<Tz> {
-        if datetime_cursor.day() == self.day_number {
+        return if datetime_cursor.day() == self.day_number {
             // If the current value already falls on the right day, moving forward
             // we only need to increment by month.
-            datetime_cursor
-                .checked_add_months(Months::new(1))
-                .unwrap()
-                .with_time(self.naive_starts_at_time())
-                .unwrap()
+            match datetime_cursor.checked_add_months(Months::new(1)) {
+                None => {
+                    datetime_cursor
+                        .to_utc()
+                        .checked_add_months(Months::new(1))
+                        .expect("Datetime must advance")
+                        .with_timezone(&datetime_cursor.timezone())
+                },
+                Some(new_datetime_cursor) => {
+                    new_datetime_cursor.with_time(self.naive_starts_at_time()).latest()
+                        .unwrap()
+                }
+            }
         } else {
-            // If we are not yet on the right day, we need to increment by day
-            // TODO: consider using with_day() instead so we don't have to increment.
-            datetime_cursor
-                .checked_add_days(Days::new(1))
-                .unwrap()
-                .with_time(self.naive_starts_at_time())
-                .unwrap()
+            advance_time_safely(datetime_cursor, TimeDelta::days(1), self.naive_starts_at_time())
         }
     }
 }
