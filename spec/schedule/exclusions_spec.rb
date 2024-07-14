@@ -54,14 +54,8 @@ RSpec.describe "exclusions", aggregate_failures: true do
 
       schedule.add_exclusions(
         [
-          [
-            (starts_at - 30.minutes).to_i,
-            (starts_at + 5.minutes).to_i
-          ],
-          [
-            (starts_at + 7.days).to_i,
-            (starts_at + 8.days).to_i
-          ]
+          [(starts_at - 30.minutes).to_i, (starts_at + 5.minutes).to_i],
+          [(starts_at + 7.days).to_i, (starts_at + 8.days).to_i]
         ]
       )
 
