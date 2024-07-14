@@ -247,6 +247,10 @@ pub fn init() -> Result<(), Error> {
     class.define_singleton_method("new", function!(MutSchedule::new, 3))?;
     class.define_method("occurrences", method!(MutSchedule::occurrences, 0))?;
     class.define_method(
+        "occurrences_contained_within_interval",
+        method!(MutSchedule::occurrences_contained_within_interval, 2),
+    )?;
+    class.define_method(
         "occurrences_overlapping_with_interval",
         method!(MutSchedule::occurrences_overlapping_with_interval, 2),
     )?;
