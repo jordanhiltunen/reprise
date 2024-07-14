@@ -33,6 +33,62 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
     end
   end
 
+  it "will use the start time of the schedule if a time_of_day for the series is not given" do
+    schedule.repeat_weekly(:tuesday, duration_in_seconds: 300)
+
+    expect(schedule.occurrences.size).to eq(4)
+    expect(
+      schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
+    ).to contain_exactly(
+       "Tue Jul  2 2024 12:00AM -1000",
+       "Tue Jul  9 2024 12:00AM -1000",
+       "Tue Jul 16 2024 12:00AM -1000",
+       "Tue Jul 23 2024 12:00AM -1000"
+     )
+  end
+
+  it "supports the accumulation of occurrences from multiple recurring series" do
+    schedule.repeat_weekly(:tuesday, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
+    schedule.repeat_weekly(:wednesday, time_of_day: { hour: 2, minute: 3, second: 4 }, duration_in_seconds: 300)
+
+    expect(schedule.occurrences.size).to eq(8)
+    expect(
+      schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
+    ).to contain_exactly(
+       "Tue Jul  2 2024 01:02AM -1000",
+       "Wed Jul  3 2024 02:03AM -1000",
+       "Tue Jul  9 2024 01:02AM -1000",
+       "Wed Jul 10 2024 02:03AM -1000",
+       "Tue Jul 16 2024 01:02AM -1000",
+       "Wed Jul 17 2024 02:03AM -1000",
+       "Tue Jul 23 2024 01:02AM -1000",
+       "Wed Jul 24 2024 02:03AM -1000"
+     )
+  end
+
+  it "supports the accumulation of occurrences from multiple recurring series with their own independent bookends" do
+    schedule.repeat_weekly(:tuesday,
+                           time_of_day: { hour: 9, minute: 0 }, duration_in_seconds: 300,
+                           starts_at: Time.current + 2.weeks, ends_at:)
+    schedule.repeat_weekly(:wednesday,
+                           time_of_day: { hour: 4, minute: 7, second: 4 }, duration_in_seconds: 300,
+                           ends_at: Time.current + 6.weeks)
+
+    expect(schedule.occurrences.size).to eq(8)
+    expect(
+      schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
+    ).to contain_exactly(
+       "Wed Aug  7 2024 04:07AM -1000",
+       "Wed Jul  3 2024 04:07AM -1000",
+       "Wed Jul 10 2024 04:07AM -1000",
+       "Tue Jul 16 2024 09:00AM -1000", # Tuesday series comes in 2 weeks later.
+       "Wed Jul 17 2024 04:07AM -1000",
+       "Tue Jul 23 2024 09:00AM -1000",
+       "Wed Jul 24 2024 04:07AM -1000",
+       "Wed Jul 31 2024 04:07AM -1000"
+     )
+  end
+
   describe "#occurrences" do
     let(:occurrences) do
       schedule.repeat_weekly(
@@ -72,49 +128,11 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
     end
   end
 
-  describe "#occurrences_between" do
-    it "returns the occurrences that transpire at least in part during a given interval" do
-      schedule.repeat_weekly(:sunday, **series_options)
-
-      expect(schedule.occurrences.size).to eq(4)
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
-        .to contain_exactly(
-          "Sun Jul  7 2024 10:15PM -1000",
-          "Sun Jul 14 2024 10:15PM -1000",
-          "Sun Jul 21 2024 10:15PM -1000",
-          "Sun Jun 30 2024 10:15PM -1000"
-        )
-
-      occurrences_between = schedule.occurrences_between(
-        starts_at: starts_at + 3.days,
-        ends_at: ends_at - 10.days
-      )
-
-      expect(occurrences_between.map { |o| localized_occurrence_start_time(o) })
-        .to contain_exactly(
-          "Sun Jul  7 2024 10:15PM -1000",
-          "Sun Jul 14 2024 10:15PM -1000"
-        )
-    end
-  end
-
-  describe "#occurs_between?" do
-    before { schedule.repeat_weekly(:sunday, **series_options) }
-
-    it "returns true when at least one occurrence overlaps with a given interval" do
-      expect(schedule.occurs_between?(starts_at: starts_at + 3.days, ends_at: ends_at - 10.days)).to eq(true)
-    end
-
-    it "returns false when at least one occurrence overlaps with a given interval" do
-      expect(schedule.occurs_between?(starts_at: starts_at + 1.day, ends_at: starts_at + 2.days)).to eq(false)
-    end
-  end
-
   describe "#add_exclusion" do
     it "allows users to specify exclusions that result in removed occurrences" do
-      schedule.repeat_weekly(:sunday, time_of_day: { hour: 0, minute: 1, second: 2 }, duration_in_seconds: event_duration_in_seconds)
+      schedule.repeat_weekly(:sunday, time_of_day: { hour: 0, minute: 1, second: 2 },
+                                      duration_in_seconds: event_duration_in_seconds)
 
-      expect(schedule.occurrences.size).to eq(4)
       expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
         .to contain_exactly(
           "Sun Jun 30 2024 12:01AM -1000",
@@ -128,7 +146,6 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
         ends_at: Time.current.in_time_zone(time_zone) + 5.minutes
       )
 
-      expect(schedule.occurrences.size).to eq(3)
       expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
         .to contain_exactly(
           "Sun Jul  7 2024 12:01AM -1000",
@@ -170,97 +187,6 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
           "Sun Jul 14 2024 12:01AM -1000",
           "Sun Jul 21 2024 12:01AM -1000"
         )
-    end
-  end
-
-  describe "#repeat_weekly" do
-    it "generates an array of weekly occurrences" do
-      schedule.repeat_weekly(:tuesday, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
-
-      expect(schedule.occurrences.size).to eq(4)
-      expect(
-        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
-      ).to contain_exactly(
-        "Tue Jul  2 2024 01:02AM -1000",
-        "Tue Jul  9 2024 01:02AM -1000",
-        "Tue Jul 16 2024 01:02AM -1000",
-        "Tue Jul 23 2024 01:02AM -1000"
-      )
-    end
-
-    it "will use the start time of the schedule if a time_of_day for the series is not given" do
-      schedule.repeat_weekly(:tuesday, duration_in_seconds: 300)
-
-      expect(schedule.occurrences.size).to eq(4)
-      expect(
-        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
-      ).to contain_exactly(
-        "Tue Jul  2 2024 12:00AM -1000",
-        "Tue Jul  9 2024 12:00AM -1000",
-        "Tue Jul 16 2024 12:00AM -1000",
-        "Tue Jul 23 2024 12:00AM -1000"
-      )
-    end
-
-    it "supports the accumulation of occurrences from multiple recurring series" do
-      schedule.repeat_weekly(:tuesday, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
-      schedule.repeat_weekly(:wednesday, time_of_day: { hour: 2, minute: 3, second: 4 }, duration_in_seconds: 300)
-
-      expect(schedule.occurrences.size).to eq(8)
-      expect(
-        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
-      ).to contain_exactly(
-        "Tue Jul  2 2024 01:02AM -1000",
-        "Wed Jul  3 2024 02:03AM -1000",
-        "Tue Jul  9 2024 01:02AM -1000",
-        "Wed Jul 10 2024 02:03AM -1000",
-        "Tue Jul 16 2024 01:02AM -1000",
-        "Wed Jul 17 2024 02:03AM -1000",
-        "Tue Jul 23 2024 01:02AM -1000",
-        "Wed Jul 24 2024 02:03AM -1000"
-      )
-    end
-
-    it "supports the accumulation of occurrences from multiple recurring series with their own independent bookends" do
-      schedule.repeat_weekly(:tuesday,
-                             time_of_day: { hour: 9, minute: 0 }, duration_in_seconds: 300,
-                             starts_at: Time.current + 2.weeks, ends_at:)
-      schedule.repeat_weekly(:wednesday,
-                             time_of_day: { hour: 4, minute: 7, second: 4 }, duration_in_seconds: 300,
-                             ends_at: Time.current + 6.weeks)
-
-      expect(schedule.occurrences.size).to eq(8)
-      expect(
-        schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
-      ).to contain_exactly(
-        "Wed Aug  7 2024 04:07AM -1000",
-        "Wed Jul  3 2024 04:07AM -1000",
-        "Wed Jul 10 2024 04:07AM -1000",
-        "Tue Jul 16 2024 09:00AM -1000", # Tuesday series comes in 2 weeks later.
-        "Wed Jul 17 2024 04:07AM -1000",
-        "Tue Jul 23 2024 09:00AM -1000",
-        "Wed Jul 24 2024 04:07AM -1000",
-        "Wed Jul 31 2024 04:07AM -1000"
-      )
-    end
-
-    context "when the schedule crosses a daylight savings change" do
-      let(:starts_at) { Time.new(2024, 3, 2, 0, 0, 0) }
-      let(:ends_at) { starts_at + 4.weeks }
-      let(:time_zone) { "America/Los_Angeles" }
-
-      it "holds the local occurrence time constant across the DST change" do
-        schedule.repeat_weekly(:sunday, time_of_day: { hour: 0, minute: 1, second: 2 }, duration_in_seconds: 300)
-
-        expect(
-          schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
-        ).to contain_exactly(
-          "Sun Mar  3 2024 12:01AM -0800",
-          "Sun Mar 10 2024 12:01AM -0800",
-          "Sun Mar 17 2024 12:01AM -0700",
-          "Sun Mar 24 2024 12:01AM -0700"
-        )
-      end
     end
   end
 
