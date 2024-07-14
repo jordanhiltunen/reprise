@@ -18,4 +18,8 @@ module SeriesHelpers
       .map { |o| o.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       .join(" - ")
   end
+
+  def localized_occurrence_start_time(occurrence)
+    occurrence.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z")
+  end
 end
