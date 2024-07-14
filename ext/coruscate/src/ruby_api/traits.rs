@@ -1,3 +1,4 @@
+use crate::ruby_api::clock::set_datetime_cursor_safely;
 use crate::ruby_api::occurrence::Occurrence;
 use crate::ruby_api::recurring_series::daily::Daily;
 use crate::ruby_api::recurring_series::hourly::Hourly;
@@ -76,8 +77,8 @@ pub(crate) trait Recurrable: std::fmt::Debug {
             .local_ends_at_datetime()
             .unwrap_or(ends_at);
 
-        let mut datetime_cursor = starts_at.with_time(self.naive_starts_at_time()).unwrap();
-        let mut datetime_cursor = starts_at.with_time(self.naive_starts_at_time()).latest().unwrap();
+        let mut datetime_cursor =
+            set_datetime_cursor_safely(starts_at, self.naive_starts_at_time());
 
         while datetime_cursor < ends_at {
             let occurrence_candidate_datetime_option =
