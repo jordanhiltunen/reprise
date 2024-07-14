@@ -48,6 +48,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 13.2"
   spec.add_development_dependency "rake-compiler", "~> 1.2.0"
   spec.add_development_dependency "rspec", "~> 3.0"
+  spec.add_development_dependency "rubocop"
   spec.add_development_dependency "yard"
 
   spec.add_dependency "activesupport", "~> 7.0.8"
