@@ -4,10 +4,19 @@
 
 Reprise is a performance-first Ruby gem that provides support for defining event recurrence
 rules and generating & querying their future occurrences. Depending on your use case, 
-you may see a speedup of up to 1000x relative to other recurrence rule gems. Reprise
+you may benefit from a speedup of up to 1000x relative to other recurrence rule gems. Reprise
 is a thin Ruby wrapper around an extension written in Rust; this allows us to offer a level
 of speed and conservative memory use that we would otherwise be unable to accomplish in
 pure Ruby alone.
+
+## Installation
+
+Add this line to your application's Gemfile:
+
+```ruby
+gem "reprise"
+```
+
 
 ## Design Goals
 
@@ -27,22 +36,6 @@ pure Ruby alone.
   exclusion collision detection without client applications having to 
   implement that core scheduling concern on their own, outside of schedule
   expansion.
-
-## Installation
-
-Add this line to your application's Gemfile:
-
-```ruby
-gem "reprise"
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install reprise
 
 ## Usage
 
