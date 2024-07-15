@@ -2,10 +2,10 @@
 
 [![build](https://github.com/jordanhiltunen/reprise/actions/workflows/build.yml/badge.svg)](https://github.com/jordanhiltunen/reprise/actions/workflows/build.yml)
 
-Reprise is a performance-first Ruby gem that provides support for defining event recurrence
+Reprise is an experimental performance-first Ruby gem that provides support for defining event recurrence
 rules and generating & querying their future occurrences. Depending on your use case, 
-you may benefit from a speedup of up to 1000x relative to other recurrence rule gems. Reprise
-is a thin Ruby wrapper around an extension written in Rust; this allows us to offer a level
+you may benefit from a speedup of up to 1000x relative to other recurrence rule gems: because
+Reprise is a thin Ruby wrapper around an extension written in Rust, we are able to offer a level
 of speed and conservative memory use that we would otherwise be unable to accomplish in
 pure Ruby alone.
 
@@ -99,6 +99,55 @@ bundle exec rake yard
 
 - [ ] TODO: When we have a decent 0.0.1, publish the yarddocs
 - on GitHub.
+
+## Why Reprise?
+
+### Consider the alternatives first
+
+Reprise is particularly indebted to [ice_cube](https://github.com/ice-cube-ruby/ice_cube) and [Montrose](https://github.com/rossta/montrose), projects that have served the Ruby community for years.
+They are stable and battle-tested. If you have no actual business need for the kind of performance that Reprise aims for,
+you would probably be much better served by choosing one of those two gems instead.
+
+### Tradeoffs
+
+- **Flexibility.** Because Reprise calls into a strictly-typed extension, its current public interface is very much "one-size-fits-all";
+  the influence of Rust leaks into its Ruby API. Alternative gems offer much more flexible APIs that support a variety
+  of more idiomatic calling conventions: they have better, more forgiving ergonomics. Reprise may invest more efforts
+  here in the future, but not until we have landed on a feature-complete, performant core - our primary design goal. 
+  Until then, out API will remain sparse but sufficient.
+- **Stability.** Reprise is still experimental; we have not yet released a `1.0.0` or have a public roadmap. Breaking changes
+  may be frequent across releases. If you do not want to pin Reprise to a specific version and want a library that you can
+  upgrade without reviewing the changelog, you may want to consider an alternative for now.
+- **Serialization.** We do not yet offer any form of persistence support (e.g. parsing from / serializing to yaml / hash
+  / ical / others). 
+
+### Advantages
+
+- **Speed**. Reprise can generate events from a series of recurrence rules up to 1000x faster than the alternatives.
+- **Memory**. Reprise uses up to 700x less memory during schedule expansion than the alternatives.
+- **Exclusion Handling.**
+
+### When Performance Matters
+
+A truism in the Ruby community is that "Ruby is slow, but that doesn't matter for you": 
+> So, often it hardly matters that [Ruby] is slow, because your use-case does not need the scale, 
+> speed, or throughput that Ruby chokes on. Or because the trade-offs are worth it: Often the 
+> quicker development, cheaper development, faster time-to-market etc is worth the extra resources
+> (servers, hardware, SAAS) you must throw at your app to keep it performing acceptable.
+> https://berk.es/2022/08/09/ruby-slow-database-slow/
+
+This is true until it isn't. Sometimes, Ruby's speed requires that a straightforward feature
+be implemented in a contorted or unfortunately-constrained manner in order to work.  
+
+Reprise aims to solve a niche problem: cutting the latency of recurring schedule generation when it is in
+the critical path without imposing an additional complexity burden on clients. For most applications
+that deal with recurring events, this is probably not a problem. But if it is, we want to buy you more
+effectively-free per-request headroom that you can spend in simple Ruby to improve or ship a feature that
+you otherwise couldn't.
+
+## Acknowledgements [#related]
+
+Reprise, a Ruby gem with a Rust core, is only possible because of the foundation laid by the excellent [Magnus](https://github.com/matsadler/magnus) project.
 
 ## Benchmarks
 
