@@ -123,9 +123,36 @@ you would probably be much better served by choosing one of those two gems inste
 
 ### Advantages
 
-- **Speed**. Reprise can generate events from a series of recurrence rules up to 1000x faster than the alternatives.
-- **Memory**. Reprise uses up to 700x less memory during schedule expansion than the alternatives.
-- **Exclusion Handling.**
+#### Benchmarks
+
+- **Speed**. Reprise can generate events from a series of recurrence rules up to 1000x faster.
+- **Memory**. Reprise uses up to 700x less memory during schedule expansion.
+
+#### Exclusion Handling
+
+Beyond performance, one area where Reprise shines is in schedule exclusion handling:
+
+Suppose you have a recurring series that occurs every Monday from 12:30 PM - 1:00 PM. You need to generate
+future occurrences of this series, excluding those that do not conflict with pre-existing, non-recurring
+schedule entries; e.g. on one particular Monday, you have schedule entries at 9:00 AM - 9:30 AM, 12:15 PM - 1:00 PM, 
+and 3:30 - 4:30 PM.
+
+How do you filter out recurring series occurrences that conflict with other schedule entries that exist
+in your application?
+
+At time of writing, alternative gems' solutions to this problem are all unfortunately lacking:
+- **None**: It is entirely the responsibility of the client application to handle occurrence exclusions,
+  despite this logic being core to the domain of recurring schedule management.
+- **Date-based exclusion**. Client applications can pass specific dates when occurrences should be excluded.
+  This is not sufficient except for in the most simple of circumstances. Again, consider our hypothetical
+  Monday @ 12:30 PM recurring series: being able to exclude a specific _date_ from your recurrence rule still 
+  requires you to implement your own overlap detection logic to determine whether an occurrence actually conflicts with
+  the start and end times of a schedule entry on a given date. 
+
+These limitations can push a significant amount of schedule recurrence logic onto client applications;
+Reprise improves on this significantly by offering an API to define exclusions with start and end times; Reprise
+then determines whether any given occurrence overlaps with an exclusion that you have defined, and filters
+them out during occurrence generation accordingly.
 
 ### When Performance Matters
 
