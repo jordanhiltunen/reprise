@@ -80,14 +80,20 @@ pub(crate) trait Recurrable: std::fmt::Debug {
         let mut datetime_cursor =
             set_datetime_cursor_safely(starts_at, self.naive_starts_at_time());
 
+        // dbg!("Initial datetime cursor", datetime_cursor);
+
         while datetime_cursor < ends_at {
             let occurrence_candidate_datetime_option =
                 self.next_occurrence_candidate(&datetime_cursor);
+
+            // dbg!("Occurrence candidate", occurrence_candidate_datetime_option);
 
             if let Some(occurrence_candidate_datetime) = occurrence_candidate_datetime_option {
                 if occurrence_candidate_datetime > starts_at
                     && occurrence_candidate_datetime < ends_at
                 {
+                    // dbg!("Valid occurrence candidate", occurrence_candidate_datetime);
+
                     occurrences.push(Occurrence {
                         starts_at_unix_timestamp: occurrence_candidate_datetime.timestamp(),
                         ends_at_unix_timestamp: (occurrence_candidate_datetime

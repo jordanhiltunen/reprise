@@ -2,17 +2,21 @@
 
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "coruscate/version"
+require "reprise/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "coruscate"
-  spec.version       = Coruscate::VERSION
+  spec.name          = "reprise"
+  spec.version       = Reprise::VERSION
   spec.authors       = ["Jordan Hiltunen"]
-  spec.email         = ["hello@jordanhiltunen.com"]
+  spec.email         = ["oss@jordanhiltunen.com"]
 
-  spec.summary       = %q{A recurring event generation gem, implemented in Rust with an emphasis on performance}
-  spec.description   = %q{Write a longer description or delete this line.}
-  spec.homepage      = "https://github.com/jordanhiltunen/coruscate"
+  spec.summary       = "Fast recurring event generation for Ruby."
+  spec.description   = <<~DESCRIPTION.strip.gsub(/\s+/, " ")
+    Generates date & time events from recurrence rules to support various calendar and scheduling use cases,
+    with an emphasis on speed; the core of the Reprise gem is implemented as a Rust extension to enable its
+    use for performance-sensitive workloads.
+  DESCRIPTION
+  spec.homepage      = "https://github.com/jordanhiltunen/reprise"
   spec.license       = "MIT"
   spec.required_ruby_version = ">= 3.2.0"
 
@@ -22,8 +26,8 @@ Gem::Specification.new do |spec|
     spec.metadata["allowed_push_host"] = "TODO: Set to 'http://mygemserver.com'"
 
     spec.metadata["homepage_uri"] = spec.homepage
-    spec.metadata["source_code_uri"] = "https://github.com/jordanhiltunen/coruscate"
-    spec.metadata["changelog_uri"] = "https://github.com/jordanhiltunen/coruscate/blob/main/CHANGELOG.md"
+    spec.metadata["source_code_uri"] = "https://github.com/jordanhiltunen/reprise"
+    spec.metadata["changelog_uri"] = "https://github.com/jordanhiltunen/reprise/blob/main/CHANGELOG.md"
   else
     raise "RubyGems 2.0 or newer is required to protect against " \
       "public gem pushes."
@@ -37,7 +41,7 @@ Gem::Specification.new do |spec|
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
-  spec.extensions = %w[ext/coruscate/extconf.rb]
+  spec.extensions = %w[ext/reprise/extconf.rb]
 
   spec.add_development_dependency "benchmark-ips"
   spec.add_development_dependency "benchmark-memory"

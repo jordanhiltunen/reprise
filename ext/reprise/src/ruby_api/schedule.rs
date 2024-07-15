@@ -35,7 +35,7 @@ pub(crate) struct Schedule {
 }
 
 #[derive(Debug)]
-#[magnus::wrap(class = "Coruscate::Core::Schedule")]
+#[magnus::wrap(class = "Reprise::Core::Schedule")]
 struct MutSchedule(Arc<RwLock<Schedule>>);
 
 impl MutSchedule {
@@ -176,10 +176,11 @@ impl MutSchedule {
             self.time_zone(),
         );
 
-        return self.generate_occurrences(
-            Some(interval.starts_at()),
-            Some(interval.ends_at())
-        ).into_iter().filter(|o| interval.contains(o)).collect();
+        return self
+            .generate_occurrences(Some(interval.starts_at()), Some(interval.ends_at()))
+            .into_iter()
+            .filter(|o| interval.contains(o))
+            .collect();
     }
 
     pub fn occurrences_overlapping_with_interval(
@@ -203,10 +204,11 @@ impl MutSchedule {
         let examined_window_ends_at =
             Some(interval.ends_at() + TimeDelta::seconds(longest_occurrence_duration_in_seconds));
 
-        return self.generate_occurrences(
-            examined_window_starts_at,
-            examined_window_ends_at
-        ).into_iter().filter(|o| interval.overlaps_with(o)).collect();
+        return self
+            .generate_occurrences(examined_window_starts_at, examined_window_ends_at)
+            .into_iter()
+            .filter(|o| interval.overlaps_with(o))
+            .collect();
     }
 
     pub fn occurrences(&self) -> Vec<Occurrence> {
@@ -242,7 +244,7 @@ impl MutSchedule {
 }
 
 pub fn init() -> Result<(), Error> {
-    let class = ruby_modules::coruscate_core().define_class("Schedule", class::object())?;
+    let class = ruby_modules::reprise_core().define_class("Schedule", class::object())?;
 
     class.define_singleton_method("new", function!(MutSchedule::new, 3))?;
     class.define_method("occurrences", method!(MutSchedule::occurrences, 0))?;

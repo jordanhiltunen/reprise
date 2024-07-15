@@ -3,11 +3,11 @@
 require "active_support"
 require "active_support/core_ext"
 
-module Coruscate
+module Reprise
   class TimeOfDay
-    class UnsupportedTypeError < Coruscate::Error; end
-    class InvalidHashError < Coruscate::Error; end
-    class RangeError < Coruscate::Error; end
+    class UnsupportedTypeError < Reprise::Error; end
+    class InvalidHashError < Reprise::Error; end
+    class RangeError < Reprise::Error; end
 
     DEFAULT_TIME_OF_DAY = { hour: 0, minute: 0, second: 0 }.freeze
     TIME_OF_DAY_ATTRIBUTES = DEFAULT_TIME_OF_DAY.keys.freeze

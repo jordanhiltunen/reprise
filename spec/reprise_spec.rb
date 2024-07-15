@@ -2,8 +2,8 @@
 
 require "spec_helper"
 
-RSpec.describe Coruscate do
+RSpec.describe Reprise do
   it "has a version number" do
-    expect(Coruscate::VERSION).not_to be nil
+    expect(Reprise::VERSION).not_to be nil
   end
 end

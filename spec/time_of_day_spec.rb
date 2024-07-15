@@ -2,23 +2,23 @@
 
 require "spec_helper"
 
-RSpec.describe Coruscate::TimeOfDay do
+RSpec.describe Reprise::TimeOfDay do
   describe "#initialize" do
     describe "errors" do
       it "raises UnsupportedTypeError when an unsupported time_of_day is given" do
         expect { described_class.new(5) }.to raise_error(
-          Coruscate::TimeOfDay::UnsupportedTypeError, "Integer is not a supported type"
+          Reprise::TimeOfDay::UnsupportedTypeError, "Integer is not a supported type"
         )
       end
 
       it "raises InvalidHashError when the hms_opts hash contains unexpected keys" do
         expect { described_class.new({ years: 12 }) }
-          .to raise_error(Coruscate::TimeOfDay::InvalidHashError)
+          .to raise_error(Reprise::TimeOfDay::InvalidHashError)
       end
 
       it "raises RangeError when the time of day is out-of-range" do
         expect { described_class.new({ hour: 25 }) }
-          .to raise_error(Coruscate::TimeOfDay::RangeError)
+          .to raise_error(Reprise::TimeOfDay::RangeError)
       end
     end
   end

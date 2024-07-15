@@ -3,7 +3,7 @@ use crate::ruby_api::traits::HasOverlapAwareness;
 use magnus::{class, method, typed_data, Error, Module, Ruby, Time};
 
 #[derive(Debug)]
-#[magnus::wrap(class = "Coruscate::Core::Occurrence")]
+#[magnus::wrap(class = "Reprise::Core::Occurrence")]
 pub(crate) struct Occurrence {
     pub(crate) starts_at_unix_timestamp: i64,
     pub(crate) ends_at_unix_timestamp: i64,
@@ -59,7 +59,7 @@ impl HasOverlapAwareness for Occurrence {
 
 pub fn init() -> Result<(), Error> {
     let occurrence_class =
-        ruby_modules::coruscate_core().define_class("Occurrence", class::object())?;
+        ruby_modules::reprise_core().define_class("Occurrence", class::object())?;
     occurrence_class.define_method("start_time", method!(Occurrence::start_time, 0))?;
     occurrence_class.define_method("end_time", method!(Occurrence::end_time, 0))?;
     occurrence_class.define_method("label", method!(Occurrence::label, 0))?;

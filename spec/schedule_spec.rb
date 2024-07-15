@@ -2,10 +2,10 @@
 
 require "spec_helper"
 
-RSpec.describe Coruscate::Schedule, aggregate_failures: true do
+RSpec.describe Reprise::Schedule, aggregate_failures: true do
   include SeriesHelpers
 
-  subject(:schedule) { Coruscate::Schedule.new(starts_at:, ends_at:, time_zone:) }
+  subject(:schedule) { Reprise::Schedule.new(starts_at:, ends_at:, time_zone:) }
 
   let(:time_zone) { "Hawaii" }
   let(:starts_at) { Time.current.in_time_zone(time_zone) }
@@ -100,8 +100,8 @@ RSpec.describe Coruscate::Schedule, aggregate_failures: true do
       schedule.occurrences
     end
 
-    it "returns an array of Coruscate::Core::Occurrence" do
-      expect(occurrences.all? { |occurrence| occurrence.is_a?(Coruscate::Core::Occurrence) }).to eq(true)
+    it "returns an array of Reprise::Core::Occurrence" do
+      expect(occurrences.all? { |occurrence| occurrence.is_a?(Reprise::Core::Occurrence) }).to eq(true)
     end
 
     it "exposes #start_time and #end_time methods on the occurrences" do

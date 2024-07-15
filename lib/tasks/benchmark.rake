@@ -12,7 +12,7 @@ require "montrose"
 
 desc "Run benchmarks"
 task :benchmark do
-  require "coruscate"
+  require "reprise"
 
   schedule_start_time = Time.current
   schedule_end_time = Time.current + 1.year
@@ -32,24 +32,24 @@ task :benchmark do
     end
   end
 
-  coruscate_schedule = Coruscate::Schedule.new(starts_at: Time.current, ends_at: Time.current + 365.days, time_zone: "Hawaii")
+  reprise_schedule = Reprise::Schedule.new(starts_at: Time.current, ends_at: Time.current + 365.days, time_zone: "Hawaii")
   weekdays.each do |w|
-    coruscate_schedule.repeat_weekly(
+    reprise_schedule.repeat_weekly(
       w,
       time_of_day: { hour: 1, minute: 2, second: 3 },
       duration_in_seconds: 300
     )
   end
   exclusions.each do |e|
-    coruscate_schedule.add_exclusion(starts_at: e.beginning_of_day, ends_at: e.end_of_day)
+    reprise_schedule.add_exclusion(starts_at: e.beginning_of_day, ends_at: e.end_of_day)
   end
 
   def generate_ice_cube_occurrences(ice_cube_schedule)
     ice_cube_schedule.remaining_occurrences.size
   end
 
-  def generate_coruscate_occurrences(coruscate_schedule)
-    coruscate_schedule.occurrences.size
+  def generate_reprise_occurrences(reprise_schedule)
+    reprise_schedule.occurrences.size
   end
 
   def generate_montrose_occurrences(montrose_schedule)
@@ -61,13 +61,13 @@ task :benchmark do
   puts "IceCube: #{generate_ice_cube_occurrences(ice_cube_schedule)}"
   # N.B. Montrose has no schedule exclusion feature, so we adjust for that.
   puts "Montrose: #{generate_montrose_occurrences(montrose_schedule) - exclusions.size}"
-  puts "Coruscate: #{generate_coruscate_occurrences(coruscate_schedule)}"
+  puts "Reprise: #{generate_reprise_occurrences(reprise_schedule)}"
 
   puts "Benchmarking Iterations Per Second (IPS)"
   Benchmark.ips do |x|
     x.report("IceCube") { generate_ice_cube_occurrences(ice_cube_schedule) }
     x.report("Montrose") { generate_montrose_occurrences(montrose_schedule) }
-    x.report("Coruscate") { generate_coruscate_occurrences(coruscate_schedule) }
+    x.report("Reprise") { generate_reprise_occurrences(reprise_schedule) }
   end
 
   puts "---"
@@ -75,7 +75,7 @@ task :benchmark do
   Benchmark.memory do |x|
     x.report("IceCube") { generate_ice_cube_occurrences(ice_cube_schedule) }
     x.report("Montrose") { generate_montrose_occurrences(montrose_schedule) }
-    x.report("Coruscate") { generate_coruscate_occurrences(coruscate_schedule) }
+    x.report("Reprise") { generate_reprise_occurrences(reprise_schedule) }
 
     x.compare!
   end

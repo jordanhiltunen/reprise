@@ -150,22 +150,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "06ea2b9bc92be3c2baa9334a323ebca2d6f074ff852cd1d7b11064035cd3868f"
 
 [[package]]
-name = "coruscate"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "chrono-tz",
- "enum_dispatch",
- "magnus",
- "memoize",
- "parking_lot",
- "rayon",
- "rb-sys",
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "crossbeam-deque"
 version = "0.8.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -607,6 +591,22 @@ name = "regex-syntax"
 version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a66a03ae7c801facd77a29370b4faec201768915ac14a721ba36f20bc9c209b"
+
+[[package]]
+name = "reprise"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "chrono-tz",
+ "enum_dispatch",
+ "magnus",
+ "memoize",
+ "parking_lot",
+ "rayon",
+ "rb-sys",
+ "serde",
+ "serde_json",
+]
 
 [[package]]
 name = "rustc-hash"

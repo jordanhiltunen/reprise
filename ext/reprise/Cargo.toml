@@ -1,5 +1,5 @@
 [package]
-name = "coruscate"
+name = "reprise"
 version = "0.1.0"
 edition = "2021"
 
@@ -17,8 +17,6 @@ magnus = { version = "0.7.1", features = ["rb-sys"] }
 memoize = "0.4.2"
 parking_lot = "0.12.3"
 rayon = "1.10"
-rb-sys = { version = "0.9.56", default-features = false, features = ["ruby-static"] }
+rb-sys = { version = "*", default-features = false, features = [] }
 serde = "1.0.203"
 serde_json = "1.0.117"
-
-# magnus = { version = "0.6.3", features = ["rb-sys", "ruby-static"] }

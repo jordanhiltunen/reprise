@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Coruscate
+module Reprise
   module Core
     # This class definition is open-classed only for the purposes
     # of adding documentation; it is defined dynamically within

@@ -2,11 +2,11 @@
 
 require "forwardable"
 
-module Coruscate
+module Reprise
   class Error < StandardError; end
 
-  # @note On the interface of this class: all of the methods on +Coruscate::Schedule+ could have been
-  #   transparently delegated to +Coruscate::Core::Schedule+, the internal schedule class that is
+  # @note On the interface of this class: all of the methods on +Reprise::Schedule+ could have been
+  #   transparently delegated to +Reprise::Core::Schedule+, the internal schedule class that is
   #   implemented in Rust; instead, we define explicit proxy methods with obvious kwargs duplication,
   #   both to make it easier to generate YARD docs and to offer decent autocomplete support in IDEs.
   #   For any changes in the implementation of the interface, prefer DevX over DRY and save our
@@ -32,7 +32,7 @@ module Coruscate
     # @!macro [new] duration_in_seconds
 
     # All schedules must be constructed with a valid +starts_at+ and +ends_at+ time.
-    # Coruscate does not support infinitely-recurring schedules, or the bounding
+    # Reprise does not support infinitely-recurring schedules, or the bounding
     # of schedules on the basis of a maximum occurrence count.
     #
     # @param starts_at [Time]
@@ -50,7 +50,7 @@ module Coruscate
       @default_time_of_day = TimeOfDay.new(starts_at)
     end
 
-    # @return [Array<Coruscate::Core::Occurrence>]
+    # @return [Array<Reprise::Core::Occurrence>]
     def occurrences
       internal_schedule.occurrences
     end
@@ -101,7 +101,7 @@ module Coruscate
     # @!macro time_of_day
     # @param duration_in_seconds [Integer]
     # @return [void]
-    # @example with an +hms_opts+ +time_of_day+ hash
+    # @example with a +time_of_day+ hash
     #   schedule.repeat_weekly(:monday, time_of_day: { hour: 6 }, duration_in_seconds: 30)
     # @example with a local time for +time_of_day+
     #   local_time = Time.current.in_time_zone(my_current_time_zone)
@@ -174,7 +174,7 @@ module Coruscate
       occurrences_between(starts_at, ends_at, include_overlapping:).any?
     end
 
-    # @return [Array<Coruscate::Core::Occurrence>]
+    # @return [Array<Reprise::Core::Occurrence>]
     def occurrences_between(starts_at, ends_at, include_overlapping: false)
       if include_overlapping
         internal_schedule.occurrences_overlapping_with_interval(starts_at.to_i, ends_at.to_i)
@@ -193,7 +193,7 @@ module Coruscate
     def internal_schedule
       return @_internal_schedule if defined?(@_internal_schedule)
 
-      @_internal_schedule = ::Coruscate::Core::Schedule.new(
+      @_internal_schedule = ::Reprise::Core::Schedule.new(
         starts_at.to_i,
         ends_at.to_i,
         time_zone

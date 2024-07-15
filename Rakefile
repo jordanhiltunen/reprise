@@ -25,9 +25,9 @@ platforms = %w[
   x64-mingw32
 ]
 
-gemspec = Bundler.load_gemspec("coruscate.gemspec")
-Rake::ExtensionTask.new("coruscate", gemspec) do |ext|
-  ext.lib_dir = "lib/coruscate"
+gemspec = Bundler.load_gemspec("reprise.gemspec")
+Rake::ExtensionTask.new("reprise", gemspec) do |ext|
+  ext.lib_dir = "lib/reprise"
   ext.cross_compile = true
   ext.cross_platform = platforms
   ext.cross_compiling do |spec|
@@ -41,7 +41,7 @@ YARD::Rake::YardocTask.new do |t|
 end
 
 task :remove_ext do
-  path = "lib/coruscate/coruscate.bundle"
+  path = "lib/reprise/reprise.bundle"
   File.unlink(path) if File.exist?(path)
 end
 

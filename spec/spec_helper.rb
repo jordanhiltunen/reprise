@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "bundler/setup"
-require "coruscate"
+require "reprise"
 require "active_support"
 require "active_support/core_ext/integer/time"
 require "active_support/core_ext/time"

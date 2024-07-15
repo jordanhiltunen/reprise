@@ -14,4 +14,4 @@ Gemfile.lock
 .rspec_status
 
 # build artifacts
-/ext/coruscate/target/
+/ext/reprise/target/

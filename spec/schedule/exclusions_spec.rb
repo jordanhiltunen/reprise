@@ -5,7 +5,7 @@ require "spec_helper"
 RSpec.describe "exclusions", aggregate_failures: true do
   include SeriesHelpers
 
-  subject(:schedule) { Coruscate::Schedule.new(starts_at:, ends_at:, time_zone:) }
+  subject(:schedule) { Reprise::Schedule.new(starts_at:, ends_at:, time_zone:) }
 
   let(:starts_at) { Time.new(2024, 6, 30, 0, 0, 0, "-10:00") }
   let(:ends_at) { starts_at + 4.weeks }

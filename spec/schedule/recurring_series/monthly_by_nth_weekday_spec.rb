@@ -5,7 +5,7 @@ require "spec_helper"
 RSpec.describe "#repeat_monthly_by_nth_weekday", aggregate_failures: true do
   include SeriesHelpers
 
-  subject(:schedule) { Coruscate::Schedule.new(starts_at:, ends_at:, time_zone:) }
+  subject(:schedule) { Reprise::Schedule.new(starts_at:, ends_at:, time_zone:) }
 
   let(:starts_at) { TimeZoneHelpers::ONE_MINUTE_BEFORE_LA_TRANSITION_TO_DST_2024.in_time_zone(time_zone) }
   let(:ends_at) { starts_at + 5.months }
