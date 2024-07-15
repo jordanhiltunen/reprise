@@ -2,17 +2,12 @@
 
 [![build](https://github.com/jordanhiltunen/reprise/actions/workflows/build.yml/badge.svg)](https://github.com/jordanhiltunen/reprise/actions/workflows/build.yml)
 
-Reprise is a shiny schedule expansion library that pursues speed first and foremost.
-While battle-tested gems like IceCube and Montrose provide incredibly flexible APIs
-to allow client applications to idiomatically construct recurring schedules with ease,
-Reprise offers a very sparse API, opting instead to pursue blazingly-fast schedule
-expansion at the expense of ergonomics.
-
-Reprise provides schedule expansion using a Rust extension built with magnus.
-Your use case probably will not benefit from the emphasis it places on raw performance,
-you would probably benefit more from the mature and very comprehensive APIs offered
-by IceCube and Montrose... but if you only need to support very rudimentary schedule
-expansion logic and you need speed, this might be worthwhile
+Reprise is a performance-first Ruby gem that provides support for defining event recurrence
+rules and generating & querying their future occurrences. Depending on your use case, 
+you may see a speedup of up to 1000x relative to other recurrence rule gems. Reprise
+is a thin Ruby wrapper around an extension written in Rust; this allows us to offer a level
+of speed and conservative memory use that we would otherwise be unable to accomplish in
+pure Ruby alone.
 
 ## Design Goals
 
