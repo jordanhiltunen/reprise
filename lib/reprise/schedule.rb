@@ -19,44 +19,6 @@ module Reprise
   #   For any changes in the implementation of the interface, prefer DevX over DRY and save our
   #   sophistication budget for the underlying Rust extension.
   class Schedule
-    # @!macro [new] weekday
-    #   @param weekday [Symbol] Accepts +:monday+, +:tuesday+, +:wednesday+, +:thursday+, or +:friday+.
-
-    # @!macro [new] time_of_day
-    #   @param time_of_day [Hash,Time,nil]
-    #     Either a local time value from which the hour, minute, and second
-    #     should be derived, or a hash containing at least one of +hour+, +minute+,
-    #     or +second+. If +nil+, the time of day will be inferred from the schedule's
-    #     +starts_at+ value.
-    #   @option time_of_day [Integer] :hour, >= 0 && <= 23
-    #   @option time_of_day [Integer] :minute, >= 0 && <= 59
-    #   @option time_of_day [Integer] :second, >= 0 && <= 59
-    #   @raise [UnsupportedTypeError] if +time_of_day+ is neither a +Hash+ nor a +Time+.
-    #   @raise [InvalidHashError] if the hash representation of the time is invalid.
-    #   @raise [RangeError] if either the hour, minute, or second is out-of-range.
-
-    # @!macro [new] interval
-    #   @param interval [Integer]
-    #     This determines whether or not occurrences should be skipped.
-    #     A value of +1+ means that every occurrence for the series should be returned;
-    #     +2+, every other occurrence should be returned, etc.
-
-    # @!macro [new] recurring_series_start_and_end_times
-    #   @param starts_at [Time, nil] The time that the series should begin. If left blank,
-    #     the series will start at the same time as the parent schedule.
-    #   @param starts_at [Time, nil] The time that the series should end. If left blank,
-    #     the series will end at the same time as the parent schedule.
-
-    # @!macro [new] duration_in_seconds
-    #   @param duration_in_seconds [Integer]
-    #     This determines the end time of each occurrence ({Reprise::Core::Occurrence#end_time}), and also
-    #     influences occurrence queries, and whether any added exclusions conflict with any of the schedule's
-    #     occurrences.
-
-    # @!macro [new] label
-    #   @param label [String, nil] An optional label to apply to all of the occurrences
-    #     that are generated from the series. See {Reprise::Core::Occurrence#label}.
-
     # All schedules must be constructed with a valid +starts_at+ and +ends_at+ time.
     # Reprise does not support infinitely-recurring schedules, or the bounding
     # of schedules on the basis of a maximum occurrence count.
@@ -82,6 +44,44 @@ module Reprise
     def occurrences
       internal_schedule.occurrences
     end
+
+    # @!macro [new] weekday
+    #   @param weekday [Symbol] Accepts +:monday+, +:tuesday+, +:wednesday+, +:thursday+, or +:friday+.
+
+    # @!macro [new] time_of_day
+    #   @param time_of_day [Hash,Time,nil]
+    #     Either a local time value from which the hour, minute, and second
+    #     should be derived, or a hash containing at least one of +hour+, +minute+,
+    #     or +second+. If +nil+, the time of day will be inferred from the schedule's
+    #     +starts_at+ value.
+    #   @option time_of_day [Integer] :hour, >= 0 && <= 23
+    #   @option time_of_day [Integer] :minute, >= 0 && <= 59
+    #   @option time_of_day [Integer] :second, >= 0 && <= 59
+    #   @raise [UnsupportedTypeError] if +time_of_day+ is neither a +Hash+ nor a +Time+.
+    #   @raise [InvalidHashError] if the hash representation of the time is invalid.
+    #   @raise [RangeError] if either the hour, minute, or second is out-of-range.
+
+    # @!macro [new] interval
+    #   @param interval [Integer]
+    #     This determines whether or not occurrences should be skipped.
+    #     A value of +1+ means that every occurrence for the series should be returned;
+    #     +2+, every other occurrence should be returned, etc.
+
+    # @!macro [new] recurring_series_start_and_end_times
+    #   @param starts_at [Time, nil] The time that the series should begin. If left blank,
+    #     the series will start at the same time as the parent schedule.
+    #   @param ends_at [Time, nil] The time that the series should end. If left blank,
+    #     the series will end at the same time as the parent schedule.
+
+    # @!macro [new] duration_in_seconds
+    #   @param duration_in_seconds [Integer]
+    #     This determines the end time of each occurrence ({Reprise::Core::Occurrence#end_time}), and also
+    #     influences occurrence queries, and whether any added exclusions conflict with any of the schedule's
+    #     occurrences.
+
+    # @!macro [new] label
+    #   @param label [String, nil] An optional label to apply to all of the occurrences
+    #     that are generated from the series. See {Reprise::Core::Occurrence#label}.
 
     # @!macro time_of_day
     # @!macro duration_in_seconds
