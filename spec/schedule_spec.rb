@@ -121,7 +121,7 @@ RSpec.describe Reprise::Schedule, aggregate_failures: true do
       first_occurrence = occurrences.first
 
       expect(first_occurrence.inspect).to eq(
-        '<Reprise::Core::Occurrence start_time="2024-06-30 06:01:02 -0400" end_time="2024-06-30 11:01:02 -0400" label="My Weekly Occurrence">'
+        '<Reprise::Core::Occurrence start_time="2024-06-30T10:01:02+00:00" end_time="2024-06-30T15:01:02+00:00" label="My Weekly Occurrence">'
       )
     end
   end

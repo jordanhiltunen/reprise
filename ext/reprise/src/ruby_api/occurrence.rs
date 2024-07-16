@@ -47,8 +47,25 @@ impl Occurrence {
             .unwrap();
     }
 
+    pub fn start_time_utc(&self) -> DateTime<Utc> {
+        return DateTime::from_timestamp(self.starts_at_unix_timestamp, 0).unwrap();
+    }
+
+    pub fn end_time_utc(&self) -> DateTime<Utc> {
+        return DateTime::from_timestamp(self.ends_at_unix_timestamp, 0).unwrap();
+    }
+
     pub fn label(&self) -> Option<String> {
         return self.label.clone();
+    }
+
+    pub(crate) fn inspect(&self) -> String {
+        return format!(
+            "<Reprise::Core::Occurrence start_time={:?} end_time={:?} label={:?}>",
+            self.start_time_utc().to_rfc3339(),
+            self.end_time_utc().to_rfc3339(),
+            self.label().unwrap_or("nil".into())
+        );
     }
 
     fn ruby_handle() -> Ruby {
