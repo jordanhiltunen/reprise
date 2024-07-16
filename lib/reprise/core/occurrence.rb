@@ -2,7 +2,9 @@
 
 module Reprise
   module Core
-    # This class definition is open-classed only for the purposes
+    # An Occurrence represents a single instance of a recurring series belong to a schedule.
+    #
+    # @private This class definition is open-classed only for the purposes
     # of adding documentation; it is defined dynamically within
     # the Rust extension.
     class Occurrence
