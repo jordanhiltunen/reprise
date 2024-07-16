@@ -25,8 +25,8 @@ RSpec.describe Reprise::Schedule, aggregate_failures: true do
       # https://github.com/tzinfo/tzinfo/issues/53#issuecomment-235852722
       let(:time_zone) { "CEST" }
 
-      it "raises an ArgumentError" do
-        expect { schedule }.to raise_error(ArgumentError, "Invalid Timezone: CEST")
+      it "raises a TZInfo::InvalidTimezoneIdentifier" do
+        expect { schedule }.to raise_error(TZInfo::InvalidTimezoneIdentifier, "Invalid identifier: CEST")
       end
     end
   end
