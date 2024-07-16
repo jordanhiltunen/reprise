@@ -1,6 +1,7 @@
 use crate::ruby_api::ruby_modules;
 use crate::ruby_api::traits::HasOverlapAwareness;
 use magnus::{class, method, typed_data, Error, Module, Ruby, Time};
+use magnus::{class, method, Error, Module, Ruby, Time};
 
 #[derive(Debug)]
 #[magnus::wrap(class = "Reprise::Core::Occurrence")]
@@ -24,6 +25,15 @@ impl Occurrence {
             ends_at_unix_timestamp,
             label,
         };
+    }
+
+    pub(crate) fn inspect(&self) -> String {
+        return format!(
+            "<Reprise::Core::Occurrence:start_time={:?} end_time={:?} label={:?}>",
+            self.start_time(),
+            self.end_time(),
+            self.label().unwrap_or("nil".into())
+        );
     }
 
     pub fn start_time(&self) -> Time {
@@ -63,10 +73,7 @@ pub fn init() -> Result<(), Error> {
     occurrence_class.define_method("start_time", method!(Occurrence::start_time, 0))?;
     occurrence_class.define_method("end_time", method!(Occurrence::end_time, 0))?;
     occurrence_class.define_method("label", method!(Occurrence::label, 0))?;
-    occurrence_class.define_method(
-        "inspect",
-        method!(<Occurrence as typed_data::Inspect>::inspect, 0),
-    )?;
+    occurrence_class.define_method("inspect", method!(Occurrence::inspect, 0))?;
 
     Ok(())
 }
