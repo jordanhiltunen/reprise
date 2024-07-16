@@ -76,27 +76,20 @@ schedule.repeat_hourly(
 
 ## Development
 
-### Compilation
+To get started after checking out the repo:
 
-- `rake compile:reprise`
-
-After checking out the res
-po, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Generating Documentation
-
-Generate documentation within the `./docs` directory so that it can be
-easily imported into GitHub pages. 
-See: https://medium.com/make-school/a-cheatsheet-to-generate-documentation-for-your-rails-project-on-gh-pages-e28f6acfb9b9
-
-```
-bundle exec rake yard
+```bash
+$ bin/setup # install dependencies
+$ rake compile:reprise # recompile the extension after making changes to Rust files
+$ rake spec # run the test suite
+$ rake benchmark # run the benchmarks
 ```
 
-- [ ] TODO: When we have a decent 0.0.1, publish the yarddocs
-- on GitHub.
+### Generating Documentation
+
+Reprise' public Ruby API is documented using [YARD](https://yardoc.org/guides/).
+To regenerate the documentation after changing any of the annotations, run `rake yard`
+and commit the changes.
 
 ## Why Reprise?
 
