@@ -3,7 +3,16 @@
 module Reprise
   class Error < StandardError; end
 
-  # @note On the interface of this class: all of the methods on +Reprise::Schedule+ could have been
+  # The +Reprise::Schedule+ class is the primary interface of the Reprise gem.
+  #
+  # It offers methods that enable you to:
+  # - Initialize a new schedule.
+  # - Add recurring series to the schedule via +#repeat_*+ methods.
+  # - Mark specific intervals of time as excluded from the schedule via {Reprise::Schedule#add_exclusion} and {Reprise::Schedule#add_exclusions}.
+  # - Query for the presence of occurrences within intervals of time via {Reprise::Schedule#occurs_between?}.
+  # - Generate an array of all of the schedule's occurrences via {Reprise::Schedule#occurrences}.
+  #
+  # @private On the interface of this class: all of the methods on +Reprise::Schedule+ could have been
   #   transparently delegated to +Reprise::Core::Schedule+, the internal schedule class that is
   #   implemented in Rust; instead, we define explicit proxy methods with obvious kwargs duplication,
   #   both to make it easier to generate YARD docs and to offer decent autocomplete support in IDEs.
