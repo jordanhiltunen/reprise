@@ -35,11 +35,27 @@ module Reprise
     #   @raise [InvalidHashError] if the hash representation of the time is invalid.
     #   @raise [RangeError] if either the hour, minute, or second is out-of-range.
 
+    # @!macro [new] interval
+    #   @param interval [Integer]
+    #     This determines whether or not occurrences should be skipped.
+    #     A value of +1+ means that every occurrence for the series should be returned;
+    #     +2+, every other occurrence should be returned, etc.
+
+    # @!macro [new] recurring_series_start_and_end_times
+    #   @param starts_at [Time, nil] The time that the series should begin. If left blank,
+    #     the series will start at the same time as the parent schedule.
+    #   @param starts_at [Time, nil] The time that the series should end. If left blank,
+    #     the series will end at the same time as the parent schedule.
+
     # @!macro [new] duration_in_seconds
     #   @param duration_in_seconds [Integer]
     #     This determines the end time of each occurrence ({Reprise::Core::Occurrence#end_time}), and also
     #     influences occurrence queries, and whether any added exclusions conflict with any of the schedule's
     #     occurrences.
+
+    # @!macro [new] label
+    #   @param label [String, nil] An optional label to apply to all of the occurrences
+    #     that are generated from the series. See {Reprise::Core::Occurrence#label}.
 
     # All schedules must be constructed with a valid +starts_at+ and +ends_at+ time.
     # Reprise does not support infinitely-recurring schedules, or the bounding
@@ -69,6 +85,9 @@ module Reprise
 
     # @!macro time_of_day
     # @!macro duration_in_seconds
+    # @!macro interval
+    # @!macro recurring_series_start_and_end_times
+    # @!macro label
     # @return [void]
     def repeat_minutely(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)
       internal_schedule.repeat_minutely(
@@ -83,6 +102,9 @@ module Reprise
 
     # @!macro time_of_day
     # @!macro duration_in_seconds
+    # @!macro interval
+    # @!macro recurring_series_start_and_end_times
+    # @!macro label
     # @return [void]
     def repeat_hourly(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)
       internal_schedule.repeat_hourly(
@@ -97,6 +119,9 @@ module Reprise
 
     # @!macro time_of_day
     # @!macro duration_in_seconds
+    # @!macro interval
+    # @!macro recurring_series_start_and_end_times
+    # @!macro label
     # @return [void]
     def repeat_daily(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)
       internal_schedule.repeat_daily(
@@ -112,6 +137,9 @@ module Reprise
     # @!macro weekday
     # @!macro time_of_day
     # @!macro duration_in_seconds
+    # @!macro interval
+    # @!macro recurring_series_start_and_end_times
+    # @!macro label
     # @return [void]
     # @example with a +time_of_day+ hash
     #   schedule.repeat_weekly(:monday, time_of_day: { hour: 6 }, duration_in_seconds: 30)
@@ -133,6 +161,9 @@ module Reprise
     # @param day_number [Integer] The number of the day in the month; >= 1 && <= 31
     # @!macro time_of_day
     # @!macro duration_in_seconds
+    # @!macro interval
+    # @!macro recurring_series_start_and_end_times
+    # @!macro label
     # @return [void]
     # @example
     #   schedule.repeat_monthly_by_day(15, time_of_day: { hour: 9 }, duration_in_seconds: 30)
@@ -152,6 +183,9 @@ module Reprise
     # @param nth_day [Integer] The nth weekday, 0-indexed; e.g. 0 might represent the first wednesday
     # @!macro time_of_day
     # @!macro duration_in_seconds
+    # @!macro interval
+    # @!macro recurring_series_start_and_end_times
+    # @!macro label
     # @return [void]
     def repeat_monthly_by_nth_weekday(weekday, nth_day, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)
       internal_schedule.repeat_monthly_by_nth_weekday(
