@@ -198,6 +198,7 @@ module Reprise
     #     occurrences that partially overlap with the given interval, not just the occurrences
     #     that are entirely contained within the interval.
 
+    # Indicates whether one or more of your schedule's occurrences fall within the given interval.
     # @param starts_at [Time] The start of the interval to query
     # @param ends_at [Time] The end of the interval to query
     # @!macro include_overlapping
@@ -206,10 +207,11 @@ module Reprise
       occurrences_between(starts_at, ends_at, include_overlapping:).any?
     end
 
+    # This method efficiently queries your schedule for occurrences that fall within a given interval.
     # @param starts_at [Time] The start of the interval to query
     # @param ends_at [Time] The end of the interval to query
     # @!macro include_overlapping
-    # @return [Array<Reprise::Core::Occurrence>] Returns an array of occurrences that occur between
+    # @return [Array<Reprise::Core::Occurrence>] an array of occurrences that occur between
     #   the given +starts_at+ and +ends_at+ bookends.
     def occurrences_between(starts_at, ends_at, include_overlapping: false)
       if include_overlapping
