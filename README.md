@@ -17,26 +17,6 @@ Add this line to your application's Gemfile:
 gem "reprise"
 ```
 
-
-## Design Goals
-
-- Raw performance & memory efficiency.
-
-## Design Non-Goals
-
-- Offering multiple methods / calling conventions for each feature.
-  We are calling into Rust functions, relying on a very strict
-  typed language to do the heavy lifting for us. Libraries like 
-  ice_cube and montrose offer remarkable flexibility in a Ruby idiom; 
-  if those libraries make sense for your use case, you should probably
-  use them.
-- Supporting serialization to and from iCal. We are straying from that
-  standard in meaningful ways. For example, we do not define exclusions by
-  date, but by specific time ranges. This allows the library to handle 
-  exclusion collision detection without client applications having to 
-  implement that core scheduling concern on their own, outside of schedule
-  expansion.
-
 ## Usage
 
 ### Initialize a new schedule
