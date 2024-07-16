@@ -60,6 +60,7 @@ module Reprise
       @default_time_of_day = TimeOfDay.new(starts_at)
     end
 
+    # Returns an array of occurrences sorted in order of ascending occurrence start time.
     # This method is not cached; on every call, it will recompute all of the schedule's occurrences.
     # @return [Array<Reprise::Core::Occurrence>]
     def occurrences
