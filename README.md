@@ -54,23 +54,6 @@ schedule.repeat_hourly(
 )
 ```
 
-## Development
-
-To get started after checking out the repo:
-
-```bash
-$ bin/setup # install dependencies
-$ rake compile:reprise # recompile the extension after making changes to Rust files
-$ rake spec # run the test suite
-$ rake benchmark # run the benchmarks
-```
-
-### Generating Documentation
-
-Reprise' public Ruby API is documented using [YARD](https://yardoc.org/guides/).
-To regenerate the documentation after changing any of the annotations, run `rake yard`
-and commit the changes.
-
 ## Why Reprise?
 
 ### Consider the alternatives first
@@ -109,7 +92,7 @@ Below is a sample local benchmark run taken on the following development machine
 | CPU           | 2.4 GHz 8-Core Intel i9                                    |
 | Memory        | 64GB 2667 MHz DDRr                                         |
 | Ruby Version  | 3.3.2 (2024-05-30 revision e5a195edf6) \[x86_64-darwin23\] |
-| Rust Version  |rustc 1.79.0 (129f3b996 2024-06-10)|
+| Rust Version  | rustc 1.79.0 (129f3b996 2024-06-10)                        |
 
 `benchmark-ips`:
 ```
@@ -191,11 +174,22 @@ you otherwise couldn't.
 
 Reprise, a Ruby gem with a Rust core, is only possible because of the foundation laid by the excellent [Magnus](https://github.com/matsadler/magnus) project.
 
-## Benchmarks
+## Development
 
-You can run benchmarks locally via `bundle exec rake benchmark`.
+To get started after checking out the repo:
 
-To view a list of past benchmarking results in CI, see [past runs of our Benchmark worfklow](https://github.com/jordanhiltunen/reprise/actions/workflows/benchmark.yml).
+```bash
+$ bin/setup # install dependencies
+$ rake compile:reprise # recompile the extension after making changes to Rust files
+$ rake spec # run the test suite
+$ rake benchmark # run the benchmarks
+```
+
+### Generating Documentation
+
+Reprise' public Ruby API is documented using [YARD](https://yardoc.org/guides/).
+To regenerate the documentation after changing any of the annotations, run `rake yard`
+and commit the changes.
 
 ## Contributing
 
