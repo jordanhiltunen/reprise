@@ -41,16 +41,14 @@ gem "reprise"
 
 ### Initialize a new schedule
 
-All schedules must be initialized with a start time, end time, and time zone.
+All schedules must be initialized with a `start_time`, `end_time`, and `time_zone`:
 
 ```ruby
-starts_at = Time.current.in_time_zone("Hawaii")
-ends_at = Time.current + 4.weeks
-
-schedule = Reprise::Schedule.new(starts_at:, ends_at:, time_zone: "Hawaii")
-
-# 2. Define recurring series
-schedule.repeat_weekly(:sunday, time_of_day: { hour: 9, minute: 30 }, duration_in_seconds: 60)
+schedule = Reprise::Schedule.new(
+  starts_at: Time.current, 
+  ends_at: Time.current + 4.weeks, 
+  time_zone: "Hawaii"
+)
 ````
 
 ### Add recurring event series
