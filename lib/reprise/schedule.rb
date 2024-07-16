@@ -47,6 +47,7 @@ module Reprise
       @default_time_of_day = TimeOfDay.new(starts_at)
     end
 
+    # This method is not cached; on every call, it will recompute all of the schedule's occurrences.
     # @return [Array<Reprise::Core::Occurrence>]
     def occurrences
       internal_schedule.occurrences
@@ -152,9 +153,9 @@ module Reprise
     end
 
     # Add a time interval between which no occurrences are valid.
-    # Any occurrences that overlap with an exclusion are removed.
-    # @param starts_at [Time]
-    # @param ends_at [Time]
+    # Any occurrences that overlap with an exclusion are removed from the schedule's occurrences.
+    # @param starts_at [Time] The time that the exclusion starts at
+    # @param ends_at [Time] The time that the exclusion ends at
     def add_exclusion(starts_at:, ends_at:)
       internal_schedule.add_exclusion(
         starts_at_unix_timestamp: starts_at.to_i,
@@ -162,20 +163,40 @@ module Reprise
       )
     end
 
+    # Add time intervals between which no occurrences are valid.
+    # Any occurrences that overlap with an exclusion are removed from the schedule's occurrences.
     # @param exclusions [Array<Array<Time,Time>>] An array of exclusion arrays, consisting of start
     #   and end +Time+ values.
+    # @return [void]
+    # @example
+    #   schedule.add_exclusions([
+    #     [exclusion_1_starts_at, exclusion_1_ends_at],
+    #     [exclusion_2_starts_at, exclusion_2_ends_at],
+    #   ])
     def add_exclusions(exclusions)
       internal_schedule.add_exclusions(
         exclusions.map {|e| e.map(&:to_i) }
       )
     end
 
-    # @return [boolean]
+    # @!macro [new] include_overlapping
+    #   @param include_overlapping [Boolean] when true, the query will also consider
+    #     occurrences that partially overlap with the given interval, not just the occurrences
+    #     that are entirely contained within the interval.
+
+    # @param starts_at [Time] The start of the interval to query
+    # @param ends_at [Time] The end of the interval to query
+    # @!macro include_overlapping
+    # @return [Boolean]
     def occurs_between?(starts_at, ends_at, include_overlapping: false)
       occurrences_between(starts_at, ends_at, include_overlapping:).any?
     end
 
-    # @return [Array<Reprise::Core::Occurrence>]
+    # @param starts_at [Time] The start of the interval to query
+    # @param ends_at [Time] The end of the interval to query
+    # @!macro include_overlapping
+    # @return [Array<Reprise::Core::Occurrence>] Returns an array of occurrences that occur between
+    #   the given +starts_at+ and +ends_at+ bookends.
     def occurrences_between(starts_at, ends_at, include_overlapping: false)
       if include_overlapping
         internal_schedule.occurrences_overlapping_with_interval(starts_at.to_i, ends_at.to_i)
