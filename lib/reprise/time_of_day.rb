@@ -4,6 +4,7 @@ require "active_support"
 require "active_support/core_ext"
 
 module Reprise
+  # @api private
   class TimeOfDay
     class UnsupportedTypeError < Reprise::Error; end
     class InvalidHashError < Reprise::Error; end
