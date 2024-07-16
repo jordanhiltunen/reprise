@@ -125,8 +125,52 @@ you would probably be much better served by choosing one of those two gems inste
 
 #### Benchmarks
 
-- **Speed**. Reprise can generate events from a series of recurrence rules up to 1000x faster.
-- **Memory**. Reprise uses up to 700x less memory during schedule expansion.
+Reprise can generate events from a series of recurrence rules up to 1000x faster than the alternatives.
+
+You can run benchmarks locally via `bundle exec rake benchmark`; additionally, 
+to view our recent benchmarking results in CI, see [past runs of our Benchmark worfklow](https://github.com/jordanhiltunen/reprise/actions/workflows/benchmark.yml).
+
+Below is a sample local benchmark run taken on the following development machine:
+
+| System Detail | Value                                                      |
+|---------------|------------------------------------------------------------|
+| OS            | macOS 14.5 (23F79)                                         |
+| CPU           | 2.4 GHz 8-Core Intel i9                                    |
+| Memory        | 64GB 2667 MHz DDRr                                         |
+| Ruby Version  | 3.3.2 (2024-05-30 revision e5a195edf6) \[x86_64-darwin23\] |
+| Rust Version  |rustc 1.79.0 (129f3b996 2024-06-10)|
+
+`benchmark-ips`:
+```
+ruby 3.3.2 (2024-05-30 revision e5a195edf6) [x86_64-darwin23]
+Warming up --------------------------------------
+             IceCube     1.000 i/100ms
+            Montrose     1.000 i/100ms
+             Reprise     1.197k i/100ms
+Calculating -------------------------------------
+             IceCube     10.259 (± 9.7%) i/s -     52.000 in   5.081337s
+            Montrose     14.986 (± 6.7%) i/s -     75.000 in   5.022293s
+             Reprise     13.127k (±19.9%) i/s -     63.441k in   5.047277s
+```
+
+`benchmark-memory`:
+```
+Calculating -------------------------------------
+             IceCube    10.986M memsize (     1.040k retained)
+                       202.268k objects (    14.000  retained)
+                         5.000  strings (     1.000  retained)
+            Montrose     9.799M memsize (     3.792k retained)
+                       157.675k objects (    13.000  retained)
+                        34.000  strings (     7.000  retained)
+             Reprise    14.872k memsize (     0.000  retained)
+                       310.000  objects (     0.000  retained)
+                         0.000  strings (     0.000  retained)
+
+Comparison:
+             Reprise:      14872 allocated
+            Montrose:    9799288 allocated - 658.91x more
+             IceCube:   10986192 allocated - 738.72x more
+```
 
 #### Exclusion Handling
 
