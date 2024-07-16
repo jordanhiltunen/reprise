@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "forwardable"
-
 module Reprise
   class Error < StandardError; end
 
@@ -12,7 +10,6 @@ module Reprise
   #   For any changes in the implementation of the interface, prefer DevX over DRY and save our
   #   sophistication budget for the underlying Rust extension.
   class Schedule
-    extend ::Forwardable
     # @!macro [new] weekday
     #   @param weekday [Symbol] Accepts +:monday+, +:tuesday+, +:wednesday+, +:thursday+, or +:friday+.
 
@@ -165,9 +162,13 @@ module Reprise
       )
     end
 
-    # def add_exclusions()
-    #
-    # end
+    # @param exclusions [Array<Array<Time,Time>>] An array of exclusion arrays, consisting of start
+    #   and end +Time+ values.
+    def add_exclusions(exclusions)
+      internal_schedule.add_exclusions(
+        exclusions.map {|e| e.map(&:to_i) }
+      )
+    end
 
     # @return [boolean]
     def occurs_between?(starts_at, ends_at, include_overlapping: false)
@@ -182,9 +183,6 @@ module Reprise
         internal_schedule.occurrences_contained_within_interval(starts_at.to_i, ends_at.to_i)
       end
     end
-
-    def_delegators :internal_schedule,
-                   :add_exclusions
 
     private
 
