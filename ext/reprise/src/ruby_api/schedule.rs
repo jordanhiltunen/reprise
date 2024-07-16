@@ -17,6 +17,7 @@ use magnus::prelude::*;
 use magnus::{class, function, method};
 use magnus::{scan_args, Error, Module, RHash, Symbol};
 use parking_lot::RwLock;
+use rayon::prelude::ParallelSliceMut;
 use std::sync::Arc;
 
 pub(crate) type UnixTimestamp = i64;
@@ -224,20 +225,16 @@ impl MutSchedule {
         let starts_at = starts_at.unwrap_or(self_reference.local_starts_at_datetime);
         let ends_at = ends_at.unwrap_or(self_reference.local_ends_at_datetime);
 
-        // Even though we are structurally equipped to use par_iter() here to parallelize,
-        // and it is a simple substitution over iter(), schedule expansion is not computationally
-        // demanding enough for it to really matter. Relative to IceCube, sequential processing is
-        // ~500x faster, and parallel, only ~200x.
         let mut occurrences = self_reference
             .recurring_series
             .iter()
-            .map(|series| series.generate_occurrences(starts_at, ends_at))
-            .flatten()
+            .flat_map(|series| series.generate_occurrences(starts_at, ends_at))
             .filter(|o| !self_reference.sorted_exclusions.is_occurrence_excluded(o))
             .collect::<Vec<Occurrence>>();
 
-        occurrences
-            .sort_unstable_by(|a, b| a.starts_at_unix_timestamp.cmp(&b.starts_at_unix_timestamp));
+        occurrences.par_sort_unstable_by(|a, b| {
+            a.starts_at_unix_timestamp.cmp(&b.starts_at_unix_timestamp)
+        });
 
         return occurrences;
     }
