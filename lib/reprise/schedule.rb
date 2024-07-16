@@ -36,6 +36,10 @@ module Reprise
     #   @raise [RangeError] if either the hour, minute, or second is out-of-range.
 
     # @!macro [new] duration_in_seconds
+    #   @param duration_in_seconds [Integer]
+    #     This determines the end time of each occurrence ({Reprise::Core::Occurrence#end_time}), and also
+    #     influences occurrence queries, and whether any added exclusions conflict with any of the schedule's
+    #     occurrences.
 
     # All schedules must be constructed with a valid +starts_at+ and +ends_at+ time.
     # Reprise does not support infinitely-recurring schedules, or the bounding
@@ -63,7 +67,7 @@ module Reprise
     end
 
     # @!macro time_of_day
-    # @param duration_in_seconds [Integer]
+    # @!macro duration_in_seconds
     # @return [void]
     def repeat_minutely(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)
       internal_schedule.repeat_minutely(
@@ -77,7 +81,7 @@ module Reprise
     end
 
     # @!macro time_of_day
-    # @param duration_in_seconds [Integer]
+    # @!macro duration_in_seconds
     # @return [void]
     def repeat_hourly(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)
       internal_schedule.repeat_hourly(
@@ -91,7 +95,7 @@ module Reprise
     end
 
     # @!macro time_of_day
-    # @param duration_in_seconds [Integer]
+    # @!macro duration_in_seconds
     # @return [void]
     def repeat_daily(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)
       internal_schedule.repeat_daily(
@@ -106,7 +110,7 @@ module Reprise
 
     # @!macro weekday
     # @!macro time_of_day
-    # @param duration_in_seconds [Integer]
+    # @!macro duration_in_seconds
     # @return [void]
     # @example with a +time_of_day+ hash
     #   schedule.repeat_weekly(:monday, time_of_day: { hour: 6 }, duration_in_seconds: 30)
@@ -127,7 +131,7 @@ module Reprise
 
     # @param day_number [Integer] The number of the day in the month; >= 1 && <= 31
     # @!macro time_of_day
-    # @param duration_in_seconds [Integer]
+    # @!macro duration_in_seconds
     # @return [void]
     # @example
     #   schedule.repeat_monthly_by_day(15, time_of_day: { hour: 9 }, duration_in_seconds: 30)
@@ -146,7 +150,7 @@ module Reprise
     # @!macro weekday
     # @param nth_day [Integer] The nth weekday, 0-indexed; e.g. 0 might represent the first wednesday
     # @!macro time_of_day
-    # @param duration_in_seconds [Integer]
+    # @!macro duration_in_seconds
     # @return [void]
     def repeat_monthly_by_nth_weekday(weekday, nth_day, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)
       internal_schedule.repeat_monthly_by_nth_weekday(
