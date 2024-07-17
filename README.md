@@ -99,8 +99,6 @@ you otherwise couldn't.
 
 ##### Benchmarks
 
-Reprise can generate events from a series of recurrence rules up to 1000x faster than the alternatives.
-
 You can run benchmarks locally via `bundle exec rake benchmark`; additionally, 
 to view our recent benchmarking results in CI, see [past runs of our Benchmark worfklow](https://github.com/jordanhiltunen/reprise/actions/workflows/benchmark.yml).
 
@@ -114,7 +112,7 @@ Below is a sample local benchmark run taken on the following development machine
 | Ruby Version  | 3.3.2 (2024-05-30 revision e5a195edf6) \[x86_64-darwin23\] |
 | Rust Version  | rustc 1.79.0 (129f3b996 2024-06-10)                        |
 
-`benchmark-ips`:
+`benchmark-ips`: (higher is better)
 ```
 ruby 3.3.2 (2024-05-30 revision e5a195edf6) [x86_64-darwin23]
 Warming up --------------------------------------
@@ -127,7 +125,7 @@ Calculating -------------------------------------
              Reprise     13.127k (±19.9%) i/s -     63.441k in   5.047277s
 ```
 
-`benchmark-memory`:
+`benchmark-memory`: (lower is better)
 ```
 Calculating -------------------------------------
              IceCube    10.986M memsize (     1.040k retained)
@@ -172,7 +170,7 @@ Reprise improves on this significantly by offering an API to define exclusions w
 then determines whether any given occurrence overlaps with an exclusion that you have defined, and filters
 them out during occurrence generation accordingly.
 
-## Acknowledgements [#related]
+## Acknowledgements
 
 Reprise, a Ruby gem with a Rust core, is only possible because of the foundation laid by the excellent [Magnus](https://github.com/matsadler/magnus) project.
 
