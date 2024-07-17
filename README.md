@@ -56,7 +56,7 @@ schedule.repeat_hourly(
 
 ## Why Reprise?
 
-### Consider the alternatives first
+### First, consider the alternatives
 
 Reprise is particularly indebted to [ice_cube](https://github.com/ice-cube-ruby/ice_cube) and [Montrose](https://github.com/rossta/montrose), projects that have served the Ruby community for years.
 They are stable and battle-tested. If you have no actual business need for the kind of performance that Reprise aims for,
@@ -69,7 +69,7 @@ you would probably be much better served by choosing one of those two gems inste
   of more idiomatic calling conventions: they have better, more forgiving ergonomics. Reprise may invest more efforts
   here in the future, but not until we have landed on a feature-complete, performant core - our primary design goal. 
   Until then, out API will remain sparse but sufficient.
-- **Stability.** Reprise is still experimental; we have not yet released a `1.0.0` or have a public roadmap. Breaking changes
+- **Stability.** Reprise is still experimental; we do not yet have a `1.0.0` release or a public roadmap. Breaking changes
   may be frequent across releases. If you do not want to pin Reprise to a specific version and want a library that you can
   upgrade without reviewing the changelog, you may want to consider an alternative for now.
 - **Serialization.** We do not yet offer any form of persistence support (e.g. parsing from / serializing to yaml / hash
@@ -77,7 +77,25 @@ you would probably be much better served by choosing one of those two gems inste
 
 ### Advantages
 
-#### Benchmarks
+#### Performance
+
+A truism in the Ruby community is that "Ruby is slow, but that doesn't matter for you":
+> So, often it hardly matters that [Ruby] is slow, because your use-case does not need the scale,
+> speed, or throughput that Ruby chokes on. Or because the trade-offs are worth it: Often the
+> quicker development, cheaper development, faster time-to-market etc is worth the extra resources
+> (servers, hardware, SAAS) you must throw at your app to keep it performing acceptable.
+> https://berk.es/2022/08/09/ruby-slow-database-slow/
+
+This is often delightfully true, until on the odd occasion Ruby's speed requires that a straightforward feature
+be implemented in a contorted or meaningfully-constrained manner in order to work.
+
+Reprise aims to solve a niche problem: cutting the latency of recurring schedule generation when it is in
+the critical path without imposing an additional complexity burden on clients. For most applications
+that deal with recurring events, this is probably not a problem. But if it is, we want to buy you more
+effectively-free per-request headroom that you can spend in simple Ruby to improve or ship a feature that
+you otherwise couldn't.
+
+##### Benchmarks
 
 Reprise can generate events from a series of recurrence rules up to 1000x faster than the alternatives.
 
@@ -151,24 +169,6 @@ These limitations can push a significant amount of schedule recurrence logic ont
 Reprise improves on this significantly by offering an API to define exclusions with start and end times; Reprise
 then determines whether any given occurrence overlaps with an exclusion that you have defined, and filters
 them out during occurrence generation accordingly.
-
-### When Performance Matters
-
-A truism in the Ruby community is that "Ruby is slow, but that doesn't matter for you": 
-> So, often it hardly matters that [Ruby] is slow, because your use-case does not need the scale, 
-> speed, or throughput that Ruby chokes on. Or because the trade-offs are worth it: Often the 
-> quicker development, cheaper development, faster time-to-market etc is worth the extra resources
-> (servers, hardware, SAAS) you must throw at your app to keep it performing acceptable.
-> https://berk.es/2022/08/09/ruby-slow-database-slow/
-
-This is true until it isn't. Sometimes, Ruby's speed requires that a straightforward feature
-be implemented in a contorted or unfortunately-constrained manner in order to work.  
-
-Reprise aims to solve a niche problem: cutting the latency of recurring schedule generation when it is in
-the critical path without imposing an additional complexity burden on clients. For most applications
-that deal with recurring events, this is probably not a problem. But if it is, we want to buy you more
-effectively-free per-request headroom that you can spend in simple Ruby to improve or ship a feature that
-you otherwise couldn't.
 
 ## Acknowledgements [#related]
 
