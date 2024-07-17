@@ -89,7 +89,7 @@ A truism in the Ruby community is that "Ruby is slow, but that doesn't matter fo
 > https://berk.es/2022/08/09/ruby-slow-database-slow/
 
 This is often delightfully true, until on the odd occasion Ruby's speed requires that a straightforward feature
-be implemented in a contorted or meaningfully-constrained manner in order to work.
+be implemented in a contorted or meaningfully-constrained way in order to work.
 
 Reprise aims to solve a niche problem: cutting the latency of recurring schedule generation when it is in
 the critical path without imposing an additional complexity burden on clients. For most applications
@@ -198,12 +198,11 @@ This project is intended to be a safe, welcoming space for collaboration, and co
 - :white_check_mark: Report or fix bugs
 - :white_check_mark: Suggest features
 - :white_check_mark: Write or improve documentation
-- :yellow_circle: Submit pull requests
+- :yellow_circle: Submit pull requests (please reach out first)
 
 We plan on welcoming pull requests once we settle on an initial `1.0.0`; until then, we anticipate
 a lot of early experimentation, and we will have more time to collaborate and welcome pull requests
-once we've hit that milestone and have put more energy into defining our roadmap. 
-All that to say -- please reach out before submitting a new feature PR :bow:.
+once we've hit that milestone.
 
 ## License
 
