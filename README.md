@@ -36,7 +36,8 @@ schedule = Reprise::Schedule.new(
 ````
 
 If your `starts_at` is an `ActiveSupport::TimeWithZone`, your schedule will infer its time zone from
-that value. You can also explicitly pass in a `time_zone` if you are passing in simple `Time` instances:
+that value. You can also explicitly pass in a `time_zone` if your schedule bookends don't have time zone
+information (e.g. if you are passing in simple `Time` instances):
 
 ```ruby
 schedule = Reprise::Schedule.new(
@@ -55,6 +56,8 @@ schedule.repeat_weekly(:sunday, duration_in_seconds: 15.minutes)
 schedule.occurrences.size
 # => 52
 ```
+
+#### Customizing the time of day for a recurring series' occurrences
 
 By default, all series that advance in units of a day or greater will use the time that your schedule
 started at as the local time for each future occurrence:
@@ -85,6 +88,45 @@ schedule.repeat_weekly(:tuesday, time_of_day: ten_forty_five_pm_in_rome, duratio
 # => <Reprise::Core::Occurrence start_time="2015-06-02T08:45:00+00:00" end_time="2015-06-02T08:46:00+00:00" label="nil">
 first_occurrence.start_time.in_time_zone("Rome")
 # => Tue, 02 Jun 2015 10:45:00.000000000 CEST +02:00
+```
+
+#### Customizing the bookends of a recurring series
+
+By default, all series will inherit the `starts_at` and `ends_at` values of their parent schedule:
+
+```ruby
+schedule = Reprise::Schedule.new(
+  starts_at: may_26_2015_four_thirty_pm_in_rome, 
+  ends_at: may_26_2015_four_thirty_pm_in_rome + 200.days
+)
+
+schedule.repeat_weekly(:wednesday, time_of_day: { hour: 9, minute: 30 }, duration_in_seconds: 10.minutes)
+occurrences = schedule.occurrences
+puts occurrences.size
+# => 29
+puts (occurrences.last.start_time.to_date - occurrences.first.start_time.to_date).to_i
+# => 196 # days
+```
+
+You can also specify the bookends of each recurring series:
+
+```ruby
+schedule.repeat_weekly(
+  :friday, 
+  time_of_day: { hour: 4, minute: 01 }, 
+  duration_in_seconds: 40.minutes,
+  starts_at: may_26_2015_four_thirty_pm_in_rome + 40.days,
+  ends_at: may_26_2015_four_thirty_pm_in_rome + 100.days
+)
+occurrences = schedule.occurrences
+puts occurrences.size
+# => 8
+puts occurrences.first.start_time.in_time_zone("Rome")
+# 2015-07-10 04:01:00 +0200
+puts occurrences.last.start_time.in_time_zone("Rome")
+# 2015-08-28 04:01:00 +0200
+puts (occurrences.last.start_time.to_date - occurrences.first.start_time.to_date).to_i
+# => 49 # days
 ```
 
 There are many recurring series that you can create; `#repeat_minutely`, `#repeat_hourly`, 
