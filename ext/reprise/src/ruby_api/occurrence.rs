@@ -1,6 +1,7 @@
 use crate::ruby_api::ruby_modules;
 use crate::ruby_api::traits::HasOverlapAwareness;
 use magnus::{class, method, Error, Module, Ruby, Time};
+use chrono::{DateTime, Utc};
 
 #[derive(Debug)]
 #[magnus::wrap(class = "Reprise::Core::Occurrence")]
