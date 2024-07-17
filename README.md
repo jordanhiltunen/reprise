@@ -23,25 +23,74 @@ gem "reprise"
 
 ### Initialize a new schedule
 
-All schedules must be initialized with a `start_time`, `end_time`, and `time_zone`:
+All schedules need to be initialized with a `start_time` and `end_time`:
 
 ```ruby
+may_26_2015_four_thirty_pm_in_rome = Time.parse("2015-05-26 10:30:45").in_time_zone("Rome")
+# => Tue, 26 May 2015 16:30:45.000000000 CEST +02:00
+
 schedule = Reprise::Schedule.new(
-  starts_at: Time.current, 
-  ends_at: Time.current + 4.weeks, 
-  time_zone: "Hawaii"
+  starts_at: may_26_2015_four_thirty_pm_in_rome, 
+  ends_at: may_26_2015_four_thirty_pm_in_rome + 1.year
 )
 ````
 
-### Add recurring event series
+If your `starts_at` is an `ActiveSupport::TimeWithZone`, your schedule will infer its time zone from
+that value. You can also explicitly pass in a `time_zone` if you are passing in simple `Time` instances:
 
 ```ruby
-# When a time_of_day is required, you can pass an hour/minute/second hash:
-schedule.repeat_weekly(:sunday, time_of_day: { hour: 9, minute: 30 }, duration_in_seconds: 60)
+schedule = Reprise::Schedule.new(
+  starts_at: may_26_2015_ten_thirty_pm_utc, 
+  ends_at: may_26_2015_ten_thirty_pm_utc + 1.year,
+  time_zone: "Rome"
+)
+```
 
-# Or, you can pass a `Time` value:
-time = Time.new(2024, 6, 30, 0, 0, 0, "-10:00")
-schedule.repeat_weekly(:sunday, time_of_day: time, duration_in_seconds: 60)
+### Add recurring event series
+
+You can add any number of recurring series to the schedule via `repeat_*` methods:
+
+```ruby
+schedule.repeat_weekly(:sunday, duration_in_seconds: 15.minutes)
+schedule.occurrences.size
+# => 52
+```
+
+By default, all series that advance in units of a day or greater will use the time that your schedule
+started at as the local time for each future occurrence:
+
+```ruby
+first_occurrence = schedule.occurrences.first
+# => <Reprise::Core::Occurrence start_time="2015-05-31T14:30:45+00:00" end_time="2015-05-31T14:45:45+00:00" label="nil">
+first_occurrence.start_time.in_time_zone("Rome")
+# => Sun, 31 May 2015 16:30:45.000000000 CEST +02:00 # <- 4:30 PM
+```
+
+You can override this behaviour, and set a custom time of day for each of your series,
+either by passing an hour/minute/second hash to `time_of_day`:
+
+```ruby
+schedule.repeat_weekly(:sunday, time_of_day: { hour: 9, minute: 30 }, duration_in_seconds: 60)
+first_occurrence = schedule.occurrences.first
+# => => <Reprise::Core::Occurrence start_time="2015-05-31T07:30:00+00:00" end_time="2015-05-31T07:31:00+00:00" label="nil">
+first_occurrence.start_time.in_time_zone("Rome")
+# => Sun, 31 May 2015 09:30:00.000000000 CEST +02:00
+```
+
+Or, by passing a `Time` object instead:
+
+```ruby
+ten_forty_five_pm_in_rome = Time.parse("2015-05-27 04:45:00").in_time_zone("Rome")
+schedule.repeat_weekly(:tuesday, time_of_day: ten_forty_five_pm_in_rome, duration_in_seconds: 60)
+# => <Reprise::Core::Occurrence start_time="2015-06-02T08:45:00+00:00" end_time="2015-06-02T08:46:00+00:00" label="nil">
+first_occurrence.start_time.in_time_zone("Rome")
+# => Tue, 02 Jun 2015 10:45:00.000000000 CEST +02:00
+```
+
+There are many recurring series that you can create; `#repeat_minutely`, `#repeat_hourly`, 
+`#repeat_daily`, `#repeat_weekly`, `#repeat_monthly_by_day`, and `#repeat_monthly_by_nth_weekday`.
+
+For more information on each method, see the docs.
 
 # You can repeat monthly by the nth day; e.g. the third Tuesday of every month:
 schedule.repeat_monthly_by_nth_weekday(:tuesday, 2, { hour: 1, minute: 2, second: 3 }, 300)
@@ -56,7 +105,7 @@ schedule.repeat_hourly(
 )
 ```
 
-### Generate Schedule Occurrences
+### Generate schedule occurrences
 
 ```ruby
 # Add however many series you like, then generate your schedule's occurrences:
