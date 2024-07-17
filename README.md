@@ -9,6 +9,8 @@ Reprise is a thin Ruby wrapper around an extension written in Rust, we are able 
 of speed and conservative memory use that we would otherwise be unable to accomplish in
 pure Ruby alone.
 
+For more on why and when you might want to use this gem, see [Why Reprise?](#why-reprise).
+
 ## Installation
 
 Add this line to your application's Gemfile:
