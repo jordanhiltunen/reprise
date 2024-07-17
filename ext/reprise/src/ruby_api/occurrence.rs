@@ -26,15 +26,6 @@ impl Occurrence {
         };
     }
 
-    pub(crate) fn inspect(&self) -> String {
-        return format!(
-            "<Reprise::Core::Occurrence start_time=\"{:?}\" end_time=\"{:?}\" label={:?}>",
-            self.start_time(),
-            self.end_time(),
-            self.label().unwrap_or("nil".into())
-        );
-    }
-
     pub fn start_time(&self) -> Time {
         return Occurrence::ruby_handle()
             .time_new(self.starts_at_unix_timestamp, 0)
