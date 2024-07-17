@@ -56,6 +56,18 @@ schedule.repeat_hourly(
 )
 ```
 
+### Generate Schedule Occurrences
+
+```ruby
+# Add however many series you like, then generate your schedule's occurrences:
+occurrences = schedule.occurrences
+
+occurrences.take(3).map { |o| puts o.inspect }
+# <Reprise::Core::Occurrence start_time="2024-07-22T07:03:04+00:00" end_time="2024-07-22T07:48:04+00:00" label="Brunch">
+# <Reprise::Core::Occurrence start_time="2024-07-29T07:03:04+00:00" end_time="2024-07-29T07:48:04+00:00" label="Brunch">
+# <Reprise::Core::Occurrence start_time="2024-08-05T07:03:04+00:00" end_time="2024-08-05T07:48:04+00:00" label="Brunch">
+```
+
 ## Why Reprise?
 
 ### First, consider the alternatives
