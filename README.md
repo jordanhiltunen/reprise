@@ -134,29 +134,22 @@ There are many recurring series that you can create; `#repeat_minutely`, `#repea
 
 For more information on each method, see the docs.
 
-# You can repeat monthly by the nth day; e.g. the third Tuesday of every month:
-schedule.repeat_monthly_by_nth_weekday(:tuesday, 2, { hour: 1, minute: 2, second: 3 }, 300)
+#### Adding labels to the occurrences of each series
 
-# Or monthly by day; e.g. the 12th of every month:
-schedule.repeat_monthly_by_day(12, { hour: 1, minute: 2, second: 3 }, 300)
-
-# Or hourly: 
-schedule.repeat_hourly(
-        time_of_day: { hour: 1, minute: 2, second: 3 },
-        duration_in_seconds: 300
-)
-```
-
-### Generate schedule occurrences
+If you need to disambiguate occurrences from different series in the same schedule,
+you can add an optional label:
 
 ```ruby
-# Add however many series you like, then generate your schedule's occurrences:
-occurrences = schedule.occurrences
-
-occurrences.take(3).map { |o| puts o.inspect }
-# <Reprise::Core::Occurrence start_time="2024-07-22T07:03:04+00:00" end_time="2024-07-22T07:48:04+00:00" label="Brunch">
-# <Reprise::Core::Occurrence start_time="2024-07-29T07:03:04+00:00" end_time="2024-07-29T07:48:04+00:00" label="Brunch">
-# <Reprise::Core::Occurrence start_time="2024-08-05T07:03:04+00:00" end_time="2024-08-05T07:48:04+00:00" label="Brunch">
+schedule.repeat_daily(label: "Coffee Time", time_of_day: { hour: 8 }, duration_in_seconds: 15.minutes)
+schedule.repeat_daily(label: "Tea Time", interval: 3, time_of_day: { hour: 9 }, duration_in_seconds: 10.minutes)
+schedule.occurrences.take(7).map { |o| puts o.inspect }
+# => <Reprise::Core::Occurrence label="Coffee Time" start_time="2015-05-27T06:00:00+00:00" end_time="2015-05-27T06:15:00+00:00">
+# => <Reprise::Core::Occurrence label="Tea Time" start_time="2015-05-27T07:00:00+00:00" end_time="2015-05-27T07:10:00+00:00">
+# => <Reprise::Core::Occurrence label="Coffee Time" start_time="2015-05-28T06:00:00+00:00" end_time="2015-05-28T06:15:00+00:00">
+# => <Reprise::Core::Occurrence label="Coffee Time" start_time="2015-05-29T06:00:00+00:00" end_time="2015-05-29T06:15:00+00:00">
+# => <Reprise::Core::Occurrence label="Coffee Time" start_time="2015-05-30T06:00:00+00:00" end_time="2015-05-30T06:15:00+00:00">
+# => <Reprise::Core::Occurrence label="Tea Time" start_time="2015-05-30T07:00:00+00:00" end_time="2015-05-30T07:10:00+00:00">
+# => <Reprise::Core::Occurrence label="Coffee Time" start_time="2015-05-31T06:00:00+00:00" end_time="2015-05-31T06:15:00+00:00">
 ```
 
 ## Why Reprise?
@@ -262,7 +255,7 @@ in your application?
 At time of writing, alternative gems' solutions to this problem are all unfortunately lacking:
 - **None**: It is entirely the responsibility of the client application to handle occurrence exclusions,
   despite this logic being core to the domain of recurring schedule management.
-- **Date-based exclusion**. Client applications can pass specific dates when occurrences should be excluded.
+- **Date-based exclusion**: Client applications can pass specific dates when occurrences should be excluded.
   This is not sufficient except for in the most simple of circumstances. Again, consider our hypothetical
   Monday @ 12:30 PM recurring series: being able to exclude a specific _date_ from your recurrence rule still 
   requires you to implement your own overlap detection logic to determine whether an occurrence actually conflicts with
@@ -313,4 +306,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the Reprise project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/reprise/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the Reprise project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/jordanhiltunen/reprise/blob/master/CODE_OF_CONDUCT.md).
