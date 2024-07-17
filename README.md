@@ -195,7 +195,17 @@ and commit the changes.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/reprise. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+
+- :white_check_mark: Report or fix bugs
+- :white_check_mark: Suggest features
+- :white_check_mark: Write or improve documentation
+- :yellow_circle: Submit pull requests
+
+We plan on welcoming pull requests once we settle on an initial `1.0.0`; until then, we anticipate
+a lot of early experimentation, and we will have more time to collaborate and welcome pull requests
+once we've hit that milestone and have put more energy into defining our roadmap. 
+All that to say -- please reach out before submitting a new feature PR :bow:.
 
 ## License
 
