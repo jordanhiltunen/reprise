@@ -29,12 +29,12 @@ impl Recurrable for Minutely {
         // We can't operate exclusively on DateTime<Tz> values, as it will lead to
         // invalid or ambiguous times when crossing DST / Standard Time transitions.
         return match datetime_cursor.checked_add_signed(TimeDelta::minutes(1)) {
-            None => return datetime_cursor
+            None => datetime_cursor
                 .to_utc()
                 .checked_add_signed(TimeDelta::minutes(1))
                 .unwrap()
                 .with_timezone(&datetime_cursor.timezone()),
-            Some(datetime_cursor) => return datetime_cursor,
+            Some(datetime_cursor) => datetime_cursor,
         }
     }
 }
