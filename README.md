@@ -152,6 +152,30 @@ schedule.occurrences.take(7).map { |o| puts o.inspect }
 # => <Reprise::Core::Occurrence label="Coffee Time" start_time="2015-05-31T06:00:00+00:00" end_time="2015-05-31T06:15:00+00:00">
 ```
 
+#### Excluding time intervals from the schedule's occurrences
+
+If you have other non-recurring "schedule entries" in your domain that can collide with your recurring series'
+occurrences and need to be excluded, you can add exclusions to your schedule before generating occurrences:
+
+```ruby
+schedule.repeat_daily(label: "Standing Meeting", ends_at: may_26_2015_four_thirty_pm_in_rome + 5.days, duration_in_seconds: 15.minutes)
+schedule.occurrences.map { |o| puts o.inspect }
+# => <Reprise::Core::Occurrence start_time="2015-05-27T14:30:45+00:00" end_time="2015-05-27T14:45:45+00:00" label="Standing Meeting">
+# => <Reprise::Core::Occurrence start_time="2015-05-28T14:30:45+00:00" end_time="2015-05-28T14:45:45+00:00" label="Standing Meeting">
+# => <Reprise::Core::Occurrence start_time="2015-05-29T14:30:45+00:00" end_time="2015-05-29T14:45:45+00:00" label="Standing Meeting">
+# => <Reprise::Core::Occurrence start_time="2015-05-30T14:30:45+00:00" end_time="2015-05-30T14:45:45+00:00" label="Standing Meeting">
+
+schedule.add_exclusion(
+  starts_at: (may_26_2015_four_thirty_pm_in_rome + 2.days).beginning_of_day,
+  ends_at: (may_26_2015_four_thirty_pm_in_rome + 2.days).end_of_day
+)
+
+schedule.occurrences.map { |o| puts o.inspect }
+# => <Reprise::Core::Occurrence start_time="2015-05-27T14:30:45+00:00" end_time="2015-05-27T14:45:45+00:00" label="Standing Meeting">
+# => <Reprise::Core::Occurrence start_time="2015-05-29T14:30:45+00:00" end_time="2015-05-29T14:45:45+00:00" label="Standing Meeting">
+# => <Reprise::Core::Occurrence start_time="2015-05-30T14:30:45+00:00" end_time="2015-05-30T14:45:45+00:00" label="Standing Meeting">
+```
+
 ## Why Reprise?
 
 ### First, consider the alternatives
