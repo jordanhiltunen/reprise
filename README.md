@@ -180,6 +180,31 @@ schedule.occurrences.map { |o| puts o.inspect }
 # => <Reprise::Core::Occurrence start_time="2015-05-30T14:30:45+00:00" end_time="2015-05-30T14:45:45+00:00" label="Standing Meeting">
 ```
 
+#### Querying for occurrences within a given time interval
+
+After constructing your schedule, you can query for the occurrences within any interval
+of time:
+
+```ruby
+schedule.repeat_daily(label: "Standing Meeting", ends_at: may_26_2015_four_thirty_pm_in_rome + 5.days, duration_in_seconds: 15.minutes)
+
+schedule.occurs_between?(
+  may_26_2015_four_thirty_pm_in_rome + 2.days,
+  may_26_2015_four_thirty_pm_in_rome + 3.days,
+)
+# => true
+
+schedule.occurrences_between(
+  may_26_2015_four_thirty_pm_in_rome + 2.days,
+  may_26_2015_four_thirty_pm_in_rome + 3.days,
+).map { |o| puts o.inspect }
+# => <Reprise::Core::Occurrence start_time="2015-05-28T14:30:45+00:00" end_time="2015-05-28T14:45:45+00:00" label="Standing Meeting">
+```
+
+Both `#occurs_between?` and `#occurrences_between` also support an optional `include_overlapping`
+argument, which allows you to search for occurrences that not only occur entirely within a given
+interval, but also those that partially overlap.
+
 ## Why Reprise?
 
 ### First, consider the alternatives
