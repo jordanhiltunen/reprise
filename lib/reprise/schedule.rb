@@ -26,7 +26,7 @@ module Reprise
     # @param starts_at [Time, ActiveSupport::TimeWithZone]
     #   The beginning of the schedule; the earliest possible moment for a valid occurrence.
     #   If no +time_zone+ is given, the schedule's time zone will be inferred from +starts_at+,
-    #   defaulting to UTC if it lacks time zone information (e.g. it is a plain `Time`).
+    #   defaulting to UTC if it lacks time zone information (e.g. it is a plain +Time+).
     # @param ends_at [Time, ActiveSupport::TimeWithZone]
     #   The end of the schedule; the latest possible moment for a valid occurrence.
     # @param time_zone [String]
