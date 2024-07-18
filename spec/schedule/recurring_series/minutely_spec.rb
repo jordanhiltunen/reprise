@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "rspec"
 require "spec_helper"
 
 RSpec.describe "#repeat_minutely", aggregate_failures: true do
@@ -32,6 +33,7 @@ RSpec.describe "#repeat_minutely", aggregate_failures: true do
 
     expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
       .to contain_exactly(
+        "Sun Mar 10 2024 01:59AM -0800",
         "Sun Mar 10 2024 03:00AM -0700",
         "Sun Mar 10 2024 03:01AM -0700",
         "Sun Mar 10 2024 03:02AM -0700",
@@ -47,11 +49,11 @@ RSpec.describe "#repeat_minutely", aggregate_failures: true do
 
       expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
         .to contain_exactly(
-          "Sun Mar 10 2024 03:00AM -0700",
-          "Sun Mar 10 2024 03:02AM -0700",
-          "Sun Mar 10 2024 03:04AM -0700",
-          "Sun Mar 10 2024 03:06AM -0700",
-          "Sun Mar 10 2024 03:08AM -0700"
+          "Sun Mar 10 2024 01:59AM -0800",
+          "Sun Mar 10 2024 03:01AM -0700",
+          "Sun Mar 10 2024 03:03AM -0700",
+          "Sun Mar 10 2024 03:05AM -0700",
+          "Sun Mar 10 2024 03:07AM -0700"
         )
     end
   end
@@ -70,6 +72,7 @@ RSpec.describe "#repeat_minutely", aggregate_failures: true do
           # after the local time gap, one
           # hour forward from the desired (but non-existent)
           # local time.
+          "Sun Mar 10 2024 03:01AM -0700",
           "Sun Mar 10 2024 03:02AM -0700",
           "Sun Mar 10 2024 03:03AM -0700",
           "Sun Mar 10 2024 03:04AM -0700",
@@ -88,6 +91,7 @@ RSpec.describe "#repeat_minutely", aggregate_failures: true do
 
       expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
         .to contain_exactly(
+          "Sun Mar 10 2024 01:58AM -0800",
           "Sun Mar 10 2024 01:59AM -0800",
           # N.B. Notice the DST jump
           "Sun Mar 10 2024 03:00AM -0700",
@@ -112,9 +116,9 @@ RSpec.describe "#repeat_minutely", aggregate_failures: true do
 
       expect(first_three_occurrences.map { |o| localized_occurrence_start_time(o) })
         .to contain_exactly(
+          "Sun Nov  3 2024 12:57AM -0700",
           "Sun Nov  3 2024 12:58AM -0700",
           "Sun Nov  3 2024 12:59AM -0700",
-          "Sun Nov  3 2024 01:00AM -0700",
         )
 
       expect(last_five_occurrences.map { |o| localized_occurrence_start_time(o) })

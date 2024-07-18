@@ -41,7 +41,7 @@ RSpec.describe "#repeat_daily", aggregate_failures: true do
   end
 
   context "when the schedule starts on a transition from Standard Time (ST) to Daylight Savings Time (DST)" do
-    let(:starts_at) { (TimeZoneHelpers::ONE_MINUTE_BEFORE_LA_TRANSITION_TO_DST_2024 - 1.day).in_time_zone(time_zone) }
+    let(:starts_at) { (TimeZoneHelpers::ONE_MINUTE_BEFORE_LA_TRANSITION_TO_DST_2024).in_time_zone(time_zone) }
 
     it "generates an array of occurrences starting from the DST change" do
       schedule.repeat_daily(time_of_day: nil, duration_in_seconds: 30.minutes)
@@ -54,7 +54,8 @@ RSpec.describe "#repeat_daily", aggregate_failures: true do
         "Sun Mar 10 2024 01:59AM -0800",
         "Mon Mar 11 2024 01:59AM -0700",
         "Tue Mar 12 2024 01:59AM -0700",
-        "Wed Mar 13 2024 01:59AM -0700"
+        "Wed Mar 13 2024 01:59AM -0700",
+        "Thu Mar 14 2024 01:59AM -0700"
       )
     end
   end

@@ -89,8 +89,8 @@ pub(crate) trait Recurrable: std::fmt::Debug {
             // dbg!("Occurrence candidate", occurrence_candidate_datetime_option);
 
             if let Some(occurrence_candidate_datetime) = occurrence_candidate_datetime_option {
-                if occurrence_candidate_datetime > starts_at
-                    && occurrence_candidate_datetime < ends_at
+                if occurrence_candidate_datetime >= starts_at
+                    && occurrence_candidate_datetime <= ends_at
                 {
                     // dbg!("Valid occurrence candidate", occurrence_candidate_datetime);
 

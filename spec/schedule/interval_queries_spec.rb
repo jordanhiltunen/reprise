@@ -19,6 +19,7 @@ RSpec.describe "interval queries", aggregate_failures: true do
   def expect_underlying_set_of_occurrences
     expect(base_occurrences.map { |o| localized_occurrence_start_and_end_time(o) })
       .to contain_exactly(
+        "Sun Jun 30 2024 12:00AM -1000 - Sun Jun 30 2024 12:30AM -1000",
         "Sun Jun 30 2024 01:00AM -1000 - Sun Jun 30 2024 01:30AM -1000",
         "Sun Jun 30 2024 02:00AM -1000 - Sun Jun 30 2024 02:30AM -1000",
         "Sun Jun 30 2024 03:00AM -1000 - Sun Jun 30 2024 03:30AM -1000",

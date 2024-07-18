@@ -96,6 +96,7 @@ RSpec.describe "#repeat_hourly", aggregate_failures: true do
 
       expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
         .to contain_exactly(
+          "Sun Mar 10 2024 12:59AM -0800",
           "Sun Mar 10 2024 01:59AM -0800",
           # N.B. Notice the DST jump to 3:59 AM.
           # https://www.timeanddate.com/news/time/usa-start-dst-2024.html
@@ -117,6 +118,7 @@ RSpec.describe "#repeat_hourly", aggregate_failures: true do
 
       expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
         .to contain_exactly(
+          "Sat Nov  2 2024 11:59PM -0700",
           "Sun Nov  3 2024 01:59AM -0700",
           # N.B. Transition to ST, with a bias
           # towards the instance of the time that
