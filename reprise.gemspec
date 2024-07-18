@@ -45,7 +45,7 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "benchmark-ips"
   spec.add_development_dependency "benchmark-memory"
-  spec.add_development_dependency "bundler", "~> 2.5.9"
+  spec.add_development_dependency "bundler"
   spec.add_development_dependency "ice_cube"
   spec.add_development_dependency "memory_profiler"
   spec.add_development_dependency "montrose"
