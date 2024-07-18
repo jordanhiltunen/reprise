@@ -102,7 +102,9 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     
-<p>This class definition is open-classed only for the purposes of adding documentation; it is defined dynamically within the Rust extension.</p>
+<p>An Occurrence represents a single instance of a recurring series belong to a schedule.</p>
+
+<p>of adding documentation; it is defined dynamically within the Rust extension.</p>
 
 
   </div>
@@ -140,7 +142,36 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>The end time of the occurrence.</p>
+<p>The end time of the occurrence, given in the current system time zone.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#label-instance_method" title="#label (instance method)">#<strong>label</strong>  &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The label given to the recurring series from which the occurrence was generated (if present).</p>
 </div></span>
   
 </li>
@@ -169,7 +200,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>The start time of the occurrence.</p>
+<p>The start time of the occurrence, given in the current system time zone.</p>
 </div></span>
   
 </li>
@@ -198,7 +229,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Returns The end time of the occurrence.</p>
+<p>Returns The end time of the occurrence, given in the current system time zone.</p>
 
 
   </div>
@@ -217,7 +248,7 @@
       
         &mdash;
         <div class='inline'>
-<p>The end time of the occurrence.</p>
+<p>The end time of the occurrence, given in the current system time zone.</p>
 </div>
       
     </li>
@@ -233,7 +264,64 @@
 </pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/reprise/core/occurrence.rb', line 9</span>
+      <pre class="code"><span class="info file"># File 'lib/reprise/core/occurrence.rb', line 11</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="label-instance_method">
+  
+    #<strong>label</strong>  &#x21d2; <tt>String</tt><sup>?</sup>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns The label given to the recurring series from which the occurrence was generated (if present). Can be used to disambiguate occurrences from different series after generating the schedule’s occurrences.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The label given to the recurring series from which the occurrence was generated (if present). Can be used to disambiguate occurrences from different series after generating the schedule’s occurrences.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/reprise/core/occurrence.rb', line 11</span>
 
 </pre>
     </td>
@@ -255,7 +343,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Returns The start time of the occurrence.</p>
+<p>Returns The start time of the occurrence, given in the current system time zone.</p>
 
 
   </div>
@@ -274,7 +362,7 @@
       
         &mdash;
         <div class='inline'>
-<p>The start time of the occurrence.</p>
+<p>The start time of the occurrence, given in the current system time zone.</p>
 </div>
       
     </li>
@@ -290,7 +378,7 @@
 </pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/reprise/core/occurrence.rb', line 9</span>
+      <pre class="code"><span class="info file"># File 'lib/reprise/core/occurrence.rb', line 11</span>
 
 </pre>
     </td>
@@ -304,7 +392,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sun Jul 14 20:18:53 2024 by
+  Generated on Thu Jul 18 06:51:56 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.36 (ruby-3.3.2).
 </div>
