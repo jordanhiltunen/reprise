@@ -16,8 +16,11 @@ RSpec.describe Reprise::Schedule, aggregate_failures: true do
     context "when the time zone is invalid" do
       let(:time_zone) { "nonsense" }
 
-      it "raises a TZInfo::InvalidTimezoneIdentifier" do
-        expect { schedule }.to raise_error(TZInfo::InvalidTimezoneIdentifier, "Invalid identifier: nonsense")
+      it "raises a Reprise::TimeZoneIdentifier::InvalidTimeZoneError" do
+        expect { schedule }.to raise_error(
+          Reprise::InvalidTimeZoneError,
+          /"nonsense" is not a valid, unambiguous IANA Time Zone Database identifier/
+        )
       end
     end
 
@@ -25,8 +28,11 @@ RSpec.describe Reprise::Schedule, aggregate_failures: true do
       # https://github.com/tzinfo/tzinfo/issues/53#issuecomment-235852722
       let(:time_zone) { "CEST" }
 
-      it "raises a TZInfo::InvalidTimezoneIdentifier" do
-        expect { schedule }.to raise_error(TZInfo::InvalidTimezoneIdentifier, "Invalid identifier: CEST")
+      it "raises a Reprise::TimeZoneIdentifier::InvalidTimeZoneError" do
+        expect { schedule }.to raise_error(
+          Reprise::InvalidTimeZoneError,
+          /"CEST" is not a valid, unambiguous IANA Time Zone Database identifier/
+        )
       end
     end
   end

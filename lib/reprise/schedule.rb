@@ -23,18 +23,21 @@ module Reprise
     # Reprise does not support infinitely-recurring schedules, or the bounding
     # of schedules on the basis of a maximum occurrence count.
     #
-    # @param starts_at [Time]
+    # @param starts_at [Time, ActiveSupport::TimeWithZone]
     #   The beginning of the schedule; the earliest possible moment for a valid occurrence.
-    # @param ends_at [Time]
+    #   If no +time_zone+ is given, the schedule's time zone will be inferred from +starts_at+,
+    #   defaulting to UTC if it lacks time zone information (e.g. it is a plain `Time`).
+    # @param ends_at [Time, ActiveSupport::TimeWithZone]
     #   The end of the schedule; the latest possible moment for a valid occurrence.
     # @param time_zone [String]
-    #   Must be an unambiguous, valid time-zone according to +ActiveSupport::TimeZone::find_tzinfo+.
+    #   Must be an unambiguous, valid Rails time zone string or IANA time-zone identifier
+    #   according to +ActiveSupport::TimeZone::find_tzinfo+.
     #   See https://github.com/tzinfo/tzinfo/issues/53
-    # @raise [TZInfo::InvalidTimezoneIdentifier] if the time zone is ambiguous or invalid.
-    def initialize(starts_at:, ends_at:, time_zone:)
+    # @raise [Reprise::InvalidTimeZoneError] if the time zone is ambiguous or invalid.
+    def initialize(starts_at:, ends_at:, time_zone: nil)
       @starts_at = starts_at
       @ends_at = ends_at
-      @time_zone = ActiveSupport::TimeZone.find_tzinfo(time_zone).identifier
+      @time_zone = TimeZoneIdentifier.new(time_zone:, datetime_source: starts_at).to_s
       @default_time_of_day = TimeOfDay.new(starts_at)
     end
 
