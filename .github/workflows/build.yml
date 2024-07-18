@@ -2,20 +2,40 @@ name: build
 on: [push, pull_request]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ "ubuntu-latest", "macos-latest" ]
+        ruby: [ "3.1", "3.2", "3.3" ]
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/cache@v4
+      - uses: oxidize-rb/actions/setup-ruby-and-rust@v1
         with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            tmp
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.3
+          rustup-toolchain: "1.79"
+          ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - run: bundle exec rake compile:reprise
-      - run: bundle exec rspec --color
-#      - run: bundle exec yard --fail-on-warning # will restore when documentation is complete
+          cargo-cache: true
+          cache-version: v1
+      - name: Compile
+        run: bundle exec rake compile
+      - name: Run ruby tests
+        run: bundle exec rake test
+
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4
+#      - uses: actions/cache@v4
+#        with:
+#          path: |
+#            ~/.cargo/registry
+#            ~/.cargo/git
+#            tmp
+#          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+#      - uses: ruby/setup-ruby@v1
+#        with:
+#          ruby-version: 3.3
+#          bundler-cache: true
+#      - run: bundle exec rake compile:reprise
+#      - run: bundle exec rspec --color
+##      - run: bundle exec yard --fail-on-warning # will restore when documentation is complete
