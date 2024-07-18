@@ -20,7 +20,7 @@ jobs:
       - name: Compile
         run: bundle exec rake compile
       - name: Run ruby tests
-        run: bundle exec rake test
+        run: bundle exec rspec --color
 
 #    runs-on: ubuntu-latest
 #    steps:
