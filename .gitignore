@@ -7,11 +7,10 @@
 /pkg/
 /spec/reports/
 /tmp/
-
+/target/
+*.bundle
+*.so
+*.dll
 Gemfile.lock
-
-# rspec failure tracking
 .rspec_status
-
-# build artifacts
 /ext/reprise/target/
