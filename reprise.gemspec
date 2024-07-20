@@ -23,15 +23,19 @@ Gem::Specification.new do |spec|
   spec.metadata["source_code_uri"] = spec.homepage
   spec.metadata["changelog_uri"] = "https://github.com/jordanhiltunen/reprise/blob/main/CHANGELOG.md"
 
-  # Specify which files should be added to the gem when it is released.
-  # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
-  spec.files         = Dir.chdir(File.expand_path('..', __FILE__)) do
-    `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
-  end
+  spec.files = Dir[
+    "lib/**/*.rb",
+    "exe/**/*",
+    "ext/**/*.{rs,rb,toml}",
+    "**/Cargo.{toml,lock}",
+    "README.md",
+    "LICENSE.txt",
+    "Rakefile"
+  ].reject { |f| f.match(%r{^(test|spec|features|tmp|ext/reprise/target/debug)/}) }
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
-  spec.extensions = %w[ext/reprise/extconf.rb]
+  spec.extensions = ["ext/reprise/extconf.rb"]
 
   spec.add_development_dependency "benchmark-ips"
   spec.add_development_dependency "benchmark-memory"
