@@ -203,6 +203,27 @@ module Reprise
       )
     end
 
+    # @param day_number [Integer] The number of the day in the year; >= 1 && <= 366
+    # @!macro time_of_day
+    # @!macro duration_in_seconds
+    # @!macro interval
+    # @!macro recurring_series_start_and_end_times
+    # @!macro label
+    # @return [void]
+    # @example
+    #   schedule.repeat_annually_by_day(200, duration_in_seconds: 30)
+    def repeat_annually_by_day(day_number, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)
+      internal_schedule.repeat_annually_by_day(
+        day_number,
+        time_of_day: TimeOfDay.new(time_of_day || self.starts_at).to_h,
+        duration_in_seconds:,
+        interval:,
+        starts_at_unix_timestamp: starts_at.presence&.to_i,
+        ends_at_unix_timestamp: ends_at.presence&.to_i,
+        label:
+      )
+    end
+
     # Add a time interval between which no occurrences are valid.
     # Any occurrences that overlap with an exclusion are removed from the schedule's occurrences.
     # @param starts_at [Time] The time that the exclusion starts at
