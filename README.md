@@ -21,6 +21,8 @@ gem "reprise"
 
 ## Usage
 
+_For a complete reference of all of the methods and options available, please [see our documentation](https://rubydoc.info/gems/reprise)._
+
 ### Initialize a new schedule
 
 All schedules need to be initialized with a `start_time` and `end_time`:
@@ -131,8 +133,6 @@ puts (occurrences.last.start_time.to_date - occurrences.first.start_time.to_date
 
 There are many recurring series that you can create; `#repeat_minutely`, `#repeat_hourly`, 
 `#repeat_daily`, `#repeat_weekly`, `#repeat_monthly_by_day`, and `#repeat_monthly_by_nth_weekday`.
-
-For more information on each method, see the docs.
 
 #### Adding labels to the occurrences of each series
 
