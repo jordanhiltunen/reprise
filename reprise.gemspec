@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "reprise/version"
+require_relative "lib/reprise/version"
 
 Gem::Specification.new do |spec|
   spec.name = "reprise"
