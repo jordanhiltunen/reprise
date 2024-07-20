@@ -30,7 +30,7 @@ RSpec.describe "#repeat_monthly_by_day", aggregate_failures: true do
   it "generates an array of monthly occurrences" do
     schedule.repeat_monthly_by_day(1, **series_options)
 
-    expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+    expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
       .to contain_exactly(
         "Mon Apr  1 2024 10:15PM -0700",
         "Wed May  1 2024 10:15PM -0700",
@@ -44,6 +44,7 @@ RSpec.describe "#repeat_monthly_by_day", aggregate_failures: true do
     schedule.repeat_monthly_by_day(31, **series_options)
 
     expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+    expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
       .to contain_exactly(
         "Sun Mar 31 2024 10:15PM -0700",
         "Fri May 31 2024 10:15PM -0700",
@@ -59,7 +60,7 @@ RSpec.describe "#repeat_monthly_by_day", aggregate_failures: true do
     it "generates an array of occurrences starting from the DST change" do
       schedule.repeat_monthly_by_day(10, time_of_day: { hour: 2, minute: 15 }, duration_in_seconds: 30.minutes)
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           # N.B. The first occurrence begins
           # after the local time gap, one
@@ -82,7 +83,7 @@ RSpec.describe "#repeat_monthly_by_day", aggregate_failures: true do
     it "generates an array of occurrences across the DST change" do
       schedule.repeat_monthly_by_day(10, time_of_day: { hour: 2, minute: 15 }, duration_in_seconds: 30.minutes)
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           "Sat Feb 10 2024 02:15AM -0800",
           # N.B. Transition to DST
@@ -101,7 +102,7 @@ RSpec.describe "#repeat_monthly_by_day", aggregate_failures: true do
       it "generates an array of occurrences across the DST change" do
         schedule.repeat_monthly_by_day(10, time_of_day: { hour: 2, minute: 15 }, duration_in_seconds: 30.minutes)
 
-        expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+        expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
           .to contain_exactly(
             "Fri May 10 2024 02:15AM -0700",
             "Mon Jun 10 2024 02:15AM -0700",
@@ -124,7 +125,7 @@ RSpec.describe "#repeat_monthly_by_day", aggregate_failures: true do
     it "generates an array of occurrences across the ST change" do
       schedule.repeat_monthly_by_day(3, time_of_day: { hour: 2, minute: 15 }, duration_in_seconds: 30.minutes)
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           "Thu Oct  3 2024 02:15AM -0700",
           # N.B. Transition to ST, with a bias
