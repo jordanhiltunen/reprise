@@ -140,7 +140,8 @@ puts (occurrences.last.start_time.to_date - occurrences.first.start_time.to_date
 ```
 
 There are many recurring series that you can create; `#repeat_minutely`, `#repeat_hourly`, 
-`#repeat_daily`, `#repeat_weekly`, `#repeat_monthly_by_day`, and `#repeat_monthly_by_nth_weekday`.
+`#repeat_daily`, `#repeat_weekly`, `#repeat_monthly_by_day`, `#repeat_monthly_by_nth_weekday`,
+and `#repeat_annually_by_day`.
 
 #### Adding labels to the occurrences of each series
 
