@@ -35,6 +35,17 @@ RSpec.describe Reprise::Schedule, aggregate_failures: true do
         )
       end
     end
+
+    context "when ends_at precedes starts_at" do
+      let(:ends_at) { (starts_at - 4.weeks) }
+
+      it "raises a Reprise::InvalidRangeError" do
+        expect { schedule }.to raise_error(
+          Reprise::InvalidRangeError,
+          /The end time cannot precede the start time/
+        )
+      end
+    end
   end
 
   it "will use the start time of the schedule if a time_of_day for the series is not given" do

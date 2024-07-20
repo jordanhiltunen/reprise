@@ -2,6 +2,7 @@
 
 module Reprise
   class Error < StandardError; end
+  class InvalidRangeError < Error; end
 
   # The +Reprise::Schedule+ class is the primary interface of the Reprise gem.
   #
@@ -35,6 +36,8 @@ module Reprise
     #   See https://github.com/tzinfo/tzinfo/issues/53
     # @raise [Reprise::InvalidTimeZoneError] if the time zone is ambiguous or invalid.
     def initialize(starts_at:, ends_at:, time_zone: nil)
+      raise InvalidRangeError, "The end time cannot precede the start time" if ends_at < starts_at
+
       @starts_at = starts_at
       @ends_at = ends_at
       @time_zone = TimeZoneIdentifier.new(time_zone:, datetime_source: starts_at).to_s
