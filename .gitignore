@@ -1,9 +1,13 @@
-/.bundle/
 /.idea/
+/.rspec_status
+/.ruby-version
 /.yardoc
 /_yardoc/
+/.bundle/
 /coverage/
 /doc/
+/ext/reprise/target/
+/Gemfile.lock
 /pkg/
 /spec/reports/
 /tmp/
@@ -11,6 +15,3 @@
 *.bundle
 *.so
 *.dll
-Gemfile.lock
-.rspec_status
-/ext/reprise/target/
