@@ -1,5 +1,6 @@
 use crate::ruby_api::clock::set_datetime_cursor_safely;
 use crate::ruby_api::occurrence::Occurrence;
+use crate::ruby_api::recurring_series::annually_by_day::AnnuallyByDay;
 use crate::ruby_api::recurring_series::daily::Daily;
 use crate::ruby_api::recurring_series::hourly::Hourly;
 use crate::ruby_api::recurring_series::minutely::Minutely;
@@ -36,6 +37,7 @@ pub enum RecurringSeries {
     Weekly,
     MonthlyByDay,
     MonthlyByNthWeekday,
+    AnnuallyByDay
 }
 
 #[enum_dispatch(RecurringSeries)]

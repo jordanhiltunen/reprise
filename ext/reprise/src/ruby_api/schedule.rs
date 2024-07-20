@@ -1,6 +1,7 @@
 use crate::ruby_api::exclusion::Exclusion;
 use crate::ruby_api::interval::Interval;
 use crate::ruby_api::occurrence::Occurrence;
+use crate::ruby_api::recurring_series::annually_by_day::AnnuallyByDay;
 use crate::ruby_api::recurring_series::daily::Daily;
 use crate::ruby_api::recurring_series::hourly::Hourly;
 use crate::ruby_api::recurring_series::minutely::Minutely;
