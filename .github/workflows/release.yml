@@ -17,19 +17,16 @@ jobs:
           - x86_64-linux-musl
           - x64-mingw-ucrt
     steps:
-      - uses: actions/checkout@v3
-      - uses: oxidize-rb/actions/setup-ruby-and-rust@main
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
         with:
-          rubygems: latest
+          bundler-cache: true
           ruby-version: "${{ env.LATEST_RUBY_VERSION }}"
-          bundler-cache: false
-          cargo-cache: true
-          cargo-vendor: true
       - uses: oxidize-rb/actions/cross-gem@v1.1.9
         with:
           platform: ${{ matrix.platform }}
           ruby-versions: "${{ env.SUPPORTED_RUBY_VERSIONS }}"
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: cross-gem
           path: pkg/
@@ -40,13 +37,11 @@ jobs:
     name: Release source gem
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: oxidize-rb/actions/setup-ruby-and-rust@main
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
         with:
+          bundler-cache: true
           ruby-version: "${{ env.LATEST_RUBY_VERSION }}"
-          bundler-cache: false
-          cargo-cache: true
-          cargo-vendor: true
       - name: Build gem
         run: |
           gem build reprise.gemspec
