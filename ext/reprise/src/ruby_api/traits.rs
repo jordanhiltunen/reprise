@@ -100,7 +100,25 @@ pub(crate) trait Recurrable: std::fmt::Debug {
                 }
             }
 
+            let considered_datetime_cursor = datetime_cursor;
             datetime_cursor = self.advance_datetime_cursor(&datetime_cursor);
+
+            if datetime_cursor == considered_datetime_cursor {
+                // If we fail to advance, and the next cursor is identical to the
+                // last, there is an edge case in a series' advance cursor
+                // logic that would, if left to its own devices, result in an
+                // infinite loop that would never terminate. We explicitly panic
+                // here as there is no other way to recover, callers need to be
+                // informed via an exception.
+                panic!(
+                    "{}", format!(
+                        "Infinite loop prevented during schedule expansion.
+                        This is a bug in Reprise, please share with the maintainers. \
+                        Affected series: {:?}",
+                        dbg!(self)
+                    )
+                );
+            }
         }
 
         // Only collect every Nth occurrence if an interval has been requested.
