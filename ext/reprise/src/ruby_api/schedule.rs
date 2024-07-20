@@ -166,6 +166,15 @@ impl MutSchedule {
             ));
     }
 
+    pub(crate) fn repeat_annually_by_day(&self, day_number: u32, kw: RHash) {
+        let series_options = SeriesOptions::new(self.time_zone().clone(), kw);
+        let annual_series = AnnuallyByDay::new(day_number, series_options);
+        self.0
+            .write()
+            .recurring_series
+            .push(RecurringSeries::AnnuallyByDay(annual_series));
+    }
+
     pub fn occurrences_contained_within_interval(
         &self,
         starts_at_unix_timestamp: i64,
@@ -266,6 +275,10 @@ pub fn init() -> Result<(), Error> {
     class.define_method(
         "repeat_monthly_by_nth_weekday",
         method!(MutSchedule::repeat_monthly_by_nth_weekday, 3),
+    )?;
+    class.define_method(
+        "repeat_annually_by_day",
+        method!(MutSchedule::repeat_annually_by_day, 2),
     )?;
 
     Ok(())

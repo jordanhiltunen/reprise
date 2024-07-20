@@ -5,3 +5,4 @@ pub mod monthly_by_nth_weekday;
 pub mod daily;
 pub mod minutely;
 
+pub mod annually_by_day;
