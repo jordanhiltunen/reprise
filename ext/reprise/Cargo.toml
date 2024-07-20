@@ -2,12 +2,18 @@
 name = "reprise"
 version = "0.1.0"
 edition = "2021"
+publish = false
+build = "build.rs"
 
 [lib]
 crate-type = ["cdylib"]
 
 [build]
 rustflags = ["-C", "link-dead-code=on"]
+
+[features]
+embed = ["magnus/embed"]
+ruby-api = []
 
 [dependencies]
 chrono = "0.4.38"
@@ -17,6 +23,9 @@ magnus = { version = "0.7.1", features = ["rb-sys"] }
 memoize = "0.4.2"
 parking_lot = "0.12.3"
 rayon = "1.10"
-rb-sys = { version = "*", default-features = false, features = [] }
+rb-sys = { version = "*", default-features = false, features = ["stable-api-compiled-fallback"] }
 serde = "1.0.203"
 serde_json = "1.0.117"
+
+[build-dependencies]
+rb-sys-env = "0.1.2"

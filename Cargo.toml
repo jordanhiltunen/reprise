@@ -1,0 +1,8 @@
+[workspace]
+resolver = "2"
+members = ["ext/reprise"]
+
+[profile.release]
+codegen-units = 1 # more llvm optimizations
+debug = 2 # make perfomance engineers happy
+lto = "thin" # cross-crate inlining
