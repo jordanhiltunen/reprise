@@ -33,15 +33,23 @@ jobs:
 
       - uses: oxidize-rb/actions/cross-gem@main
         with:
-          version: latest
           platform: ${{ matrix.platform }}
           ruby-versions: "${{ env.SUPPORTED_RUBY_VERSIONS }}"
+          
+      - name: Display structure of built gems
+        run: ls -R
+        working-directory: pkg/
 
       - name: Smoke gem install
         if: matrix.platform == 'x86_64-linux' # GitHub actions architecture
         run: |
           gem install pkg/reprise-*.gem --verbose
           echo "✅ Gem installed successfully"
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: cross-gem
+          path: ${{ steps.cross-gem.outputs.gem-path }}
 
   release:
     name: Release
@@ -64,9 +72,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: cross-gem
-
-      - name: Package source gem
-        run: bundle exec rake build
+          path: pkg
 
       - name: Push Gem
         working-directory: pkg/
