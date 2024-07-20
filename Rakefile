@@ -15,7 +15,7 @@ task :dev do
   ENV["RB_SYS_CARGO_PROFILE"] = "dev"
 end
 
-platforms = %w[
+CROSS_PLATFORMS = %w[
   x86_64-linux
   x86_64-linux-musl
   aarch64-linux
@@ -29,7 +29,7 @@ gemspec = Bundler.load_gemspec("reprise.gemspec")
 Rake::ExtensionTask.new("reprise", gemspec) do |ext|
   ext.lib_dir = "lib/reprise"
   ext.cross_compile = true
-  ext.cross_platform = platforms
+  ext.cross_platform = CROSS_PLATFORMS
   ext.cross_compiling do |spec|
     spec.dependencies.reject! { |dep| dep.name == "rb_sys" }
     spec.files.reject! { |file| File.fnmatch?("ext/*", file, File::FNM_EXTGLOB) }
