@@ -56,18 +56,6 @@ impl Recurrable for AnnuallyByDay {
     }
 
     fn advance_datetime_cursor(&self, datetime_cursor: &DateTime<Tz>) -> DateTime<Tz> {
-        // - If the day is already on the right ordinal:
-        //   - Advance by one year.
-        //   - If we have the right day
-        //     - Set the time.
-        //     - If the time doesn't set (ambiguous gap)
-        //       - Advance arbitrarily by one hour.
-        //   - If we don't have the right day.
-        //     - Advance arbitrarily by one day, using UTC.
-        // - If it's not on the right ordinal:
-        //  - Set to the right ordinal.
-        //    - If we don't have the right day.
-        //      - Advance by one year, in UTC.
         return if datetime_cursor.ordinal() == self.day_number {
             self.safely_advance_one_year(datetime_cursor)
         } else {
