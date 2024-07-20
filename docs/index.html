@@ -59,7 +59,7 @@
 
       <div id="content"><div id='filecontents'><h1 id="reprise">Reprise</h1>
 
-<p><a href="https://github.com/jordanhiltunen/reprise/actions/workflows/build.yml"><img src="https://github.com/jordanhiltunen/reprise/actions/workflows/build.yml/badge.svg" alt="build"></a> | <a href="">Docs</a></p>
+<p><a href="https://github.com/jordanhiltunen/reprise/actions/workflows/test.yml"><img src="https://github.com/jordanhiltunen/reprise/actions/workflows/test.yml/badge.svg" alt="Tests"></a> | <a href="https://github.com/jordanhiltunen/reprise/actions/workflows/cruby-build-and-install.yml"><img src="https://github.com/jordanhiltunen/reprise/actions/workflows/cruby-build-and-install.yml/badge.svg" alt="Test CRuby Gem Build"></a></p>
 
 <p>Reprise is an experimental performance-first Ruby gem that provides support for defining event recurrence
 rules and generating &amp; querying their future occurrences. Depending on your use case, 
@@ -202,6 +202,57 @@ you can add an optional label:</p>
 </span><span class='comment'># =&gt; &lt;Reprise::Core::Occurrence label=&quot;Tea Time&quot; start_time=&quot;2015-05-30T07:00:00+00:00&quot; end_time=&quot;2015-05-30T07:10:00+00:00&quot;&gt;
 </span><span class='comment'># =&gt; &lt;Reprise::Core::Occurrence label=&quot;Coffee Time&quot; start_time=&quot;2015-05-31T06:00:00+00:00&quot; end_time=&quot;2015-05-31T06:15:00+00:00&quot;&gt;
 </span></code></pre>
+
+<h4 id="excluding-time-intervals-from-the-schedules-occurrences">Excluding time intervals from the schedule&#39;s occurrences</h4>
+
+<p>If you have other non-recurring &quot;schedule entries&quot; in your domain that can collide with your recurring series&#39;
+occurrences and need to be excluded, you can add exclusions to your schedule before generating occurrences:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_schedule'>schedule</span><span class='period'>.</span><span class='id identifier rubyid_repeat_daily'>repeat_daily</span><span class='lparen'>(</span><span class='label'>label:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Standing Meeting</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>ends_at:</span> <span class='id identifier rubyid_may_26_2015_four_thirty_pm_in_rome'>may_26_2015_four_thirty_pm_in_rome</span> <span class='op'>+</span> <span class='int'>5</span><span class='period'>.</span><span class='id identifier rubyid_days'>days</span><span class='comma'>,</span> <span class='label'>duration_in_seconds:</span> <span class='int'>15</span><span class='period'>.</span><span class='id identifier rubyid_minutes'>minutes</span><span class='rparen'>)</span>
+<span class='id identifier rubyid_schedule'>schedule</span><span class='period'>.</span><span class='id identifier rubyid_occurrences'>occurrences</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_o'>o</span><span class='op'>|</span> <span class='id identifier rubyid_puts'>puts</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span> <span class='rbrace'>}</span>
+<span class='comment'># =&gt; &lt;Reprise::Core::Occurrence start_time=&quot;2015-05-26T14:30:45+00:00&quot; end_time=&quot;2015-05-26T14:45:45+00:00&quot; label=&quot;Standing Meeting&quot;&gt;
+</span><span class='comment'># =&gt; &lt;Reprise::Core::Occurrence start_time=&quot;2015-05-27T14:30:45+00:00&quot; end_time=&quot;2015-05-27T14:45:45+00:00&quot; label=&quot;Standing Meeting&quot;&gt;
+</span><span class='comment'># =&gt; &lt;Reprise::Core::Occurrence start_time=&quot;2015-05-28T14:30:45+00:00&quot; end_time=&quot;2015-05-28T14:45:45+00:00&quot; label=&quot;Standing Meeting&quot;&gt;
+</span><span class='comment'># =&gt; &lt;Reprise::Core::Occurrence start_time=&quot;2015-05-29T14:30:45+00:00&quot; end_time=&quot;2015-05-29T14:45:45+00:00&quot; label=&quot;Standing Meeting&quot;&gt;
+</span><span class='comment'># =&gt; &lt;Reprise::Core::Occurrence start_time=&quot;2015-05-30T14:30:45+00:00&quot; end_time=&quot;2015-05-30T14:45:45+00:00&quot; label=&quot;Standing Meeting&quot;&gt;
+</span>
+<span class='comment'># You don&#39;t need to specify entire days; you can pass time intervals as narrow or wide as you like.
+</span><span class='id identifier rubyid_schedule'>schedule</span><span class='period'>.</span><span class='id identifier rubyid_add_exclusion'>add_exclusion</span><span class='lparen'>(</span>
+  <span class='label'>starts_at:</span> <span class='lparen'>(</span><span class='id identifier rubyid_may_26_2015_four_thirty_pm_in_rome'>may_26_2015_four_thirty_pm_in_rome</span> <span class='op'>+</span> <span class='int'>2</span><span class='period'>.</span><span class='id identifier rubyid_days'>days</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_beginning_of_day'>beginning_of_day</span><span class='comma'>,</span>
+  <span class='label'>ends_at:</span> <span class='lparen'>(</span><span class='id identifier rubyid_may_26_2015_four_thirty_pm_in_rome'>may_26_2015_four_thirty_pm_in_rome</span> <span class='op'>+</span> <span class='int'>2</span><span class='period'>.</span><span class='id identifier rubyid_days'>days</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_end_of_day'>end_of_day</span>
+<span class='rparen'>)</span>
+
+<span class='id identifier rubyid_schedule'>schedule</span><span class='period'>.</span><span class='id identifier rubyid_occurrences'>occurrences</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_o'>o</span><span class='op'>|</span> <span class='id identifier rubyid_puts'>puts</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span> <span class='rbrace'>}</span>
+<span class='comment'># N.B. The occurrence on 2015-05-28 is now excluded.
+</span><span class='comment'># =&gt; &lt;Reprise::Core::Occurrence start_time=&quot;2015-05-26T14:30:45+00:00&quot; end_time=&quot;2015-05-26T14:45:45+00:00&quot; label=&quot;Standing Meeting&quot;&gt;
+</span><span class='comment'># =&gt; &lt;Reprise::Core::Occurrence start_time=&quot;2015-05-27T14:30:45+00:00&quot; end_time=&quot;2015-05-27T14:45:45+00:00&quot; label=&quot;Standing Meeting&quot;&gt;
+</span><span class='comment'># =&gt; &lt;Reprise::Core::Occurrence start_time=&quot;2015-05-29T14:30:45+00:00&quot; end_time=&quot;2015-05-29T14:45:45+00:00&quot; label=&quot;Standing Meeting&quot;&gt;
+</span><span class='comment'># =&gt; &lt;Reprise::Core::Occurrence start_time=&quot;2015-05-30T14:30:45+00:00&quot; end_time=&quot;2015-05-30T14:45:45+00:00&quot; label=&quot;Standing Meeting&quot;&gt;
+</span></code></pre>
+
+<h4 id="querying-for-occurrences-within-a-given-time-interval">Querying for occurrences within a given time interval</h4>
+
+<p>After constructing your schedule, you can query for the occurrences within any interval
+of time:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_schedule'>schedule</span><span class='period'>.</span><span class='id identifier rubyid_repeat_daily'>repeat_daily</span><span class='lparen'>(</span><span class='label'>label:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Standing Meeting</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>ends_at:</span> <span class='id identifier rubyid_may_26_2015_four_thirty_pm_in_rome'>may_26_2015_four_thirty_pm_in_rome</span> <span class='op'>+</span> <span class='int'>5</span><span class='period'>.</span><span class='id identifier rubyid_days'>days</span><span class='comma'>,</span> <span class='label'>duration_in_seconds:</span> <span class='int'>15</span><span class='period'>.</span><span class='id identifier rubyid_minutes'>minutes</span><span class='rparen'>)</span>
+
+<span class='id identifier rubyid_schedule'>schedule</span><span class='period'>.</span><span class='id identifier rubyid_occurs_between?'>occurs_between?</span><span class='lparen'>(</span>
+  <span class='id identifier rubyid_may_26_2015_four_thirty_pm_in_rome'>may_26_2015_four_thirty_pm_in_rome</span> <span class='op'>+</span> <span class='int'>2</span><span class='period'>.</span><span class='id identifier rubyid_days'>days</span><span class='comma'>,</span>
+  <span class='id identifier rubyid_may_26_2015_four_thirty_pm_in_rome'>may_26_2015_four_thirty_pm_in_rome</span> <span class='op'>+</span> <span class='int'>3</span><span class='period'>.</span><span class='id identifier rubyid_days'>days</span><span class='comma'>,</span>
+<span class='rparen'>)</span>
+<span class='comment'># =&gt; true
+</span>
+<span class='id identifier rubyid_schedule'>schedule</span><span class='period'>.</span><span class='id identifier rubyid_occurrences_between'>occurrences_between</span><span class='lparen'>(</span>
+  <span class='id identifier rubyid_may_26_2015_four_thirty_pm_in_rome'>may_26_2015_four_thirty_pm_in_rome</span> <span class='op'>+</span> <span class='int'>2</span><span class='period'>.</span><span class='id identifier rubyid_days'>days</span><span class='comma'>,</span>
+  <span class='id identifier rubyid_may_26_2015_four_thirty_pm_in_rome'>may_26_2015_four_thirty_pm_in_rome</span> <span class='op'>+</span> <span class='int'>3</span><span class='period'>.</span><span class='id identifier rubyid_days'>days</span><span class='comma'>,</span>
+<span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_o'>o</span><span class='op'>|</span> <span class='id identifier rubyid_puts'>puts</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span> <span class='rbrace'>}</span>
+<span class='comment'># =&gt; &lt;Reprise::Core::Occurrence start_time=&quot;2015-05-28T14:30:45+00:00&quot; end_time=&quot;2015-05-28T14:45:45+00:00&quot; label=&quot;Standing Meeting&quot;&gt;
+</span></code></pre>
+
+<p>Both <code>#occurs_between?</code> and <code>#occurrences_between</code> also support an optional <code>include_overlapping</code>
+argument, which allows you to search for occurrences that not only occur entirely within a given
+interval, but also those that partially overlap.</p>
 
 <h2 id="why-reprise">Why Reprise?</h2>
 
@@ -390,7 +441,7 @@ once we&#39;ve hit that milestone.</p>
 </div></div>
 
       <div id="footer">
-  Generated on Thu Jul 18 07:12:34 2024 by
+  Generated on Sat Jul 20 10:33:49 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.36 (ruby-3.3.2).
 </div>
