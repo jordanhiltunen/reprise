@@ -67,6 +67,7 @@ started at as the local time for each future occurrence:
 ```ruby
 first_occurrence = schedule.occurrences.first
 # => <Reprise::Core::Occurrence start_time="2015-05-31T14:30:45+00:00" end_time="2015-05-31T14:45:45+00:00" label="nil">
+
 first_occurrence.start_time.in_time_zone("Rome")
 # => Sun, 31 May 2015 16:30:45.000000000 CEST +02:00 # <- 4:30 PM
 ```
@@ -77,7 +78,8 @@ either by passing an hour/minute/second hash to `time_of_day`:
 ```ruby
 schedule.repeat_weekly(:sunday, time_of_day: { hour: 9, minute: 30 }, duration_in_seconds: 60)
 first_occurrence = schedule.occurrences.first
-# => => <Reprise::Core::Occurrence start_time="2015-05-31T07:30:00+00:00" end_time="2015-05-31T07:31:00+00:00" label="nil">
+# => <Reprise::Core::Occurrence start_time="2015-05-31T07:30:00+00:00" end_time="2015-05-31T07:31:00+00:00" label="nil">
+
 first_occurrence.start_time.in_time_zone("Rome")
 # => Sun, 31 May 2015 09:30:00.000000000 CEST +02:00
 ```
@@ -88,6 +90,7 @@ Or, by passing a `Time` object instead:
 ten_forty_five_pm_in_rome = Time.parse("2015-05-27 04:45:00").in_time_zone("Rome")
 schedule.repeat_weekly(:tuesday, time_of_day: ten_forty_five_pm_in_rome, duration_in_seconds: 60)
 # => <Reprise::Core::Occurrence start_time="2015-06-02T08:45:00+00:00" end_time="2015-06-02T08:46:00+00:00" label="nil">
+
 first_occurrence.start_time.in_time_zone("Rome")
 # => Tue, 02 Jun 2015 10:45:00.000000000 CEST +02:00
 ```
@@ -104,8 +107,10 @@ schedule = Reprise::Schedule.new(
 
 schedule.repeat_weekly(:wednesday, time_of_day: { hour: 9, minute: 30 }, duration_in_seconds: 10.minutes)
 occurrences = schedule.occurrences
+
 puts occurrences.size
 # => 29
+
 puts (occurrences.last.start_time.to_date - occurrences.first.start_time.to_date).to_i
 # => 196 # days
 ```
@@ -123,10 +128,13 @@ schedule.repeat_weekly(
 occurrences = schedule.occurrences
 puts occurrences.size
 # => 8
+
 puts occurrences.first.start_time.in_time_zone("Rome")
 # 2015-07-10 04:01:00 +0200
+
 puts occurrences.last.start_time.in_time_zone("Rome")
 # 2015-08-28 04:01:00 +0200
+
 puts (occurrences.last.start_time.to_date - occurrences.first.start_time.to_date).to_i
 # => 49 # days
 ```
@@ -142,6 +150,7 @@ you can add an optional label:
 ```ruby
 schedule.repeat_daily(label: "Coffee Time", time_of_day: { hour: 8 }, duration_in_seconds: 15.minutes)
 schedule.repeat_daily(label: "Tea Time", interval: 3, time_of_day: { hour: 9 }, duration_in_seconds: 10.minutes)
+
 schedule.occurrences.take(7).map { |o| puts o.inspect }
 # => <Reprise::Core::Occurrence label="Coffee Time" start_time="2015-05-27T06:00:00+00:00" end_time="2015-05-27T06:15:00+00:00">
 # => <Reprise::Core::Occurrence label="Tea Time" start_time="2015-05-27T07:00:00+00:00" end_time="2015-05-27T07:10:00+00:00">
@@ -235,6 +244,7 @@ A truism in the Ruby community is that "Ruby is slow, but that doesn't matter fo
 > speed, or throughput that Ruby chokes on. Or because the trade-offs are worth it: Often the
 > quicker development, cheaper development, faster time-to-market etc is worth the extra resources
 > (servers, hardware, SAAS) you must throw at your app to keep it performing acceptable.
+>
 > https://berk.es/2022/08/09/ruby-slow-database-slow/
 
 This is often delightfully true, until on the odd occasion Ruby's speed requires that a straightforward feature
@@ -305,7 +315,7 @@ and 3:30 - 4:30 PM.
 How do you filter out recurring series occurrences that conflict with other schedule entries that exist
 in your application?
 
-At time of writing, alternative gems' solutions to this problem are all unfortunately lacking:
+At time of writing, alternative gems' solutions to this problem are somewhat wanting:
 - **None**: It is entirely the responsibility of the client application to handle occurrence exclusions,
   despite this logic being core to the domain of recurring schedule management.
 - **Date-based exclusion**: Client applications can pass specific dates when occurrences should be excluded.
