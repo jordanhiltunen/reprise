@@ -11,7 +11,7 @@ jobs:
     name: Build native gems
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         platform:
           - aarch64-linux
@@ -32,6 +32,7 @@ jobs:
           cache-version: v1-${{ matrix.platform }}
 
       - uses: oxidize-rb/actions/cross-gem@main
+        id: cross-gem
         with:
           platform: ${{ matrix.platform }}
           ruby-versions: "${{ env.SUPPORTED_RUBY_VERSIONS }}"
