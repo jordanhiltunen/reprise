@@ -53,7 +53,7 @@ RSpec.describe Reprise::Schedule, aggregate_failures: true do
 
     expect(schedule.occurrences.size).to eq(4)
     expect(
-      schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
+      schedule.occurrences.map { |o| o.starts_at.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
     ).to contain_exactly(
        "Tue Jul  2 2024 12:00AM -1000",
        "Tue Jul  9 2024 12:00AM -1000",
@@ -68,7 +68,7 @@ RSpec.describe Reprise::Schedule, aggregate_failures: true do
 
     expect(schedule.occurrences.size).to eq(8)
     expect(
-      schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
+      schedule.occurrences.map { |o| o.starts_at.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
     ).to contain_exactly(
        "Tue Jul  2 2024 01:02AM -1000",
        "Wed Jul  3 2024 02:03AM -1000",
@@ -91,7 +91,7 @@ RSpec.describe Reprise::Schedule, aggregate_failures: true do
 
     expect(schedule.occurrences.size).to eq(8)
     expect(
-      schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
+      schedule.occurrences.map { |o| o.starts_at.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
     ).to contain_exactly(
       "Wed Jul  3 2024 04:07AM -1000",
       "Wed Jul 10 2024 04:07AM -1000",
@@ -119,13 +119,13 @@ RSpec.describe Reprise::Schedule, aggregate_failures: true do
       expect(occurrences.all? { |occurrence| occurrence.is_a?(Reprise::Core::Occurrence) }).to eq(true)
     end
 
-    it "exposes #start_time and #end_time methods on the occurrences" do
+    it "exposes #starts_at and #ends_at methods on the occurrences" do
       first_occurrence = occurrences.first
 
-      expect(first_occurrence.start_time).to be_a(Time)
-      expect(first_occurrence.start_time.in_time_zone(time_zone).to_s).to eq("2024-06-30 00:01:02 -1000")
-      expect(first_occurrence.end_time).to be_a(Time)
-      expect(first_occurrence.end_time.in_time_zone(time_zone).to_s).to eq("2024-06-30 05:01:02 -1000")
+      expect(first_occurrence.starts_at).to be_a(Time)
+      expect(first_occurrence.starts_at.in_time_zone(time_zone).to_s).to eq("2024-06-30 00:01:02 -1000")
+      expect(first_occurrence.ends_at).to be_a(Time)
+      expect(first_occurrence.ends_at.in_time_zone(time_zone).to_s).to eq("2024-06-30 05:01:02 -1000")
     end
 
     it "exposes an optional label on each occurrence" do
@@ -138,7 +138,7 @@ RSpec.describe Reprise::Schedule, aggregate_failures: true do
       first_occurrence = occurrences.first
 
       expect(first_occurrence.inspect).to eq(
-        '<Reprise::Core::Occurrence start_time="2024-06-30T10:01:02+00:00" end_time="2024-06-30T15:01:02+00:00" label="My Weekly Occurrence">'
+        '<Reprise::Core::Occurrence starts_at="2024-06-30T10:01:02+00:00" ends_at="2024-06-30T15:01:02+00:00" label="My Weekly Occurrence">'
       )
     end
   end

@@ -17,7 +17,7 @@ RSpec.describe "exclusions", aggregate_failures: true do
       schedule.repeat_weekly(:sunday, time_of_day: { hour: 0, minute: 1, second: 2 },
         duration_in_seconds: event_duration_in_seconds)
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           "Sun Jun 30 2024 12:01AM -1000",
           "Sun Jul  7 2024 12:01AM -1000",
@@ -30,7 +30,7 @@ RSpec.describe "exclusions", aggregate_failures: true do
         ends_at: starts_at + 5.minutes
       )
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           "Sun Jul  7 2024 12:01AM -1000",
           "Sun Jul 14 2024 12:01AM -1000",
@@ -44,7 +44,7 @@ RSpec.describe "exclusions", aggregate_failures: true do
       schedule.repeat_weekly(:sunday, time_of_day: { hour: 0, minute: 1, second: 2 }, duration_in_seconds: 300)
 
       expect(schedule.occurrences.size).to eq(4)
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           "Sun Jun 30 2024 12:01AM -1000",
           "Sun Jul  7 2024 12:01AM -1000",
@@ -60,7 +60,7 @@ RSpec.describe "exclusions", aggregate_failures: true do
       )
 
       expect(schedule.occurrences.size).to eq(2)
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           "Sun Jul 14 2024 12:01AM -1000",
           "Sun Jul 21 2024 12:01AM -1000"

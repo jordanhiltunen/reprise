@@ -30,7 +30,7 @@ RSpec.describe "#repeat_daily", aggregate_failures: true do
   it "generates an array of daily occurrences" do
     schedule.repeat_daily(**series_options(time_of_day: { hour: 1, minute: 2, second: 3 }))
 
-    expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+    expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
       .to contain_exactly(
         "Mon Mar 11 2024 01:02AM -0700",
         "Tue Mar 12 2024 01:02AM -0700",
@@ -46,7 +46,7 @@ RSpec.describe "#repeat_daily", aggregate_failures: true do
     it "generates an array of occurrences starting from the DST change" do
       schedule.repeat_daily(time_of_day: nil, duration_in_seconds: 30.minutes)
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
         # N.B. The first occurrence begins
         # after the local time gap, one
@@ -68,7 +68,7 @@ RSpec.describe "#repeat_daily", aggregate_failures: true do
     it "generates an array of daily occurrences across the DST change" do
       schedule.repeat_daily(**series_options)
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           "Sat Mar  9 2024 10:15PM -0800",
           "Sun Mar 10 2024 10:15PM -0700",
@@ -82,7 +82,7 @@ RSpec.describe "#repeat_daily", aggregate_failures: true do
       it "generates an array of daily occurrences across the DST change" do
         schedule.repeat_daily(**series_options(time_of_day: { hour: 2, minute: 15 }))
 
-        expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+        expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
           .to contain_exactly(
             "Sat Mar  9 2024 02:15AM -0800",
             # N.B. there is no 2:15 AM on this date;
@@ -104,7 +104,7 @@ RSpec.describe "#repeat_daily", aggregate_failures: true do
     it "generates an array of daily occurrences across the ST change" do
       schedule.repeat_daily(**series_options(time_of_day: { hour: 1, minute: 15 }))
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           "Sat Nov  2 2024 01:15AM -0700",
           # N.B. Clocks are turned back 1 hour at 2:00am

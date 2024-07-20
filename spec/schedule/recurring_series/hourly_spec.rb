@@ -30,7 +30,7 @@ RSpec.describe "#repeat_hourly", aggregate_failures: true do
   it "generates an array of hourly occurrences" do
     schedule.repeat_hourly(**series_options(time_of_day: { hour: 1, minute: 2, second: 3 }))
 
-    expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+    expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
       .to contain_exactly(
         "Sun Mar 10 2024 03:02AM -0700",
         "Sun Mar 10 2024 04:02AM -0700",
@@ -51,7 +51,7 @@ RSpec.describe "#repeat_hourly", aggregate_failures: true do
         interval: 2
       )
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           "Sun Mar 10 2024 01:02PM -0700",
           "Sun Mar 10 2024 03:02AM -0700",
@@ -71,7 +71,7 @@ RSpec.describe "#repeat_hourly", aggregate_failures: true do
     it "generates an array of occurrences starting from the DST change" do
       schedule.repeat_hourly(time_of_day: { hour: 2, minute: 15 }, duration_in_seconds: 30.minutes)
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           # N.B. The first occurrence begins
           # after the local time gap, one
@@ -94,7 +94,7 @@ RSpec.describe "#repeat_hourly", aggregate_failures: true do
     it "generates an array of daily occurrences across the DST change" do
       schedule.repeat_hourly(**series_options, time_of_day: nil)
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           "Sun Mar 10 2024 12:59AM -0800",
           "Sun Mar 10 2024 01:59AM -0800",
@@ -116,7 +116,7 @@ RSpec.describe "#repeat_hourly", aggregate_failures: true do
     it "generates an array of occurrences across the ST change" do
       schedule.repeat_hourly(time_of_day: nil, duration_in_seconds: 30.minutes)
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           "Sat Nov  2 2024 11:59PM -0700",
           "Sun Nov  3 2024 01:59AM -0700",

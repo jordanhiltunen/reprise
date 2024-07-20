@@ -38,7 +38,7 @@ RSpec.shared_examples "a series that supports the duration_in_seconds argument" 
 
   it "creates occurrences with the requested duration in seconds" do
     expect(
-      occurrences.all? { |o| (o.end_time - o.start_time) == 3.hours.seconds }
+      occurrences.all? { |o| (o.ends_at - o.starts_at) == 3.hours.seconds }
     ).to eq(true)
   end
 end

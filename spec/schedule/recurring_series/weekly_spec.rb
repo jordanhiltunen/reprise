@@ -30,7 +30,7 @@ RSpec.describe "#repeat_weekly", aggregate_failures: true do
   it "generates an array of weekly occurrences" do
     schedule.repeat_weekly(:monday, duration_in_seconds: 30.minutes)
 
-    expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+    expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
       .to contain_exactly(
         "Mon Apr  1 2024 01:59AM -0700",
         "Mon Apr  8 2024 01:59AM -0700",
@@ -48,7 +48,7 @@ RSpec.describe "#repeat_weekly", aggregate_failures: true do
     it "generates an array of occurrences starting from the DST change" do
       schedule.repeat_weekly(:sunday, time_of_day: { hour: 2, minute: 15 }, duration_in_seconds: 30.minutes)
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           # N.B. The first occurrence begins
           # after the local time gap, one
@@ -70,7 +70,7 @@ RSpec.describe "#repeat_weekly", aggregate_failures: true do
     it "generates an array of occurrences across the DST change" do
       schedule.repeat_weekly(:monday, duration_in_seconds: 30.minutes)
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           "Mon Mar  4 2024 01:59AM -0800",
           # N.B. Transition to DST
@@ -89,7 +89,7 @@ RSpec.describe "#repeat_weekly", aggregate_failures: true do
       it "generates an array of occurrences across the DST change" do
         schedule.repeat_weekly(:sunday, time_of_day: { hour: 2, minute: 15 }, duration_in_seconds: 30.minutes)
 
-        expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+        expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
           .to contain_exactly(
             "Sun Apr  7 2024 02:15AM -0700",
             "Sun Mar  3 2024 02:15AM -0800",
@@ -113,7 +113,7 @@ RSpec.describe "#repeat_weekly", aggregate_failures: true do
     it "generates an array of occurrences across the ST change" do
       schedule.repeat_weekly(:sunday, time_of_day: { hour: 2, minute: 15 }, duration_in_seconds: 30.minutes)
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           "Sun Oct 27 2024 02:15AM -0700",
           # N.B. Transition to ST, with a bias

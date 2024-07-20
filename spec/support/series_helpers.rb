@@ -14,12 +14,12 @@ module SeriesHelpers
   end
 
   def localized_occurrence_start_and_end_time(occurrence)
-    [occurrence.start_time, occurrence.end_time]
+    [occurrence.starts_at, occurrence.ends_at]
       .map { |o| o.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
       .join(" - ")
   end
 
-  def localized_occurrence_start_time(occurrence)
-    occurrence.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z")
+  def localized_occurrence_starts_at(occurrence)
+    occurrence.starts_at.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z")
   end
 end

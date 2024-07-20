@@ -30,7 +30,7 @@ RSpec.describe "#repeat_annually_by_day", aggregate_failures: true do
   it "generates an array of annual occurrences" do
     schedule.repeat_annually_by_day(200, **series_options)
 
-    expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+    expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
       .to contain_exactly(
         "Thu Jul 18 2024 10:15PM -0700",
         "Sat Jul 19 2025 10:15PM -0700",
@@ -44,7 +44,7 @@ RSpec.describe "#repeat_annually_by_day", aggregate_failures: true do
   it "skips years when the requested day does not appear" do
     schedule.repeat_annually_by_day(366, **series_options)
 
-    expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+    expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
       .to contain_exactly(
         "Sun Dec 31 2028 10:15PM -0800",
         "Tue Dec 31 2024 10:15PM -0800"
@@ -59,7 +59,7 @@ RSpec.describe "#repeat_annually_by_day", aggregate_failures: true do
     it "generates an array of occurrences starting from the DST change" do
       schedule.repeat_annually_by_day(70, time_of_day: { hour: 2, minute: 15 }, duration_in_seconds: 30.minutes)
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           # N.B. The first occurrence begins
           # after the local time gap, one
@@ -82,7 +82,7 @@ RSpec.describe "#repeat_annually_by_day", aggregate_failures: true do
     it "generates an array of occurrences across the ST change" do
       schedule.repeat_annually_by_day(308, time_of_day: { hour: 2, minute: 15 }, duration_in_seconds: 30.minutes)
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           # N.B. Transition to ST, with a bias
           # towards the instance of the time that

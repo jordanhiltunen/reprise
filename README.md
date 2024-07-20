@@ -25,7 +25,7 @@ _For a complete reference of all of the methods and options available, please [s
 
 ### Initialize a new schedule
 
-All schedules need to be initialized with a `start_time` and `end_time`:
+All schedules need to be initialized with `starts_at` and `ends_at` time bookends:
 
 ```ruby
 may_26_2015_four_thirty_pm_in_rome = Time.parse("2015-05-26 10:30:45").in_time_zone("Rome")
@@ -66,9 +66,9 @@ started at as the local time for each future occurrence:
 
 ```ruby
 first_occurrence = schedule.occurrences.first
-# => <Reprise::Core::Occurrence start_time="2015-05-31T14:30:45+00:00" end_time="2015-05-31T14:45:45+00:00" label="nil">
+# => <Reprise::Core::Occurrence starts_at="2015-05-31T14:30:45+00:00" ends_at="2015-05-31T14:45:45+00:00" label="nil">
 
-first_occurrence.start_time.in_time_zone("Rome")
+first_occurrence.starts_at.in_time_zone("Rome")
 # => Sun, 31 May 2015 16:30:45.000000000 CEST +02:00 # <- 4:30 PM
 ```
 
@@ -78,9 +78,9 @@ either by passing an hour/minute/second hash to `time_of_day`:
 ```ruby
 schedule.repeat_weekly(:sunday, time_of_day: { hour: 9, minute: 30 }, duration_in_seconds: 60)
 first_occurrence = schedule.occurrences.first
-# => <Reprise::Core::Occurrence start_time="2015-05-31T07:30:00+00:00" end_time="2015-05-31T07:31:00+00:00" label="nil">
+# => <Reprise::Core::Occurrence starts_at="2015-05-31T07:30:00+00:00" ends_at="2015-05-31T07:31:00+00:00" label="nil">
 
-first_occurrence.start_time.in_time_zone("Rome")
+first_occurrence.starts_at.in_time_zone("Rome")
 # => Sun, 31 May 2015 09:30:00.000000000 CEST +02:00
 ```
 
@@ -89,9 +89,9 @@ Or, by passing a `Time` object instead:
 ```ruby
 ten_forty_five_pm_in_rome = Time.parse("2015-05-27 04:45:00").in_time_zone("Rome")
 schedule.repeat_weekly(:tuesday, time_of_day: ten_forty_five_pm_in_rome, duration_in_seconds: 60)
-# => <Reprise::Core::Occurrence start_time="2015-06-02T08:45:00+00:00" end_time="2015-06-02T08:46:00+00:00" label="nil">
+# => <Reprise::Core::Occurrence starts_at="2015-06-02T08:45:00+00:00" ends_at="2015-06-02T08:46:00+00:00" label="nil">
 
-first_occurrence.start_time.in_time_zone("Rome")
+first_occurrence.starts_at.in_time_zone("Rome")
 # => Tue, 02 Jun 2015 10:45:00.000000000 CEST +02:00
 ```
 
@@ -111,7 +111,7 @@ occurrences = schedule.occurrences
 puts occurrences.size
 # => 29
 
-puts (occurrences.last.start_time.to_date - occurrences.first.start_time.to_date).to_i
+puts (occurrences.last.starts_at.to_date - occurrences.first.starts_at.to_date).to_i
 # => 196 # days
 ```
 
@@ -129,13 +129,13 @@ occurrences = schedule.occurrences
 puts occurrences.size
 # => 8
 
-puts occurrences.first.start_time.in_time_zone("Rome")
+puts occurrences.first.starts_at.in_time_zone("Rome")
 # 2015-07-10 04:01:00 +0200
 
-puts occurrences.last.start_time.in_time_zone("Rome")
+puts occurrences.last.starts_at.in_time_zone("Rome")
 # 2015-08-28 04:01:00 +0200
 
-puts (occurrences.last.start_time.to_date - occurrences.first.start_time.to_date).to_i
+puts (occurrences.last.starts_at.to_date - occurrences.first.starts_at.to_date).to_i
 # => 49 # days
 ```
 
@@ -153,13 +153,13 @@ schedule.repeat_daily(label: "Coffee Time", time_of_day: { hour: 8 }, duration_i
 schedule.repeat_daily(label: "Tea Time", interval: 3, time_of_day: { hour: 9 }, duration_in_seconds: 10.minutes)
 
 schedule.occurrences.take(7).map { |o| puts o.inspect }
-# => <Reprise::Core::Occurrence label="Coffee Time" start_time="2015-05-27T06:00:00+00:00" end_time="2015-05-27T06:15:00+00:00">
-# => <Reprise::Core::Occurrence label="Tea Time" start_time="2015-05-27T07:00:00+00:00" end_time="2015-05-27T07:10:00+00:00">
-# => <Reprise::Core::Occurrence label="Coffee Time" start_time="2015-05-28T06:00:00+00:00" end_time="2015-05-28T06:15:00+00:00">
-# => <Reprise::Core::Occurrence label="Coffee Time" start_time="2015-05-29T06:00:00+00:00" end_time="2015-05-29T06:15:00+00:00">
-# => <Reprise::Core::Occurrence label="Coffee Time" start_time="2015-05-30T06:00:00+00:00" end_time="2015-05-30T06:15:00+00:00">
-# => <Reprise::Core::Occurrence label="Tea Time" start_time="2015-05-30T07:00:00+00:00" end_time="2015-05-30T07:10:00+00:00">
-# => <Reprise::Core::Occurrence label="Coffee Time" start_time="2015-05-31T06:00:00+00:00" end_time="2015-05-31T06:15:00+00:00">
+# => <Reprise::Core::Occurrence label="Coffee Time" starts_at="2015-05-27T06:00:00+00:00" ends_at="2015-05-27T06:15:00+00:00">
+# => <Reprise::Core::Occurrence label="Tea Time" starts_at="2015-05-27T07:00:00+00:00" ends_at="2015-05-27T07:10:00+00:00">
+# => <Reprise::Core::Occurrence label="Coffee Time" starts_at="2015-05-28T06:00:00+00:00" ends_at="2015-05-28T06:15:00+00:00">
+# => <Reprise::Core::Occurrence label="Coffee Time" starts_at="2015-05-29T06:00:00+00:00" ends_at="2015-05-29T06:15:00+00:00">
+# => <Reprise::Core::Occurrence label="Coffee Time" starts_at="2015-05-30T06:00:00+00:00" ends_at="2015-05-30T06:15:00+00:00">
+# => <Reprise::Core::Occurrence label="Tea Time" starts_at="2015-05-30T07:00:00+00:00" ends_at="2015-05-30T07:10:00+00:00">
+# => <Reprise::Core::Occurrence label="Coffee Time" starts_at="2015-05-31T06:00:00+00:00" ends_at="2015-05-31T06:15:00+00:00">
 ```
 
 #### Excluding time intervals from the schedule's occurrences
@@ -170,11 +170,11 @@ occurrences and need to be excluded, you can add exclusions to your schedule bef
 ```ruby
 schedule.repeat_daily(label: "Standing Meeting", ends_at: may_26_2015_four_thirty_pm_in_rome + 5.days, duration_in_seconds: 15.minutes)
 schedule.occurrences.map { |o| puts o.inspect }
-# => <Reprise::Core::Occurrence start_time="2015-05-26T14:30:45+00:00" end_time="2015-05-26T14:45:45+00:00" label="Standing Meeting">
-# => <Reprise::Core::Occurrence start_time="2015-05-27T14:30:45+00:00" end_time="2015-05-27T14:45:45+00:00" label="Standing Meeting">
-# => <Reprise::Core::Occurrence start_time="2015-05-28T14:30:45+00:00" end_time="2015-05-28T14:45:45+00:00" label="Standing Meeting">
-# => <Reprise::Core::Occurrence start_time="2015-05-29T14:30:45+00:00" end_time="2015-05-29T14:45:45+00:00" label="Standing Meeting">
-# => <Reprise::Core::Occurrence start_time="2015-05-30T14:30:45+00:00" end_time="2015-05-30T14:45:45+00:00" label="Standing Meeting">
+# => <Reprise::Core::Occurrence starts_at="2015-05-26T14:30:45+00:00" ends_at="2015-05-26T14:45:45+00:00" label="Standing Meeting">
+# => <Reprise::Core::Occurrence starts_at="2015-05-27T14:30:45+00:00" ends_at="2015-05-27T14:45:45+00:00" label="Standing Meeting">
+# => <Reprise::Core::Occurrence starts_at="2015-05-28T14:30:45+00:00" ends_at="2015-05-28T14:45:45+00:00" label="Standing Meeting">
+# => <Reprise::Core::Occurrence starts_at="2015-05-29T14:30:45+00:00" ends_at="2015-05-29T14:45:45+00:00" label="Standing Meeting">
+# => <Reprise::Core::Occurrence starts_at="2015-05-30T14:30:45+00:00" ends_at="2015-05-30T14:45:45+00:00" label="Standing Meeting">
 
 # You don't need to specify entire days; you can pass time intervals as narrow or wide as you like.
 schedule.add_exclusion(
@@ -184,10 +184,10 @@ schedule.add_exclusion(
 
 schedule.occurrences.map { |o| puts o.inspect }
 # N.B. The occurrence on 2015-05-28 is now excluded.
-# => <Reprise::Core::Occurrence start_time="2015-05-26T14:30:45+00:00" end_time="2015-05-26T14:45:45+00:00" label="Standing Meeting">
-# => <Reprise::Core::Occurrence start_time="2015-05-27T14:30:45+00:00" end_time="2015-05-27T14:45:45+00:00" label="Standing Meeting">
-# => <Reprise::Core::Occurrence start_time="2015-05-29T14:30:45+00:00" end_time="2015-05-29T14:45:45+00:00" label="Standing Meeting">
-# => <Reprise::Core::Occurrence start_time="2015-05-30T14:30:45+00:00" end_time="2015-05-30T14:45:45+00:00" label="Standing Meeting">
+# => <Reprise::Core::Occurrence starts_at="2015-05-26T14:30:45+00:00" ends_at="2015-05-26T14:45:45+00:00" label="Standing Meeting">
+# => <Reprise::Core::Occurrence starts_at="2015-05-27T14:30:45+00:00" ends_at="2015-05-27T14:45:45+00:00" label="Standing Meeting">
+# => <Reprise::Core::Occurrence starts_at="2015-05-29T14:30:45+00:00" ends_at="2015-05-29T14:45:45+00:00" label="Standing Meeting">
+# => <Reprise::Core::Occurrence starts_at="2015-05-30T14:30:45+00:00" ends_at="2015-05-30T14:45:45+00:00" label="Standing Meeting">
 ```
 
 #### Querying for occurrences within a given time interval
@@ -208,7 +208,7 @@ schedule.occurrences_between(
   may_26_2015_four_thirty_pm_in_rome + 2.days,
   may_26_2015_four_thirty_pm_in_rome + 3.days,
 ).map { |o| puts o.inspect }
-# => <Reprise::Core::Occurrence start_time="2015-05-28T14:30:45+00:00" end_time="2015-05-28T14:45:45+00:00" label="Standing Meeting">
+# => <Reprise::Core::Occurrence starts_at="2015-05-28T14:30:45+00:00" ends_at="2015-05-28T14:45:45+00:00" label="Standing Meeting">
 ```
 
 Both `#occurs_between?` and `#occurrences_between` also support an optional `include_overlapping`

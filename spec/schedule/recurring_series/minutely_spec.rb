@@ -31,7 +31,7 @@ RSpec.describe "#repeat_minutely", aggregate_failures: true do
   it "generates an array of minutely occurrences" do
     schedule.repeat_minutely(**series_options, time_of_day: nil)
 
-    expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+    expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
       .to contain_exactly(
         "Sun Mar 10 2024 01:59AM -0800",
         "Sun Mar 10 2024 03:00AM -0700",
@@ -47,7 +47,7 @@ RSpec.describe "#repeat_minutely", aggregate_failures: true do
     it "generates an array of every nth occurrence" do
       schedule.repeat_minutely(**series_options, time_of_day: nil, interval: 2)
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           "Sun Mar 10 2024 01:59AM -0800",
           "Sun Mar 10 2024 03:01AM -0700",
@@ -66,7 +66,7 @@ RSpec.describe "#repeat_minutely", aggregate_failures: true do
     it "generates an array of occurrences starting from the DST change" do
       schedule.repeat_minutely(time_of_day: { hour: 2, minute: 1 }, duration_in_seconds: 30.seconds)
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           # N.B. The first occurrence begins
           # after the local time gap, one
@@ -89,7 +89,7 @@ RSpec.describe "#repeat_minutely", aggregate_failures: true do
     it "generates an array of minutely occurrences across the DST change" do
       schedule.repeat_minutely(**series_options, time_of_day: nil)
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           "Sun Mar 10 2024 01:58AM -0800",
           "Sun Mar 10 2024 01:59AM -0800",
@@ -114,14 +114,14 @@ RSpec.describe "#repeat_minutely", aggregate_failures: true do
       first_three_occurrences = occurrences.first(3)
       last_five_occurrences = occurrences.last(5)
 
-      expect(first_three_occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(first_three_occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           "Sun Nov  3 2024 12:57AM -0700",
           "Sun Nov  3 2024 12:58AM -0700",
           "Sun Nov  3 2024 12:59AM -0700",
         )
 
-      expect(last_five_occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(last_five_occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           "Sun Nov  3 2024 01:57AM -0700",
           "Sun Nov  3 2024 01:58AM -0700",

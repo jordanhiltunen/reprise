@@ -81,7 +81,7 @@ module Reprise
 
     # @!macro [new] duration_in_seconds
     #   @param duration_in_seconds [Integer]
-    #     This determines the end time of each occurrence ({Reprise::Core::Occurrence#end_time}), and also
+    #     This determines the end time of each occurrence ({Reprise::Core::Occurrence#ends_at}), and also
     #     influences occurrence queries, and whether any added exclusions conflict with any of the schedule's
     #     occurrences.
 

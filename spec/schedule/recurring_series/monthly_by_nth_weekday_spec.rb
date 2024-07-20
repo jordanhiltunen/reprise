@@ -31,7 +31,7 @@ RSpec.describe "#repeat_monthly_by_nth_weekday", aggregate_failures: true do
     schedule.repeat_monthly_by_nth_weekday(:tuesday, 2, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
 
     expect(
-      schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
+      schedule.occurrences.map { |o| o.starts_at.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
     ).to contain_exactly(
       "Tue Mar 19 2024 01:02AM -0700",
       "Tue Apr 16 2024 01:02AM -0700",
@@ -47,7 +47,7 @@ RSpec.describe "#repeat_monthly_by_nth_weekday", aggregate_failures: true do
     )
 
     expect(
-      schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
+      schedule.occurrences.map { |o| o.starts_at.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
     ).to contain_exactly(
       "Fri Mar 29 2024 01:02AM -0700",
       "Fri Apr 26 2024 01:02AM -0700",
@@ -62,7 +62,7 @@ RSpec.describe "#repeat_monthly_by_nth_weekday", aggregate_failures: true do
     schedule.repeat_monthly_by_nth_weekday(:wednesday, 4, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
 
     expect(
-      schedule.occurrences.map { |o| o.start_time.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
+      schedule.occurrences.map { |o| o.starts_at.in_time_zone(time_zone).strftime("%a %b %e %Y %I:%M%p %z") }
     ).to contain_exactly(
       "Wed May 29 2024 01:02AM -0700",
       "Wed Jul 31 2024 01:02AM -0700"
@@ -77,7 +77,7 @@ RSpec.describe "#repeat_monthly_by_nth_weekday", aggregate_failures: true do
     it "generates an array of occurrences starting from the DST change" do
       schedule.repeat_monthly_by_nth_weekday(:sunday, 1, time_of_day: { hour: 2, minute: 15 }, duration_in_seconds: 30.minutes)
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           # N.B. The first occurrence begins
           # after the local time gap, one
@@ -99,7 +99,7 @@ RSpec.describe "#repeat_monthly_by_nth_weekday", aggregate_failures: true do
     it "generates an array of occurrences across the DST change" do
       schedule.repeat_monthly_by_nth_weekday(:sunday, 1, time_of_day: { hour: 1, minute: 15 }, duration_in_seconds: 30.minutes)
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           "Sun Jan 14 2024 01:15AM -0800",
           "Sun Feb 11 2024 01:15AM -0800",
@@ -119,7 +119,7 @@ RSpec.describe "#repeat_monthly_by_nth_weekday", aggregate_failures: true do
       it "generates an array of occurrences across the DST change" do
         schedule.repeat_monthly_by_nth_weekday(:sunday, 1, time_of_day: { hour: 2, minute: 15 }, duration_in_seconds: 30.minutes)
 
-        expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+        expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
           .to contain_exactly(
             "Sun Jan 14 2024 02:15AM -0800",
             "Sun Feb 11 2024 02:15AM -0800",
@@ -143,7 +143,7 @@ RSpec.describe "#repeat_monthly_by_nth_weekday", aggregate_failures: true do
     it "generates an array of occurrences across the ST change" do
       schedule.repeat_monthly_by_nth_weekday(:sunday, 0, time_of_day: { hour: 2, minute: 15 }, duration_in_seconds: 30.minutes)
 
-      expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
+      expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
         .to contain_exactly(
           "Sun Oct  6 2024 02:15AM -0700",
           # N.B. Transition to ST, with a bias
