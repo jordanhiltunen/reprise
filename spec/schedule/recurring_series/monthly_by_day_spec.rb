@@ -43,7 +43,6 @@ RSpec.describe "#repeat_monthly_by_day", aggregate_failures: true do
   it "skips months where the requested day does not appear" do
     schedule.repeat_monthly_by_day(31, **series_options)
 
-    expect(schedule.occurrences.map { |o| localized_occurrence_start_time(o) })
     expect(schedule.occurrences.map { |o| localized_occurrence_starts_at(o) })
       .to contain_exactly(
         "Sun Mar 31 2024 10:15PM -0700",
