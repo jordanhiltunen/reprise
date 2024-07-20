@@ -31,7 +31,7 @@ jobs:
           cargo-vendor: true
           cache-version: v1-${{ matrix.platform }}
 
-      - uses: oxidize-rb/cross-gem-action@main
+      - uses: oxidize-rb/cross-gem@main
         with:
           version: latest
           platform: ${{ matrix.platform }}
@@ -58,7 +58,7 @@ jobs:
           cache-version: v1
 
       # It seems that v4 is not compatible with how artifacts are uploaded by
-      # oxidize-rb/cross-gem-action. So this must stay as v3 until the issue
+      # oxidize-rb/cross-gem. So this must stay as v3 until the issue
       # below is fixed.
       # See https://github.com/oxidize-rb/actions/issues/27, for more details.
       - uses: actions/download-artifact@v3
@@ -67,36 +67,36 @@ jobs:
 
       - name: Package source gem
         run: bundle exec rake build
-#
-#      - name: Push Gem
-#        working-directory: pkg/
-#        env:
-#          RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
-#        run: |
-#          mkdir -p $HOME/.gem
-#          touch $HOME/.gem/credentials
-#          chmod 0600 $HOME/.gem/credentials
-#          printf -- "---\n:rubygems_api_key: ${RUBYGEMS_API_KEY}\n" > $HOME/.gem/credentials
-#          ls -l
-#          for i in *.gem; do
-#            if [ -f "$i" ]; then
-#              if ! gem push "$i" >push.out; then
-#                gemerr=$?
-#                sed 's/^/::error:: /' push.out
-#                if ! grep -q "Repushing of gem" push.out; then
-#                  exit $gemerr
-#                fi
-#              fi
-#            fi
-#          done
-#
-#      - name: Create GitHub release
-#        uses: ncipollo/release-action@v1
-#        with:
-#          allowUpdates: true
-#          generateReleaseNotes: true
-#          draft: true
-#          omitBodyDuringUpdate: true
-#          omitNameDuringUpdate: true
-#          omitPrereleaseDuringUpdate: true
-#          skipIfReleaseExists: true
+
+      - name: Push Gem
+        working-directory: pkg/
+        env:
+          RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+        run: |
+          mkdir -p $HOME/.gem
+          touch $HOME/.gem/credentials
+          chmod 0600 $HOME/.gem/credentials
+          printf -- "---\n:rubygems_api_key: ${RUBYGEMS_API_KEY}\n" > $HOME/.gem/credentials
+          ls -l
+          for i in *.gem; do
+            if [ -f "$i" ]; then
+              if ! gem push "$i" >push.out; then
+                gemerr=$?
+                sed 's/^/::error:: /' push.out
+                if ! grep -q "Repushing of gem" push.out; then
+                  exit $gemerr
+                fi
+              fi
+            fi
+          done
+
+      - name: Create GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          generateReleaseNotes: true
+          draft: true
+          omitBodyDuringUpdate: true
+          omitNameDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
+          skipIfReleaseExists: true
