@@ -1,6 +1,6 @@
 # Reprise
 
-[![Tests](https://github.com/jordanhiltunen/reprise/actions/workflows/test.yml/badge.svg)](https://github.com/jordanhiltunen/reprise/actions/workflows/test.yml) | [![Test CRuby Gem Build](https://github.com/jordanhiltunen/reprise/actions/workflows/cruby-build-and-install.yml/badge.svg)](https://github.com/jordanhiltunen/reprise/actions/workflows/cruby-build-and-install.yml)
+[![Gem Version](https://badge.fury.io/rb/reprise.svg)](https://badge.fury.io/rb/reprise) | [![Tests](https://github.com/jordanhiltunen/reprise/actions/workflows/test.yml/badge.svg)](https://github.com/jordanhiltunen/reprise/actions/workflows/test.yml) | [![Test CRuby Gem Build](https://github.com/jordanhiltunen/reprise/actions/workflows/cruby-build-and-install.yml/badge.svg)](https://github.com/jordanhiltunen/reprise/actions/workflows/cruby-build-and-install.yml)
 
 Reprise is an experimental performance-first Ruby gem that provides support for defining event recurrence
 rules and generating & querying their future occurrences. Depending on your use case, 
