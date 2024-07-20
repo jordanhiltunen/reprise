@@ -1,0 +1,88 @@
+name: Release RubyGem
+on: workflow_dispatch
+env:
+  SUPPORTED_RUBY_VERSIONS: "3.1,3.2,3.3"
+  LATEST_RUBY_VERSION: "3.3"
+jobs:
+  build:
+    name: Compile native gem
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform:
+          - aarch64-linux
+          - arm64-darwin
+          - x86_64-darwin
+          - x86_64-linux
+          - x86_64-linux-musl
+          - x64-mingw-ucrt
+    steps:
+      - uses: actions/checkout@v3
+      - uses: oxidize-rb/actions/setup-ruby-and-rust@main
+        with:
+          rubygems: latest
+          ruby-version: "${{ env.LATEST_RUBY_VERSION }}"
+          bundler-cache: false
+          cargo-cache: true
+          cargo-vendor: true
+      - uses: oxidize-rb/actions/cross-gem@v1.1.9
+        with:
+          platform: ${{ matrix.platform }}
+          ruby-versions: "${{ env.SUPPORTED_RUBY_VERSIONS }}"
+      - uses: actions/upload-artifact@v2
+        with:
+          name: cross-gem
+          path: pkg/
+      - name: Display structure of built gems
+        run: ls -R
+        working-directory: pkg/
+  release_source:
+    name: Release source gem
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: oxidize-rb/actions/setup-ruby-and-rust@main
+        with:
+          ruby-version: "${{ env.LATEST_RUBY_VERSION }}"
+          bundler-cache: false
+          cargo-cache: true
+          cargo-vendor: true
+      - name: Build gem
+        run: |
+          gem build reprise.gemspec
+          mkdir -p pkg/
+          mv *.gem pkg/
+      - name: Upload Gem
+        uses: actions/upload-artifact@v3
+        with:
+          name: cross-gem
+          path: pkg/
+  publish:
+    name: Publish cross gems
+    runs-on: ubuntu-latest
+    needs:
+      - build
+      - release_source
+    steps:
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "${{ env.LATEST_RUBY_VERSION }}"
+          bundler-cache: true
+      - uses: actions/download-artifact@v3
+        with:
+          name: cross-gem
+          path: pkg/
+      - name: Publish to RubyGems
+        env:
+          RUBYGEMS_API_KEY: ${{secrets.RUBYGEMS_API_KEY}}
+        run: |
+          mkdir -p $HOME/.gem
+          touch $HOME/.gem/credentials
+          chmod 0600 $HOME/.gem/credentials
+          printf -- "---\n:rubygems_api_key: ${RUBYGEMS_API_KEY}\n" > $HOME/.gem/credentials
+          for i in *.gem; do
+            if [ -f "$i" ]
+            then
+              gem push "$i" || true
+            fi
+          done
