@@ -37,8 +37,6 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
   spec.extensions = ["ext/reprise/extconf.rb"]
-  # https://github.com/rubygems/rubygems/pull/5852#issuecomment-1231118509
-  spec.required_rubygems_version = "> 3.4.20"
 
   spec.add_development_dependency "benchmark-ips"
   spec.add_development_dependency "benchmark-memory"
