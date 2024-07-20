@@ -37,7 +37,7 @@ pub enum RecurringSeries {
     Weekly,
     MonthlyByDay,
     MonthlyByNthWeekday,
-    AnnuallyByDay
+    AnnuallyByDay,
 }
 
 #[enum_dispatch(RecurringSeries)]
@@ -111,7 +111,8 @@ pub(crate) trait Recurrable: std::fmt::Debug {
                 // here as there is no other way to recover, callers need to be
                 // informed via an exception.
                 panic!(
-                    "{}", format!(
+                    "{}",
+                    format!(
                         "Infinite loop prevented during schedule expansion.
                         This is a bug in Reprise, please share with the maintainers. \
                         Affected series: {:?}",
