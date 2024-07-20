@@ -11,10 +11,11 @@ jobs:
     strategy:
       matrix:
         platform:
-          - x86_64-linux
           - aarch64-linux
-          - x86_64-darwin
           - arm64-darwin
+          - x86_64-darwin
+          - x86_64-linux
+          - x86_64-linux-musl
           - x64-mingw-ucrt
     steps:
       - uses: actions/checkout@v4
