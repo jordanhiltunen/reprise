@@ -35,7 +35,12 @@ jobs:
         with:
           platform: ${{ matrix.platform }}
           ruby-versions: "${{ env.SUPPORTED_RUBY_VERSIONS }}"
-          
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: cross-gem
+          path: ${{ steps.cross-gem.outputs.gem-path }}
+
       - name: Display structure of built gems
         run: ls -R
         working-directory: pkg/
@@ -45,11 +50,6 @@ jobs:
         run: |
           gem install pkg/reprise-*.gem --verbose
           echo "✅ Gem installed successfully"
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: cross-gem
-          path: ${{ steps.cross-gem.outputs.gem-path }}
 
   release:
     name: Release
