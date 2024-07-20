@@ -56,6 +56,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rubocop"
   spec.add_development_dependency "yard"
 
-  spec.add_dependency "activesupport", "~> 7.0.8"
+  spec.add_dependency "activesupport", "~> 7.0.0"
   spec.add_dependency "rb_sys", ">= 0.9.86"
 end
