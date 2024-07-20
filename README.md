@@ -1,6 +1,6 @@
 # Reprise
 
-[![build](https://github.com/jordanhiltunen/reprise/actions/workflows/build.yml/badge.svg)](https://github.com/jordanhiltunen/reprise/actions/workflows/build.yml)
+[![build](https://github.com/jordanhiltunen/reprise/actions/workflows/build.yml/badge.svg)](https://github.com/jordanhiltunen/reprise/actions/workflows/test.yml) | [Docs]()
 
 Reprise is an experimental performance-first Ruby gem that provides support for defining event recurrence
 rules and generating & querying their future occurrences. Depending on your use case, 
