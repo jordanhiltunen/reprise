@@ -23,6 +23,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Get Version
+        id: get-version
+        run: |
+          version=$(grep VERSION lib/reprise/version.rb |rev |cut -d '"' -f2 |rev)
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "Found version $version from lib/reprise/version.rb"
+
       - uses: oxidize-rb/actions/setup-ruby-and-rust@v1
         with:
           ruby-version: "${{ env.LATEST_RUBY_VERSION }}"
@@ -99,7 +106,9 @@ jobs:
 
       - name: Create GitHub release
         uses: ncipollo/release-action@v1
+        id: create-release
         with:
+          artifacts: "pkg/*"
           allowUpdates: true
           generateReleaseNotes: true
           draft: true
@@ -107,3 +116,5 @@ jobs:
           omitNameDuringUpdate: true
           omitPrereleaseDuringUpdate: true
           skipIfReleaseExists: true
+          tag: ${{ steps.get-version.outputs.version }}
+          token: ${{ secrets.GITHUB_TOKEN }}
