@@ -3,11 +3,15 @@ on: workflow_dispatch
 env:
   SUPPORTED_RUBY_VERSIONS: "3.1,3.2,3.3"
   LATEST_RUBY_VERSION: "3.3"
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   build:
-    name: Compile native gem
+    name: Build native gems
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         platform:
           - aarch64-linux
@@ -18,66 +22,81 @@ jobs:
           - x64-mingw-ucrt
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
+
+      - uses: oxidize-rb/actions/setup-ruby-and-rust@v1
         with:
-          bundler-cache: true
           ruby-version: "${{ env.LATEST_RUBY_VERSION }}"
-      - uses: oxidize-rb/actions/cross-gem@v1.1.9
+          bundler-cache: false
+          cargo-cache: true
+          cargo-vendor: true
+          cache-version: v1-${{ matrix.platform }}
+
+      - uses: oxidize-rb/cross-gem-action@main
         with:
+          version: latest
           platform: ${{ matrix.platform }}
           ruby-versions: "${{ env.SUPPORTED_RUBY_VERSIONS }}"
-      - uses: actions/upload-artifact@v3
-        with:
-          name: cross-gem
-          path: pkg/
-      - name: Display structure of built gems
-        run: ls -R
-        working-directory: pkg/
-  release_source:
-    name: Release source gem
+
+      - name: Smoke gem install
+        if: matrix.platform == 'x86_64-linux' # GitHub actions architecture
+        run: |
+          gem install pkg/reprise-*.gem --verbose
+          echo "✅ Gem installed successfully"
+
+  release:
+    name: Release
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-          ruby-version: "${{ env.LATEST_RUBY_VERSION }}"
-      - name: Build gem
-        run: |
-          gem build reprise.gemspec
-          mkdir -p pkg/
-          mv *.gem pkg/
-      - name: Upload Gem
-        uses: actions/upload-artifact@v3
-        with:
-          name: cross-gem
-          path: pkg/
-  publish:
-    name: Publish cross gems
-    runs-on: ubuntu-latest
-    needs:
-      - build
-      - release_source
-    steps:
-      - uses: ruby/setup-ruby@v1
+
+      - uses: oxidize-rb/actions/setup-ruby-and-rust@v1
         with:
           ruby-version: "${{ env.LATEST_RUBY_VERSION }}"
           bundler-cache: true
+          cargo-cache: true
+          cache-version: v1
+
+      # It seems that v4 is not compatible with how artifacts are uploaded by
+      # oxidize-rb/cross-gem-action. So this must stay as v3 until the issue
+      # below is fixed.
+      # See https://github.com/oxidize-rb/actions/issues/27, for more details.
       - uses: actions/download-artifact@v3
         with:
           name: cross-gem
-          path: pkg/
-      - name: Publish to RubyGems
-        env:
-          RUBYGEMS_API_KEY: ${{secrets.RUBYGEMS_API_KEY}}
-        run: |
-          mkdir -p $HOME/.gem
-          touch $HOME/.gem/credentials
-          chmod 0600 $HOME/.gem/credentials
-          printf -- "---\n:rubygems_api_key: ${RUBYGEMS_API_KEY}\n" > $HOME/.gem/credentials
-          for i in *.gem; do
-            if [ -f "$i" ]
-            then
-              gem push "$i" || true
-            fi
-          done
+
+      - name: Package source gem
+        run: bundle exec rake build
+#
+#      - name: Push Gem
+#        working-directory: pkg/
+#        env:
+#          RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+#        run: |
+#          mkdir -p $HOME/.gem
+#          touch $HOME/.gem/credentials
+#          chmod 0600 $HOME/.gem/credentials
+#          printf -- "---\n:rubygems_api_key: ${RUBYGEMS_API_KEY}\n" > $HOME/.gem/credentials
+#          ls -l
+#          for i in *.gem; do
+#            if [ -f "$i" ]; then
+#              if ! gem push "$i" >push.out; then
+#                gemerr=$?
+#                sed 's/^/::error:: /' push.out
+#                if ! grep -q "Repushing of gem" push.out; then
+#                  exit $gemerr
+#                fi
+#              fi
+#            fi
+#          done
+#
+#      - name: Create GitHub release
+#        uses: ncipollo/release-action@v1
+#        with:
+#          allowUpdates: true
+#          generateReleaseNotes: true
+#          draft: true
+#          omitBodyDuringUpdate: true
+#          omitNameDuringUpdate: true
+#          omitPrereleaseDuringUpdate: true
+#          skipIfReleaseExists: true
