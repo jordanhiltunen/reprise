@@ -36,6 +36,6 @@ impl Recurrable for Hourly {
                 .unwrap()
                 .with_timezone(&datetime_cursor.timezone()),
             Some(datetime_cursor) => datetime_cursor,
-        }
+        };
     }
 }
