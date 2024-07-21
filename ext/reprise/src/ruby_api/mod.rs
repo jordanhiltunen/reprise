@@ -1,17 +1,17 @@
 use magnus::prelude::*;
-use magnus::{Error, RModule, Ruby, value::Lazy};
+use magnus::{Error};
 
-mod schedule;
-mod occurrence;
-mod exclusion;
-mod traits;
-mod recurring_series;
-mod series_options;
-mod time_of_day;
-mod ruby_modules;
-mod sorted_exclusions;
-pub mod interval;
 pub mod clock;
+mod exclusion;
+pub mod interval;
+mod occurrence;
+mod recurring_series;
+mod ruby_modules;
+mod schedule;
+mod series_options;
+mod sorted_exclusions;
+mod time_of_day;
+mod traits;
 
 pub fn init() -> Result<(), Error> {
     schedule::init()?;
