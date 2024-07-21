@@ -287,7 +287,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#repeat_annually_by_day-instance_method" title="#repeat_annually_by_day (instance method)">#<strong>repeat_annually_by_day</strong>(day_number, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)  &#x21d2; void </a>
+      <a href="#repeat_annually_by_day-instance_method" title="#repeat_annually_by_day (instance method)">#<strong>repeat_annually_by_day</strong>(day_number, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)  &#x21d2; void </a>
     
 
     
@@ -309,7 +309,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#repeat_daily-instance_method" title="#repeat_daily (instance method)">#<strong>repeat_daily</strong>(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)  &#x21d2; void </a>
+      <a href="#repeat_daily-instance_method" title="#repeat_daily (instance method)">#<strong>repeat_daily</strong>(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)  &#x21d2; void </a>
     
 
     
@@ -331,7 +331,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#repeat_hourly-instance_method" title="#repeat_hourly (instance method)">#<strong>repeat_hourly</strong>(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)  &#x21d2; void </a>
+      <a href="#repeat_hourly-instance_method" title="#repeat_hourly (instance method)">#<strong>repeat_hourly</strong>(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)  &#x21d2; void </a>
     
 
     
@@ -353,7 +353,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#repeat_minutely-instance_method" title="#repeat_minutely (instance method)">#<strong>repeat_minutely</strong>(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)  &#x21d2; void </a>
+      <a href="#repeat_minutely-instance_method" title="#repeat_minutely (instance method)">#<strong>repeat_minutely</strong>(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)  &#x21d2; void </a>
     
 
     
@@ -375,7 +375,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#repeat_monthly_by_day-instance_method" title="#repeat_monthly_by_day (instance method)">#<strong>repeat_monthly_by_day</strong>(day_number, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)  &#x21d2; void </a>
+      <a href="#repeat_monthly_by_day-instance_method" title="#repeat_monthly_by_day (instance method)">#<strong>repeat_monthly_by_day</strong>(day_number, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)  &#x21d2; void </a>
     
 
     
@@ -397,7 +397,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#repeat_monthly_by_nth_weekday-instance_method" title="#repeat_monthly_by_nth_weekday (instance method)">#<strong>repeat_monthly_by_nth_weekday</strong>(weekday, nth_day, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)  &#x21d2; void </a>
+      <a href="#repeat_monthly_by_nth_weekday-instance_method" title="#repeat_monthly_by_nth_weekday (instance method)">#<strong>repeat_monthly_by_nth_weekday</strong>(weekday, nth_day, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)  &#x21d2; void </a>
     
 
     
@@ -419,7 +419,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#repeat_weekly-instance_method" title="#repeat_weekly (instance method)">#<strong>repeat_weekly</strong>(weekday, time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)  &#x21d2; void </a>
+      <a href="#repeat_weekly-instance_method" title="#repeat_weekly (instance method)">#<strong>repeat_weekly</strong>(weekday, time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)  &#x21d2; void </a>
     
 
     
@@ -636,15 +636,15 @@
       <pre class="lines">
 
 
-234
-235
-236
-237
-238
-239</pre>
+254
+255
+256
+257
+258
+259</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/reprise/schedule.rb', line 234</span>
+      <pre class="code"><span class="info file"># File 'lib/reprise/schedule.rb', line 254</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_exclusion'>add_exclusion</span><span class='lparen'>(</span><span class='label'>starts_at:</span><span class='comma'>,</span> <span class='label'>ends_at:</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_internal_schedule'>internal_schedule</span><span class='period'>.</span><span class='id identifier rubyid_add_exclusion'>add_exclusion</span><span class='lparen'>(</span>
@@ -714,14 +714,14 @@
       <pre class="lines">
 
 
-251
-252
-253
-254
-255</pre>
+271
+272
+273
+274
+275</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/reprise/schedule.rb', line 251</span>
+      <pre class="code"><span class="info file"># File 'lib/reprise/schedule.rb', line 271</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_exclusions'>add_exclusions</span><span class='lparen'>(</span><span class='id identifier rubyid_exclusions'>exclusions</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_internal_schedule'>internal_schedule</span><span class='period'>.</span><span class='id identifier rubyid_add_exclusions'>add_exclusions</span><span class='lparen'>(</span>
@@ -885,16 +885,16 @@
       <pre class="lines">
 
 
-277
-278
-279
-280
-281
-282
-283</pre>
+297
+298
+299
+300
+301
+302
+303</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/reprise/schedule.rb', line 277</span>
+      <pre class="code"><span class="info file"># File 'lib/reprise/schedule.rb', line 297</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_occurrences_between'>occurrences_between</span><span class='lparen'>(</span><span class='id identifier rubyid_starts_at'>starts_at</span><span class='comma'>,</span> <span class='id identifier rubyid_ends_at'>ends_at</span><span class='comma'>,</span> <span class='label'>include_overlapping:</span> <span class='kw'>false</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_include_overlapping'>include_overlapping</span>
@@ -1001,12 +1001,12 @@
       <pre class="lines">
 
 
-267
-268
-269</pre>
+287
+288
+289</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/reprise/schedule.rb', line 267</span>
+      <pre class="code"><span class="info file"># File 'lib/reprise/schedule.rb', line 287</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_occurs_between?'>occurs_between?</span><span class='lparen'>(</span><span class='id identifier rubyid_starts_at'>starts_at</span><span class='comma'>,</span> <span class='id identifier rubyid_ends_at'>ends_at</span><span class='comma'>,</span> <span class='label'>include_overlapping:</span> <span class='kw'>false</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_occurrences_between'>occurrences_between</span><span class='lparen'>(</span><span class='id identifier rubyid_starts_at'>starts_at</span><span class='comma'>,</span> <span class='id identifier rubyid_ends_at'>ends_at</span><span class='comma'>,</span> <span class='label'>include_overlapping:</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span>
@@ -1019,7 +1019,7 @@
       <div class="method_details ">
   <h3 class="signature " id="repeat_annually_by_day-instance_method">
   
-    #<strong>repeat_annually_by_day</strong>(day_number, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)  &#x21d2; <tt>void</tt> 
+    #<strong>repeat_annually_by_day</strong>(day_number, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)  &#x21d2; <tt>void</tt> 
   
 
   
@@ -1147,6 +1147,24 @@
   
     <li>
       
+        <span class='name'>count</span>
+      
+      
+        <span class='type'>(<tt>Integer</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>An optional count limit to apply to the occurrences of a series; once the schedule has generated the requested number of occurrences, it will halt further expansion of that specific series. The count takes precedence over the optional <code>ends_at</code> param.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
         <span class='name'>label</span>
       
       
@@ -1224,6 +1242,8 @@
     
     
     
+    
+    
 
 <p class="tag_title">Raises:</p>
 <ul class="raise">
@@ -1278,22 +1298,23 @@
       <pre class="lines">
 
 
-218
-219
-220
-221
-222
-223
-224
-225
-226
-227
-228</pre>
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/reprise/schedule.rb', line 218</span>
+      <pre class="code"><span class="info file"># File 'lib/reprise/schedule.rb', line 237</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_repeat_annually_by_day'>repeat_annually_by_day</span><span class='lparen'>(</span><span class='id identifier rubyid_day_number'>day_number</span><span class='comma'>,</span> <span class='label'>time_of_day:</span><span class='comma'>,</span> <span class='label'>duration_in_seconds:</span><span class='comma'>,</span> <span class='label'>interval:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='label'>starts_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>ends_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_repeat_annually_by_day'>repeat_annually_by_day</span><span class='lparen'>(</span><span class='id identifier rubyid_day_number'>day_number</span><span class='comma'>,</span> <span class='label'>time_of_day:</span><span class='comma'>,</span> <span class='label'>duration_in_seconds:</span><span class='comma'>,</span> <span class='label'>interval:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='label'>starts_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>ends_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>count:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_internal_schedule'>internal_schedule</span><span class='period'>.</span><span class='id identifier rubyid_repeat_annually_by_day'>repeat_annually_by_day</span><span class='lparen'>(</span>
     <span class='id identifier rubyid_day_number'>day_number</span><span class='comma'>,</span>
     <span class='label'>time_of_day:</span> <span class='const'><span class='object_link'><a href="TimeOfDay.html" title="Reprise::TimeOfDay (class)">TimeOfDay</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="TimeOfDay.html#initialize-instance_method" title="Reprise::TimeOfDay#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_time_of_day'>time_of_day</span> <span class='op'>||</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_starts_at'>starts_at</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_h'><span class='object_link'><a href="TimeOfDay.html#to_h-instance_method" title="Reprise::TimeOfDay#to_h (method)">to_h</a></span></span><span class='comma'>,</span>
@@ -1301,6 +1322,7 @@
     <span class='label'>interval:</span><span class='comma'>,</span>
     <span class='label'>starts_at_unix_timestamp:</span> <span class='id identifier rubyid_starts_at'>starts_at</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span>
     <span class='label'>ends_at_unix_timestamp:</span> <span class='id identifier rubyid_ends_at'>ends_at</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span>
+    <span class='label'>count:</span><span class='comma'>,</span>
     <span class='label'>label:</span>
   <span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
@@ -1312,7 +1334,7 @@
       <div class="method_details ">
   <h3 class="signature " id="repeat_daily-instance_method">
   
-    #<strong>repeat_daily</strong>(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)  &#x21d2; <tt>void</tt> 
+    #<strong>repeat_daily</strong>(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)  &#x21d2; <tt>void</tt> 
   
 
   
@@ -1418,6 +1440,24 @@
   
     <li>
       
+        <span class='name'>count</span>
+      
+      
+        <span class='type'>(<tt>Integer</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>An optional count limit to apply to the occurrences of a series; once the schedule has generated the requested number of occurrences, it will halt further expansion of that specific series. The count takes precedence over the optional <code>ends_at</code> param.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
         <span class='name'>label</span>
       
       
@@ -1493,6 +1533,8 @@
     
     
     
+    
+    
 
 <p class="tag_title">Raises:</p>
 <ul class="raise">
@@ -1547,27 +1589,29 @@
       <pre class="lines">
 
 
-132
-133
-134
-135
-136
-137
-138
-139
-140
-141</pre>
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/reprise/schedule.rb', line 132</span>
+      <pre class="code"><span class="info file"># File 'lib/reprise/schedule.rb', line 143</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_repeat_daily'>repeat_daily</span><span class='lparen'>(</span><span class='label'>time_of_day:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>duration_in_seconds:</span><span class='comma'>,</span> <span class='label'>interval:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='label'>starts_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>ends_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_repeat_daily'>repeat_daily</span><span class='lparen'>(</span><span class='label'>time_of_day:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>duration_in_seconds:</span><span class='comma'>,</span> <span class='label'>interval:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='label'>starts_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>ends_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>count:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_internal_schedule'>internal_schedule</span><span class='period'>.</span><span class='id identifier rubyid_repeat_daily'>repeat_daily</span><span class='lparen'>(</span>
     <span class='label'>time_of_day:</span> <span class='const'><span class='object_link'><a href="TimeOfDay.html" title="Reprise::TimeOfDay (class)">TimeOfDay</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="TimeOfDay.html#initialize-instance_method" title="Reprise::TimeOfDay#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_time_of_day'>time_of_day</span> <span class='op'>||</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_starts_at'>starts_at</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_h'><span class='object_link'><a href="TimeOfDay.html#to_h-instance_method" title="Reprise::TimeOfDay#to_h (method)">to_h</a></span></span><span class='comma'>,</span>
     <span class='label'>duration_in_seconds:</span><span class='comma'>,</span>
     <span class='label'>interval:</span><span class='comma'>,</span>
     <span class='label'>starts_at_unix_timestamp:</span> <span class='id identifier rubyid_starts_at'>starts_at</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span>
     <span class='label'>ends_at_unix_timestamp:</span> <span class='id identifier rubyid_ends_at'>ends_at</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span>
+    <span class='label'>count:</span><span class='comma'>,</span>
     <span class='label'>label:</span>
   <span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
@@ -1579,7 +1623,7 @@
       <div class="method_details ">
   <h3 class="signature " id="repeat_hourly-instance_method">
   
-    #<strong>repeat_hourly</strong>(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)  &#x21d2; <tt>void</tt> 
+    #<strong>repeat_hourly</strong>(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)  &#x21d2; <tt>void</tt> 
   
 
   
@@ -1685,6 +1729,24 @@
   
     <li>
       
+        <span class='name'>count</span>
+      
+      
+        <span class='type'>(<tt>Integer</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>An optional count limit to apply to the occurrences of a series; once the schedule has generated the requested number of occurrences, it will halt further expansion of that specific series. The count takes precedence over the optional <code>ends_at</code> param.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
         <span class='name'>label</span>
       
       
@@ -1760,6 +1822,8 @@
     
     
     
+    
+    
 
 <p class="tag_title">Raises:</p>
 <ul class="raise">
@@ -1814,27 +1878,29 @@
       <pre class="lines">
 
 
-115
-116
-117
-118
-119
-120
-121
-122
-123
-124</pre>
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/reprise/schedule.rb', line 115</span>
+      <pre class="code"><span class="info file"># File 'lib/reprise/schedule.rb', line 124</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_repeat_hourly'>repeat_hourly</span><span class='lparen'>(</span><span class='label'>time_of_day:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>duration_in_seconds:</span><span class='comma'>,</span> <span class='label'>interval:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='label'>starts_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>ends_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_repeat_hourly'>repeat_hourly</span><span class='lparen'>(</span><span class='label'>time_of_day:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>duration_in_seconds:</span><span class='comma'>,</span> <span class='label'>interval:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='label'>starts_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>ends_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>count:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_internal_schedule'>internal_schedule</span><span class='period'>.</span><span class='id identifier rubyid_repeat_hourly'>repeat_hourly</span><span class='lparen'>(</span>
     <span class='label'>time_of_day:</span> <span class='const'><span class='object_link'><a href="TimeOfDay.html" title="Reprise::TimeOfDay (class)">TimeOfDay</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="TimeOfDay.html#initialize-instance_method" title="Reprise::TimeOfDay#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_time_of_day'>time_of_day</span> <span class='op'>||</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_starts_at'>starts_at</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_h'><span class='object_link'><a href="TimeOfDay.html#to_h-instance_method" title="Reprise::TimeOfDay#to_h (method)">to_h</a></span></span><span class='comma'>,</span>
     <span class='label'>duration_in_seconds:</span><span class='comma'>,</span>
     <span class='label'>interval:</span><span class='comma'>,</span>
     <span class='label'>starts_at_unix_timestamp:</span> <span class='id identifier rubyid_starts_at'>starts_at</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span>
     <span class='label'>ends_at_unix_timestamp:</span> <span class='id identifier rubyid_ends_at'>ends_at</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span>
+    <span class='label'>count:</span><span class='comma'>,</span>
     <span class='label'>label:</span>
   <span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
@@ -1846,7 +1912,7 @@
       <div class="method_details ">
   <h3 class="signature " id="repeat_minutely-instance_method">
   
-    #<strong>repeat_minutely</strong>(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)  &#x21d2; <tt>void</tt> 
+    #<strong>repeat_minutely</strong>(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)  &#x21d2; <tt>void</tt> 
   
 
   
@@ -1952,6 +2018,24 @@
   
     <li>
       
+        <span class='name'>count</span>
+      
+      
+        <span class='type'>(<tt>Integer</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>An optional count limit to apply to the occurrences of a series; once the schedule has generated the requested number of occurrences, it will halt further expansion of that specific series. The count takes precedence over the optional <code>ends_at</code> param.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
         <span class='name'>label</span>
       
       
@@ -2027,6 +2111,8 @@
     
     
     
+    
+    
 
 <p class="tag_title">Raises:</p>
 <ul class="raise">
@@ -2081,27 +2167,29 @@
       <pre class="lines">
 
 
-98
-99
-100
-101
-102
-103
-104
 105
 106
-107</pre>
+107
+108
+109
+110
+111
+112
+113
+114
+115</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/reprise/schedule.rb', line 98</span>
+      <pre class="code"><span class="info file"># File 'lib/reprise/schedule.rb', line 105</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_repeat_minutely'>repeat_minutely</span><span class='lparen'>(</span><span class='label'>time_of_day:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>duration_in_seconds:</span><span class='comma'>,</span> <span class='label'>interval:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='label'>starts_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>ends_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_repeat_minutely'>repeat_minutely</span><span class='lparen'>(</span><span class='label'>time_of_day:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>duration_in_seconds:</span><span class='comma'>,</span> <span class='label'>interval:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='label'>starts_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>ends_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>count:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_internal_schedule'>internal_schedule</span><span class='period'>.</span><span class='id identifier rubyid_repeat_minutely'>repeat_minutely</span><span class='lparen'>(</span>
     <span class='label'>time_of_day:</span> <span class='const'><span class='object_link'><a href="TimeOfDay.html" title="Reprise::TimeOfDay (class)">TimeOfDay</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="TimeOfDay.html#initialize-instance_method" title="Reprise::TimeOfDay#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_time_of_day'>time_of_day</span> <span class='op'>||</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_starts_at'>starts_at</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_h'><span class='object_link'><a href="TimeOfDay.html#to_h-instance_method" title="Reprise::TimeOfDay#to_h (method)">to_h</a></span></span><span class='comma'>,</span>
     <span class='label'>duration_in_seconds:</span><span class='comma'>,</span>
     <span class='label'>interval:</span><span class='comma'>,</span>
     <span class='label'>starts_at_unix_timestamp:</span> <span class='id identifier rubyid_starts_at'>starts_at</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span>
     <span class='label'>ends_at_unix_timestamp:</span> <span class='id identifier rubyid_ends_at'>ends_at</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span>
+    <span class='label'>count:</span><span class='comma'>,</span>
     <span class='label'>label:</span>
   <span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
@@ -2113,7 +2201,7 @@
       <div class="method_details ">
   <h3 class="signature " id="repeat_monthly_by_day-instance_method">
   
-    #<strong>repeat_monthly_by_day</strong>(day_number, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)  &#x21d2; <tt>void</tt> 
+    #<strong>repeat_monthly_by_day</strong>(day_number, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)  &#x21d2; <tt>void</tt> 
   
 
   
@@ -2241,6 +2329,24 @@
   
     <li>
       
+        <span class='name'>count</span>
+      
+      
+        <span class='type'>(<tt>Integer</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>An optional count limit to apply to the occurrences of a series; once the schedule has generated the requested number of occurrences, it will halt further expansion of that specific series. The count takes precedence over the optional <code>ends_at</code> param.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
         <span class='name'>label</span>
       
       
@@ -2318,6 +2424,8 @@
     
     
     
+    
+    
 
 <p class="tag_title">Raises:</p>
 <ul class="raise">
@@ -2372,22 +2480,23 @@
       <pre class="lines">
 
 
-176
-177
-178
-179
-180
-181
-182
-183
-184
-185
-186</pre>
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/reprise/schedule.rb', line 176</span>
+      <pre class="code"><span class="info file"># File 'lib/reprise/schedule.rb', line 191</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_repeat_monthly_by_day'>repeat_monthly_by_day</span><span class='lparen'>(</span><span class='id identifier rubyid_day_number'>day_number</span><span class='comma'>,</span> <span class='label'>time_of_day:</span><span class='comma'>,</span> <span class='label'>duration_in_seconds:</span><span class='comma'>,</span> <span class='label'>interval:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='label'>starts_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>ends_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_repeat_monthly_by_day'>repeat_monthly_by_day</span><span class='lparen'>(</span><span class='id identifier rubyid_day_number'>day_number</span><span class='comma'>,</span> <span class='label'>time_of_day:</span><span class='comma'>,</span> <span class='label'>duration_in_seconds:</span><span class='comma'>,</span> <span class='label'>interval:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='label'>starts_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>ends_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>count:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_internal_schedule'>internal_schedule</span><span class='period'>.</span><span class='id identifier rubyid_repeat_monthly_by_day'>repeat_monthly_by_day</span><span class='lparen'>(</span>
     <span class='id identifier rubyid_day_number'>day_number</span><span class='comma'>,</span>
     <span class='label'>time_of_day:</span> <span class='const'><span class='object_link'><a href="TimeOfDay.html" title="Reprise::TimeOfDay (class)">TimeOfDay</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="TimeOfDay.html#initialize-instance_method" title="Reprise::TimeOfDay#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_time_of_day'>time_of_day</span> <span class='op'>||</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_starts_at'>starts_at</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_h'><span class='object_link'><a href="TimeOfDay.html#to_h-instance_method" title="Reprise::TimeOfDay#to_h (method)">to_h</a></span></span><span class='comma'>,</span>
@@ -2395,6 +2504,7 @@
     <span class='label'>interval:</span><span class='comma'>,</span>
     <span class='label'>starts_at_unix_timestamp:</span> <span class='id identifier rubyid_starts_at'>starts_at</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span>
     <span class='label'>ends_at_unix_timestamp:</span> <span class='id identifier rubyid_ends_at'>ends_at</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span>
+    <span class='label'>count:</span><span class='comma'>,</span>
     <span class='label'>label:</span>
   <span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
@@ -2406,7 +2516,7 @@
       <div class="method_details ">
   <h3 class="signature " id="repeat_monthly_by_nth_weekday-instance_method">
   
-    #<strong>repeat_monthly_by_nth_weekday</strong>(weekday, nth_day, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)  &#x21d2; <tt>void</tt> 
+    #<strong>repeat_monthly_by_nth_weekday</strong>(weekday, nth_day, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)  &#x21d2; <tt>void</tt> 
   
 
   
@@ -2542,6 +2652,24 @@
   
     <li>
       
+        <span class='name'>count</span>
+      
+      
+        <span class='type'>(<tt>Integer</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>An optional count limit to apply to the occurrences of a series; once the schedule has generated the requested number of occurrences, it will halt further expansion of that specific series. The count takes precedence over the optional <code>ends_at</code> param.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
         <span class='name'>label</span>
       
       
@@ -2621,6 +2749,8 @@
     
     
     
+    
+    
 
 <p class="tag_title">Raises:</p>
 <ul class="raise">
@@ -2675,23 +2805,24 @@
       <pre class="lines">
 
 
-196
-197
-198
-199
-200
-201
-202
-203
-204
-205
-206
-207</pre>
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/reprise/schedule.rb', line 196</span>
+      <pre class="code"><span class="info file"># File 'lib/reprise/schedule.rb', line 213</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_repeat_monthly_by_nth_weekday'>repeat_monthly_by_nth_weekday</span><span class='lparen'>(</span><span class='id identifier rubyid_weekday'>weekday</span><span class='comma'>,</span> <span class='id identifier rubyid_nth_day'>nth_day</span><span class='comma'>,</span> <span class='label'>time_of_day:</span><span class='comma'>,</span> <span class='label'>duration_in_seconds:</span><span class='comma'>,</span> <span class='label'>interval:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='label'>starts_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>ends_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_repeat_monthly_by_nth_weekday'>repeat_monthly_by_nth_weekday</span><span class='lparen'>(</span><span class='id identifier rubyid_weekday'>weekday</span><span class='comma'>,</span> <span class='id identifier rubyid_nth_day'>nth_day</span><span class='comma'>,</span> <span class='label'>time_of_day:</span><span class='comma'>,</span> <span class='label'>duration_in_seconds:</span><span class='comma'>,</span> <span class='label'>interval:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='label'>starts_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>ends_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>count:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_internal_schedule'>internal_schedule</span><span class='period'>.</span><span class='id identifier rubyid_repeat_monthly_by_nth_weekday'>repeat_monthly_by_nth_weekday</span><span class='lparen'>(</span>
     <span class='id identifier rubyid_weekday'>weekday</span><span class='comma'>,</span>
     <span class='id identifier rubyid_nth_day'>nth_day</span><span class='comma'>,</span>
@@ -2700,6 +2831,7 @@
     <span class='label'>interval:</span><span class='comma'>,</span>
     <span class='label'>starts_at_unix_timestamp:</span> <span class='id identifier rubyid_starts_at'>starts_at</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span>
     <span class='label'>ends_at_unix_timestamp:</span> <span class='id identifier rubyid_ends_at'>ends_at</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span>
+    <span class='label'>count:</span><span class='comma'>,</span>
     <span class='label'>label:</span>
   <span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
@@ -2711,7 +2843,7 @@
       <div class="method_details ">
   <h3 class="signature " id="repeat_weekly-instance_method">
   
-    #<strong>repeat_weekly</strong>(weekday, time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)  &#x21d2; <tt>void</tt> 
+    #<strong>repeat_weekly</strong>(weekday, time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)  &#x21d2; <tt>void</tt> 
   
 
   
@@ -2853,6 +2985,24 @@
   
     <li>
       
+        <span class='name'>count</span>
+      
+      
+        <span class='type'>(<tt>Integer</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>An optional count limit to apply to the occurrences of a series; once the schedule has generated the requested number of occurrences, it will halt further expansion of that specific series. The count takes precedence over the optional <code>ends_at</code> param.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
         <span class='name'>label</span>
       
       
@@ -2930,6 +3080,8 @@
     
     
     
+    
+    
 
 <p class="tag_title">Raises:</p>
 <ul class="raise">
@@ -2984,22 +3136,23 @@
       <pre class="lines">
 
 
-155
-156
-157
-158
-159
-160
-161
-162
-163
-164
-165</pre>
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/reprise/schedule.rb', line 155</span>
+      <pre class="code"><span class="info file"># File 'lib/reprise/schedule.rb', line 168</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_repeat_weekly'>repeat_weekly</span><span class='lparen'>(</span><span class='id identifier rubyid_weekday'>weekday</span><span class='comma'>,</span> <span class='label'>time_of_day:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>duration_in_seconds:</span><span class='comma'>,</span> <span class='label'>interval:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='label'>starts_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>ends_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_repeat_weekly'>repeat_weekly</span><span class='lparen'>(</span><span class='id identifier rubyid_weekday'>weekday</span><span class='comma'>,</span> <span class='label'>time_of_day:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>duration_in_seconds:</span><span class='comma'>,</span> <span class='label'>interval:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='label'>starts_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>ends_at:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>count:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_internal_schedule'>internal_schedule</span><span class='period'>.</span><span class='id identifier rubyid_repeat_weekly'>repeat_weekly</span><span class='lparen'>(</span>
     <span class='id identifier rubyid_weekday'>weekday</span><span class='comma'>,</span>
     <span class='label'>time_of_day:</span> <span class='const'><span class='object_link'><a href="TimeOfDay.html" title="Reprise::TimeOfDay (class)">TimeOfDay</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="TimeOfDay.html#initialize-instance_method" title="Reprise::TimeOfDay#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_time_of_day'>time_of_day</span> <span class='op'>||</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_starts_at'>starts_at</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_h'><span class='object_link'><a href="TimeOfDay.html#to_h-instance_method" title="Reprise::TimeOfDay#to_h (method)">to_h</a></span></span><span class='comma'>,</span>
@@ -3007,6 +3160,7 @@
     <span class='label'>interval:</span><span class='comma'>,</span>
     <span class='label'>starts_at_unix_timestamp:</span> <span class='id identifier rubyid_starts_at'>starts_at</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span>
     <span class='label'>ends_at_unix_timestamp:</span> <span class='id identifier rubyid_ends_at'>ends_at</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span>
+    <span class='label'>count:</span><span class='comma'>,</span>
     <span class='label'>label:</span>
   <span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
@@ -3020,7 +3174,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sat Jul 20 19:34:57 2024 by
+  Generated on Sun Jul 21 10:23:45 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.36 (ruby-3.3.2).
 </div>
