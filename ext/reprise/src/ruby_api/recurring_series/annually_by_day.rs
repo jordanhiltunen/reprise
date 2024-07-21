@@ -1,4 +1,4 @@
-use crate::ruby_api::clock::{set_datetime_cursor_safely};
+use crate::ruby_api::clock::set_datetime_cursor_safely;
 use crate::ruby_api::series_options::SeriesOptions;
 use crate::ruby_api::traits::Recurrable;
 use chrono::{DateTime, Datelike, TimeDelta};
@@ -23,7 +23,9 @@ impl AnnuallyByDay {
             None => {
                 // If we can't advance one year, then we've fallen in a gap, like a leap year.
                 // Advance by one day to get out.
-                datetime_cursor.to_utc().checked_add_signed(TimeDelta::days(1))
+                datetime_cursor
+                    .to_utc()
+                    .checked_add_signed(TimeDelta::days(1))
                     .expect("UTC datetime should advance by one day")
                     .with_year(datetime_cursor.year() + 1)
                     .expect("UTC year should advance by one")
@@ -34,11 +36,12 @@ impl AnnuallyByDay {
                 // could fall in a local time gap / ambiguous time, so we still have to be cautious.
                 let new_cursor = set_datetime_cursor_safely(
                     new_datetime_cursor.with_timezone(&datetime_cursor.timezone()),
-                    self.naive_starts_at_time());
+                    self.naive_starts_at_time(),
+                );
 
                 return new_cursor;
             }
-        }
+        };
     }
 }
 
@@ -62,14 +65,17 @@ impl Recurrable for AnnuallyByDay {
             // N.B. This is probably inefficient, advancing by a single day.
             // We could probably do better by determining the exact next day number
             // we could safely advance to (e.g. if it's 366 requested, + 1; 365, 0, etc.)
-            let next_day =  datetime_cursor.with_ordinal(self.day_number).unwrap_or_else(||
-                            datetime_cursor
-                                .to_utc()
-                                .checked_add_signed(TimeDelta::days(1))
-                                .expect("Datetime should advance by one day")
-                                .with_timezone(&datetime_cursor.timezone()));
+            let next_day = datetime_cursor
+                .with_ordinal(self.day_number)
+                .unwrap_or_else(|| {
+                    datetime_cursor
+                        .to_utc()
+                        .checked_add_signed(TimeDelta::days(1))
+                        .expect("Datetime should advance by one day")
+                        .with_timezone(&datetime_cursor.timezone())
+                });
 
             return set_datetime_cursor_safely(next_day, self.naive_starts_at_time());
-        }
+        };
     }
 }
