@@ -1,15 +1,14 @@
-use chrono::{Datelike, DateTime, Days, TimeDelta, Weekday};
-use chrono_tz::Tz;
-use magnus::Symbol;
 use crate::ruby_api::clock::advance_time_safely;
 use crate::ruby_api::series_options::SeriesOptions;
-use crate::ruby_api::time_of_day::TimeOfDay;
-use crate::ruby_api::traits::{Recurrable};
+use crate::ruby_api::traits::Recurrable;
+use chrono::{DateTime, Datelike, TimeDelta, Weekday};
+use chrono_tz::Tz;
+use magnus::Symbol;
 
 #[derive(Debug, Clone)]
 pub(crate) struct Weekly {
     pub(crate) weekday: Weekday,
-    pub(crate) series_options: SeriesOptions
+    pub(crate) series_options: SeriesOptions,
 }
 
 impl Weekly {
@@ -18,8 +17,8 @@ impl Weekly {
 
         return Weekly {
             weekday,
-            series_options
-        }
+            series_options,
+        };
     }
 }
 
@@ -33,16 +32,24 @@ impl Recurrable for Weekly {
             Some(datetime_cursor).cloned()
         } else {
             None
-        }
+        };
     }
 
     fn advance_datetime_cursor(&self, datetime_cursor: &DateTime<Tz>) -> DateTime<Tz> {
         // If the current candidate matches the criteria, we can advance by 1-week moving forward.
         return if self.occurrence_candidate_matches_criteria(datetime_cursor) {
-            advance_time_safely(datetime_cursor, TimeDelta::days(7), self.naive_starts_at_time())
+            advance_time_safely(
+                datetime_cursor,
+                TimeDelta::days(7),
+                self.naive_starts_at_time(),
+            )
         } else {
-            advance_time_safely(datetime_cursor, TimeDelta::days(1), self.naive_starts_at_time())
-        }
+            advance_time_safely(
+                datetime_cursor,
+                TimeDelta::days(1),
+                self.naive_starts_at_time(),
+            )
+        };
     }
 
     fn occurrence_candidate_matches_criteria(&self, occurrence_candidate: &DateTime<Tz>) -> bool {
