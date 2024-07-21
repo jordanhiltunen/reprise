@@ -62,7 +62,7 @@ impl Recurrable for AnnuallyByDay {
             // N.B. This is probably inefficient, advancing by a single day.
             // We could probably do better by determining the exact next day number
             // we could safely advance to (e.g. if it's 366 requested, + 1; 365, 0, etc.)
-            let next_day =  datetime_cursor.with_ordinal(self.day_number).unwrap_or(
+            let next_day =  datetime_cursor.with_ordinal(self.day_number).unwrap_or_else(||
                             datetime_cursor
                                 .to_utc()
                                 .checked_add_signed(TimeDelta::days(1))
