@@ -15,7 +15,7 @@ pub(crate) struct SeriesOptions {
     // parent schedule itself.
     pub(crate) starts_at_unix_timestamp: Option<UnixTimestamp>,
     pub(crate) ends_at_unix_timestamp: Option<UnixTimestamp>,
-    pub(crate) label: Option<String>
+    pub(crate) label: Option<String>,
 }
 
 type RubySeriesOptionsKwargs = (
@@ -24,7 +24,7 @@ type RubySeriesOptionsKwargs = (
     i64,
     Option<UnixTimestamp>,
     Option<UnixTimestamp>,
-    Option<String>
+    Option<String>,
 );
 
 impl SeriesOptions {
@@ -37,7 +37,7 @@ impl SeriesOptions {
                 "interval",
                 "starts_at_unix_timestamp",
                 "ends_at_unix_timestamp",
-                "label"
+                "label",
             ],
             &[],
         )
@@ -48,7 +48,7 @@ impl SeriesOptions {
             interval,
             starts_at_unix_timestamp,
             ends_at_unix_timestamp,
-            label
+            label,
         ): RubySeriesOptionsKwargs = args.required;
         let time_of_day = TimeOfDay::new_from_ruby_hash(time_of_day);
 
@@ -59,7 +59,7 @@ impl SeriesOptions {
             interval,
             starts_at_unix_timestamp,
             ends_at_unix_timestamp,
-            label
+            label,
         };
     }
 
@@ -75,7 +75,9 @@ impl SeriesOptions {
         return self.interval;
     }
 
-    pub fn label(&self) -> Option<String> { return self.label.clone(); }
+    pub fn label(&self) -> Option<String> {
+        return self.label.clone();
+    }
 
     pub fn local_starts_at_datetime(&self) -> Option<DateTime<Tz>> {
         return match self.starts_at_unix_timestamp {
