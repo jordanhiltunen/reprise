@@ -4,12 +4,14 @@ use crate::ruby_api::traits::HasOverlapAwareness;
 
 #[derive(Debug)]
 pub(crate) struct SortedExclusions {
-    pub(crate) exclusions: Vec<Exclusion>
+    pub(crate) exclusions: Vec<Exclusion>,
 }
 
 impl SortedExclusions {
     pub(crate) fn new() -> SortedExclusions {
-        return SortedExclusions { exclusions: Vec::new() }
+        return SortedExclusions {
+            exclusions: Vec::new(),
+        };
     }
 
     pub(crate) fn add_exclusion(&mut self, exclusion: Exclusion) {
