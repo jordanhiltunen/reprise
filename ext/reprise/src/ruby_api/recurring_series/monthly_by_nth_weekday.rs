@@ -1,9 +1,9 @@
+use crate::ruby_api::clock::advance_time_safely;
 use crate::ruby_api::series_options::SeriesOptions;
-use crate::ruby_api::traits::{Recurrable};
-use chrono::{DateTime, Datelike, Weekday, TimeDelta, Months};
+use crate::ruby_api::traits::Recurrable;
+use chrono::{DateTime, Datelike, Months, TimeDelta, Weekday};
 use chrono_tz::Tz;
 use magnus::Symbol;
-use crate::ruby_api::clock::advance_time_safely;
 
 #[derive(Debug, Clone)]
 pub(crate) struct MonthlyByNthWeekday {
@@ -43,14 +43,22 @@ impl MonthlyByNthWeekday {
                 break;
             }
 
-            examined_datetime = advance_time_safely(&examined_datetime, TimeDelta::days(1), self.naive_starts_at_time());
+            examined_datetime = advance_time_safely(
+                &examined_datetime,
+                TimeDelta::days(1),
+                self.naive_starts_at_time(),
+            );
         }
 
         // Push the day and all remaining days with the same weekday into the collection.
         while examined_datetime < end_of_month {
             weekdays_in_month.push(examined_datetime);
 
-            examined_datetime = advance_time_safely(&examined_datetime, TimeDelta::days(7), self.naive_starts_at_time());
+            examined_datetime = advance_time_safely(
+                &examined_datetime,
+                TimeDelta::days(7),
+                self.naive_starts_at_time(),
+            );
         }
 
         return weekdays_in_month;
@@ -78,19 +86,17 @@ impl MonthlyByNthWeekday {
                 .with_day(1)
                 .expect("Datetime should be set to the first day of the month")
         } else {
-            match datetime
-                .checked_add_months(Months::new(1)) {
-                None => {
-                    datetime.to_utc().checked_add_months(Months::new(1))
-                        .expect("Datetime should advance by one month")
-                        .with_timezone(&datetime.timezone())
-                        .with_day(1)
-                        .expect("Datetime should be set to the first day of the month")
-                }
-                Some(datetime) => {
-                    datetime.with_day(1)
-                        .expect("Datetime should be set to the first of the month")
-                }
+            match datetime.checked_add_months(Months::new(1)) {
+                None => datetime
+                    .to_utc()
+                    .checked_add_months(Months::new(1))
+                    .expect("Datetime should advance by one month")
+                    .with_timezone(&datetime.timezone())
+                    .with_day(1)
+                    .expect("Datetime should be set to the first day of the month"),
+                Some(datetime) => datetime
+                    .with_day(1)
+                    .expect("Datetime should be set to the first of the month"),
             }
         };
     }
@@ -99,7 +105,8 @@ impl MonthlyByNthWeekday {
         return datetime
             .with_day(1) // TODO: could this panic if the first falls on a DST / ST transition
             .expect("Datetime should be set to the first day of the month")
-            .with_time(self.naive_starts_at_time()).latest()
+            .with_time(self.naive_starts_at_time())
+            .latest()
             .expect("Datetime should be set to the requested time of day");
     }
 }
@@ -113,11 +120,11 @@ impl Recurrable for MonthlyByNthWeekday {
         let current_weekdays_in_examined_month =
             self.identify_all_weekdays_in_month_of(&datetime_cursor);
 
-        return current_weekdays_in_examined_month.get(
-            self.get_unsigned_nth_weekday_index_from_signed(
+        return current_weekdays_in_examined_month
+            .get(self.get_unsigned_nth_weekday_index_from_signed(
                 current_weekdays_in_examined_month.len() as i32,
-            ),
-        ).cloned();
+            ))
+            .cloned();
     }
 
     fn advance_datetime_cursor(&self, datetime_cursor: &DateTime<Tz>) -> DateTime<Tz> {
