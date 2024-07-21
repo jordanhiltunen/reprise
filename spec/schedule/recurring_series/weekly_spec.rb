@@ -27,6 +27,14 @@ RSpec.describe "#repeat_weekly", aggregate_failures: true do
     end
   end
 
+  it_behaves_like "a series that supports an optional count argument" do
+    let(:series_options_hash) { series_options }
+    let(:occurrences) do
+      schedule.repeat_weekly(:monday, **series_options_hash)
+      schedule.occurrences
+    end
+  end
+
   it "generates an array of weekly occurrences" do
     schedule.repeat_weekly(:monday, duration_in_seconds: 30.minutes)
 
