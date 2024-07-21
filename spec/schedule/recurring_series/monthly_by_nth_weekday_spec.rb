@@ -27,6 +27,14 @@ RSpec.describe "#repeat_monthly_by_nth_weekday", aggregate_failures: true do
     end
   end
 
+  it_behaves_like "a series that supports an optional count argument" do
+    let(:series_options_hash) { series_options }
+    let(:occurrences) do
+      schedule.repeat_monthly_by_nth_weekday(:tuesday, 2, **series_options_hash)
+      schedule.occurrences
+    end
+  end
+
   it "generates an array of monthly occurrences with a fixed weekday" do
     schedule.repeat_monthly_by_nth_weekday(:tuesday, 2, time_of_day: { hour: 1, minute: 2, second: 3 }, duration_in_seconds: 300)
 

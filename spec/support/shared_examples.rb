@@ -42,3 +42,14 @@ RSpec.shared_examples "a series that supports the duration_in_seconds argument" 
     ).to eq(true)
   end
 end
+
+# requires variables:
+# - series_options_hash
+# - occurrences
+RSpec.shared_examples "a series that supports an optional count argument" do
+  before { series_options_hash.merge!(count: 3) }
+
+  it "creates occurrences that are capped at the requested count" do
+    expect(occurrences.size).to eq(3)
+  end
+end

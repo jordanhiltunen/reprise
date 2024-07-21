@@ -277,7 +277,7 @@ you would probably be much better served by choosing one of those two gems inste
 the influence of Rust leaks into its Ruby API. Alternative gems offer much more flexible APIs that support a variety
 of more idiomatic calling conventions: they have better, more forgiving ergonomics. Reprise may invest more efforts
 here in the future, but not until we have landed on a feature-complete, performant core - our primary design goal. 
-Until then, out API will remain sparse but sufficient.</li>
+Until then, our API will remain sparse but sufficient.</li>
 <li><strong>Stability.</strong> Reprise is still experimental; we do not yet have a <code>1.0.0</code> release or a public roadmap. Breaking changes
 may be frequent across releases. If you do not want to pin Reprise to a specific version and want a library that you can
 upgrade without reviewing the changelog, you may want to consider an alternative for now.</li>
@@ -391,8 +391,6 @@ in your application?</p>
 <p>At time of writing, alternative gems&#39; solutions to this problem are somewhat wanting:</p>
 
 <ul>
-<li><strong>None</strong>: It is entirely the responsibility of the client application to handle occurrence exclusions,
-despite this logic being core to the domain of recurring schedule management.</li>
 <li><strong>Date-based exclusion</strong>: Client applications can pass specific dates when occurrences should be excluded.
 This is not sufficient except for in the most simple of circumstances. Again, consider our hypothetical
 Monday @ 12:30 PM recurring series: being able to exclude a specific <em>date</em> from your recurrence rule still 
@@ -450,7 +448,7 @@ once we&#39;ve hit that milestone.</p>
 </div></div>
 
       <div id="footer">
-  Generated on Sat Jul 20 19:34:56 2024 by
+  Generated on Sun Jul 21 10:23:44 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.36 (ruby-3.3.2).
 </div>

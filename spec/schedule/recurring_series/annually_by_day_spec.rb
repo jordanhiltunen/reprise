@@ -27,6 +27,14 @@ RSpec.describe "#repeat_annually_by_day", aggregate_failures: true do
     end
   end
 
+  it_behaves_like "a series that supports an optional count argument" do
+    let(:series_options_hash) { series_options }
+    let(:occurrences) do
+      schedule.repeat_annually_by_day(200, **series_options_hash)
+      schedule.occurrences
+    end
+  end
+
   it "generates an array of annual occurrences" do
     schedule.repeat_annually_by_day(200, **series_options)
 

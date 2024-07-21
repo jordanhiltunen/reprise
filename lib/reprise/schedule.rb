@@ -85,6 +85,12 @@ module Reprise
     #     influences occurrence queries, and whether any added exclusions conflict with any of the schedule's
     #     occurrences.
 
+    # @!macro [new] count
+    #   @param count [Integer, nil] An optional count limit to apply to the occurrences
+    #     of a series; once the schedule has generated the requested number of occurrences,
+    #     it will halt further expansion of that specific series. The count takes precedence
+    #     over the optional +ends_at+ param.
+
     # @!macro [new] label
     #   @param label [String, nil] An optional label to apply to all of the occurrences
     #     that are generated from the series. See {Reprise::Core::Occurrence#label}.
@@ -93,15 +99,17 @@ module Reprise
     # @!macro duration_in_seconds
     # @!macro interval
     # @!macro recurring_series_start_and_end_times
+    # @!macro count
     # @!macro label
     # @return [void]
-    def repeat_minutely(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)
+    def repeat_minutely(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)
       internal_schedule.repeat_minutely(
         time_of_day: TimeOfDay.new(time_of_day || self.starts_at).to_h,
         duration_in_seconds:,
         interval:,
         starts_at_unix_timestamp: starts_at.presence&.to_i,
         ends_at_unix_timestamp: ends_at.presence&.to_i,
+        count:,
         label:
       )
     end
@@ -110,15 +118,17 @@ module Reprise
     # @!macro duration_in_seconds
     # @!macro interval
     # @!macro recurring_series_start_and_end_times
+    # @!macro count
     # @!macro label
     # @return [void]
-    def repeat_hourly(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)
+    def repeat_hourly(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)
       internal_schedule.repeat_hourly(
         time_of_day: TimeOfDay.new(time_of_day || self.starts_at).to_h,
         duration_in_seconds:,
         interval:,
         starts_at_unix_timestamp: starts_at.presence&.to_i,
         ends_at_unix_timestamp: ends_at.presence&.to_i,
+        count:,
         label:
       )
     end
@@ -127,15 +137,17 @@ module Reprise
     # @!macro duration_in_seconds
     # @!macro interval
     # @!macro recurring_series_start_and_end_times
+    # @!macro count
     # @!macro label
     # @return [void]
-    def repeat_daily(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)
+    def repeat_daily(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)
       internal_schedule.repeat_daily(
         time_of_day: TimeOfDay.new(time_of_day || self.starts_at).to_h,
         duration_in_seconds:,
         interval:,
         starts_at_unix_timestamp: starts_at.presence&.to_i,
         ends_at_unix_timestamp: ends_at.presence&.to_i,
+        count:,
         label:
       )
     end
@@ -145,6 +157,7 @@ module Reprise
     # @!macro duration_in_seconds
     # @!macro interval
     # @!macro recurring_series_start_and_end_times
+    # @!macro count
     # @!macro label
     # @return [void]
     # @example with a +time_of_day+ hash
@@ -152,7 +165,7 @@ module Reprise
     # @example with a local time for +time_of_day+
     #   local_time = Time.current.in_time_zone(my_current_time_zone)
     #   schedule.repeat_weekly(:monday, time_of_day: local_time, duration_in_seconds: 30)
-    def repeat_weekly(weekday, time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)
+    def repeat_weekly(weekday, time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)
       internal_schedule.repeat_weekly(
         weekday,
         time_of_day: TimeOfDay.new(time_of_day || self.starts_at).to_h,
@@ -160,6 +173,7 @@ module Reprise
         interval:,
         starts_at_unix_timestamp: starts_at.presence&.to_i,
         ends_at_unix_timestamp: ends_at.presence&.to_i,
+        count:,
         label:
       )
     end
@@ -169,11 +183,12 @@ module Reprise
     # @!macro duration_in_seconds
     # @!macro interval
     # @!macro recurring_series_start_and_end_times
+    # @!macro count
     # @!macro label
     # @return [void]
     # @example
     #   schedule.repeat_monthly_by_day(15, time_of_day: { hour: 9 }, duration_in_seconds: 30)
-    def repeat_monthly_by_day(day_number, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)
+    def repeat_monthly_by_day(day_number, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)
       internal_schedule.repeat_monthly_by_day(
         day_number,
         time_of_day: TimeOfDay.new(time_of_day || self.starts_at).to_h,
@@ -181,6 +196,7 @@ module Reprise
         interval:,
         starts_at_unix_timestamp: starts_at.presence&.to_i,
         ends_at_unix_timestamp: ends_at.presence&.to_i,
+        count:,
         label:
       )
     end
@@ -191,9 +207,10 @@ module Reprise
     # @!macro duration_in_seconds
     # @!macro interval
     # @!macro recurring_series_start_and_end_times
+    # @!macro count
     # @!macro label
     # @return [void]
-    def repeat_monthly_by_nth_weekday(weekday, nth_day, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)
+    def repeat_monthly_by_nth_weekday(weekday, nth_day, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)
       internal_schedule.repeat_monthly_by_nth_weekday(
         weekday,
         nth_day,
@@ -202,6 +219,7 @@ module Reprise
         interval:,
         starts_at_unix_timestamp: starts_at.presence&.to_i,
         ends_at_unix_timestamp: ends_at.presence&.to_i,
+        count:,
         label:
       )
     end
@@ -211,11 +229,12 @@ module Reprise
     # @!macro duration_in_seconds
     # @!macro interval
     # @!macro recurring_series_start_and_end_times
+    # @!macro count
     # @!macro label
     # @return [void]
     # @example
     #   schedule.repeat_annually_by_day(200, duration_in_seconds: 30)
-    def repeat_annually_by_day(day_number, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, label: nil)
+    def repeat_annually_by_day(day_number, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)
       internal_schedule.repeat_annually_by_day(
         day_number,
         time_of_day: TimeOfDay.new(time_of_day || self.starts_at).to_h,
@@ -223,6 +242,7 @@ module Reprise
         interval:,
         starts_at_unix_timestamp: starts_at.presence&.to_i,
         ends_at_unix_timestamp: ends_at.presence&.to_i,
+        count:,
         label:
       )
     end
