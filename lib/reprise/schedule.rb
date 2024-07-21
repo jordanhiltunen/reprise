@@ -85,6 +85,12 @@ module Reprise
     #     influences occurrence queries, and whether any added exclusions conflict with any of the schedule's
     #     occurrences.
 
+    # @!macro [new] count
+    #   @param count [Integer, nil] An optional count limit to apply to the occurrences
+    #     of a series; once the schedule has generated the requested number of occurrences,
+    #     it will halt further expansion of that specific series. The count takes precedence
+    #     over the optional +ends_at+ param.
+
     # @!macro [new] label
     #   @param label [String, nil] An optional label to apply to all of the occurrences
     #     that are generated from the series. See {Reprise::Core::Occurrence#label}.
@@ -93,6 +99,7 @@ module Reprise
     # @!macro duration_in_seconds
     # @!macro interval
     # @!macro recurring_series_start_and_end_times
+    # @!macro count
     # @!macro label
     # @return [void]
     def repeat_minutely(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)
@@ -111,6 +118,7 @@ module Reprise
     # @!macro duration_in_seconds
     # @!macro interval
     # @!macro recurring_series_start_and_end_times
+    # @!macro count
     # @!macro label
     # @return [void]
     def repeat_hourly(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)
@@ -129,6 +137,7 @@ module Reprise
     # @!macro duration_in_seconds
     # @!macro interval
     # @!macro recurring_series_start_and_end_times
+    # @!macro count
     # @!macro label
     # @return [void]
     def repeat_daily(time_of_day: nil, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)
@@ -148,6 +157,7 @@ module Reprise
     # @!macro duration_in_seconds
     # @!macro interval
     # @!macro recurring_series_start_and_end_times
+    # @!macro count
     # @!macro label
     # @return [void]
     # @example with a +time_of_day+ hash
@@ -173,6 +183,7 @@ module Reprise
     # @!macro duration_in_seconds
     # @!macro interval
     # @!macro recurring_series_start_and_end_times
+    # @!macro count
     # @!macro label
     # @return [void]
     # @example
@@ -196,6 +207,7 @@ module Reprise
     # @!macro duration_in_seconds
     # @!macro interval
     # @!macro recurring_series_start_and_end_times
+    # @!macro count
     # @!macro label
     # @return [void]
     def repeat_monthly_by_nth_weekday(weekday, nth_day, time_of_day:, duration_in_seconds:, interval: 1, starts_at: nil, ends_at: nil, count: nil, label: nil)
@@ -217,6 +229,7 @@ module Reprise
     # @!macro duration_in_seconds
     # @!macro interval
     # @!macro recurring_series_start_and_end_times
+    # @!macro count
     # @!macro label
     # @return [void]
     # @example
