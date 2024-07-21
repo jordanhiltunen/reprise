@@ -229,7 +229,7 @@ you would probably be much better served by choosing one of those two gems inste
   the influence of Rust leaks into its Ruby API. Alternative gems offer much more flexible APIs that support a variety
   of more idiomatic calling conventions: they have better, more forgiving ergonomics. Reprise may invest more efforts
   here in the future, but not until we have landed on a feature-complete, performant core - our primary design goal. 
-  Until then, out API will remain sparse but sufficient.
+  Until then, our API will remain sparse but sufficient.
 - **Stability.** Reprise is still experimental; we do not yet have a `1.0.0` release or a public roadmap. Breaking changes
   may be frequent across releases. If you do not want to pin Reprise to a specific version and want a library that you can
   upgrade without reviewing the changelog, you may want to consider an alternative for now.
@@ -317,8 +317,6 @@ How do you filter out recurring series occurrences that conflict with other sche
 in your application?
 
 At time of writing, alternative gems' solutions to this problem are somewhat wanting:
-- **None**: It is entirely the responsibility of the client application to handle occurrence exclusions,
-  despite this logic being core to the domain of recurring schedule management.
 - **Date-based exclusion**: Client applications can pass specific dates when occurrences should be excluded.
   This is not sufficient except for in the most simple of circumstances. Again, consider our hypothetical
   Monday @ 12:30 PM recurring series: being able to exclude a specific _date_ from your recurrence rule still 
