@@ -35,6 +35,6 @@ impl Recurrable for Minutely {
                 .unwrap()
                 .with_timezone(&datetime_cursor.timezone()),
             Some(datetime_cursor) => datetime_cursor,
-        }
+        };
     }
 }
