@@ -61,6 +61,14 @@ pub(crate) trait Recurrable: std::fmt::Debug {
         .unwrap();
     }
 
+    fn is_occurrence_count_reached(&self, occurrences: &Vec<Occurrence>) -> bool {
+        return if self.get_series_options().count.is_none() {
+            false
+        } else {
+            occurrences.len() as u64 >= self.get_series_options().count.unwrap()
+        }
+    }
+
     fn generate_occurrences(
         &self,
         starts_at: DateTime<Tz>,
@@ -82,7 +90,7 @@ pub(crate) trait Recurrable: std::fmt::Debug {
         let mut datetime_cursor =
             set_datetime_cursor_safely(starts_at, self.naive_starts_at_time());
 
-        while datetime_cursor < ends_at {
+        while datetime_cursor < ends_at && !self.is_occurrence_count_reached(&occurrences) {
             let occurrence_candidate_datetime_option =
                 self.next_occurrence_candidate(&datetime_cursor);
 
