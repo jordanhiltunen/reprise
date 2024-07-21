@@ -1,15 +1,17 @@
 use crate::ruby_api::traits::HasOverlapAwareness;
 
-#[derive(Debug)]
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub(crate) struct Exclusion {
     pub(crate) starts_at_unix_timestamp: i64,
-    pub(crate) ends_at_unix_timestamp: i64
+    pub(crate) ends_at_unix_timestamp: i64,
 }
 
 impl Exclusion {
     pub(crate) fn new(starts_at_unix_timestamp: i64, ends_at_unix_timestamp: i64) -> Exclusion {
-        return Exclusion { starts_at_unix_timestamp, ends_at_unix_timestamp }
+        return Exclusion {
+            starts_at_unix_timestamp,
+            ends_at_unix_timestamp,
+        };
     }
 }
 
