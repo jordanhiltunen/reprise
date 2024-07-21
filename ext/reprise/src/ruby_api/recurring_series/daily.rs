@@ -37,26 +37,30 @@ impl Recurrable for Daily {
         // we respect the _later_ interpretation of the time, biasing towards the new offset.
         return match datetime_cursor
             .with_time(self.naive_starts_at_time())
-            .latest() {
-            Some(datetime_cursor) => { Some(datetime_cursor) },
+            .latest()
+        {
+            Some(datetime_cursor) => Some(datetime_cursor),
             None => {
                 // If there is no local time (e.g. because we're in a time gap,
                 // during a DST transition, bypassing that exact hour) we return
                 // the cursor alone.
-                return Some(datetime_cursor.clone())
+                return Some(datetime_cursor.clone());
             }
-        }
+        };
     }
 
     fn advance_datetime_cursor(&self, datetime_cursor: &DateTime<Tz>) -> DateTime<Tz> {
         // If a time zone jumps from 2:00 AM to 3:00 PM for DST,
         // then the local 2:30 AM time simply does not exist; in that scenario,
         // we increment the UTC time and take the local time from that.
-        return datetime_cursor.checked_add_days(Days::new(1)).unwrap_or_else(||
-            datetime_cursor
-                .to_utc()
-                .checked_add_signed(TimeDelta::hours(24))
-                .unwrap().with_timezone(&datetime_cursor.timezone())
-        );
+        return datetime_cursor
+            .checked_add_days(Days::new(1))
+            .unwrap_or_else(|| {
+                datetime_cursor
+                    .to_utc()
+                    .checked_add_signed(TimeDelta::hours(24))
+                    .unwrap()
+                    .with_timezone(&datetime_cursor.timezone())
+            });
     }
 }
