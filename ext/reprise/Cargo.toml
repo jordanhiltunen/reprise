@@ -29,3 +29,7 @@ serde_json = "1.0.117"
 
 [build-dependencies]
 rb-sys-env = "0.1.2"
+
+[dev-dependencies]
+rb-sys-env = { version = "0.1" }
+rb-sys-test-helpers = { version = "0.2" }
